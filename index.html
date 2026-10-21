@@ -891,14 +891,20 @@ window.addEventListener('popstate',()=>{
 });
 function toast(msg){let el=document.getElementById('toast');if(!el){el=document.createElement('div');el.id='toast';el.className='toast';document.body.appendChild(el);}el.textContent=msg;el.classList.add('on');clearTimeout(el._t);el._t=setTimeout(()=>el.classList.remove('on'),2200);}
 ['pointerdown','touchstart','keydown'].forEach(ev=>window.addEventListener(ev,()=>armGuard(),{once:true,passive:true,capture:true}));
-/* swipe right on the detail page: go back one level, or close */
-(function(){let sx=0,sy=0,dx=0,drag=false,lock=null;
-  sheet.addEventListener('touchstart',e=>{if(e.touches.length!==1)return;const tt=e.touches[0];if(tt.clientX<28){drag=false;return;}sx=tt.clientX;sy=tt.clientY;dx=0;drag=true;lock=null;sheet.style.transition='none';},{passive:true});
+/* swipes on the detail page: right = back one level / close; from the right edge leftwards = close */
+(function(){let sx=0,sy=0,dx=0,drag=false,lock=null,fromRight=false;
+  const EDGE=28;
+  sheet.addEventListener('touchstart',e=>{if(e.touches.length!==1)return;const tt=e.touches[0];
+    if(tt.clientX<EDGE){drag=false;return;}              /* left edge: leave it to the system back gesture */
+    fromRight=tt.clientX>window.innerWidth-EDGE;
+    sx=tt.clientX;sy=tt.clientY;dx=0;drag=true;lock=null;sheet.style.transition='none';},{passive:true});
   sheet.addEventListener('touchmove',e=>{if(!drag)return;const tt=e.touches[0];const x=tt.clientX-sx,y=tt.clientY-sy;
-    if(lock===null&&(Math.abs(x)>10||Math.abs(y)>10))lock=Math.abs(x)>Math.abs(y)*1.2&&x>0?'x':'y';
-    if(lock==='x'){dx=Math.max(0,x);sheet.style.transform=`translateX(${dx}px)`;}},{passive:true});
+    if(lock===null&&(Math.abs(x)>10||Math.abs(y)>10)){const horiz=Math.abs(x)>Math.abs(y)*1.2;lock=horiz&&x>0&&!fromRight?'r':horiz&&x<0&&fromRight?'l':'y';}
+    if(lock==='r'){dx=Math.max(0,x);sheet.style.transform=`translateX(${dx}px)`;}
+    else if(lock==='l'){dx=Math.min(0,x);sheet.style.transform=`translateX(${dx}px)`;}},{passive:true});
   sheet.addEventListener('touchend',()=>{if(!drag)return;drag=false;sheet.style.transition='';
-    if(lock==='x'&&dx>90){sheet.style.transform=STACK.length?'':`translateX(110%)`;setTimeout(()=>{sheetBackStep();setTimeout(()=>{sheet.style.transform='';},260);},STACK.length?0:180);}
+    if(lock==='r'&&dx>90){sheet.style.transform=STACK.length?'':`translateX(110%)`;setTimeout(()=>{sheetBackStep();setTimeout(()=>{sheet.style.transform='';},260);},STACK.length?0:180);}
+    else if(lock==='l'&&dx<-90){sheet.style.transform='translateX(-110%)';setTimeout(()=>{closeSheet();setTimeout(()=>{sheet.style.transform='';},260);},180);}
     else sheet.style.transform='';},{passive:true});
   sheet.addEventListener('touchcancel',()=>{drag=false;lock=null;sheet.style.transition='';sheet.style.transform='';},{passive:true});
 })();
