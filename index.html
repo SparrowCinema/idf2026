@@ -364,7 +364,7 @@ html{-webkit-tap-highlight-color:transparent}
 }
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 .qrc{display:flex;gap:16px;align-items:center;background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:14px;max-width:560px}
-.qrth{flex:none;width:112px;height:112px;padding:8px;border:1px solid var(--line);border-radius:14px;background:#fff;cursor:zoom-in;display:flex;align-items:center;justify-content:center;-webkit-touch-callout:default}
+.qrth{flex:none;width:112px;height:112px;padding:8px;border:1px solid var(--line);border-radius:14px;background:#fff;display:flex;align-items:center;justify-content:center;-webkit-touch-callout:default}
 .qrth.blue{background:#4f8fd6;border-color:#4f8fd6;padding:6px}
 .qrth img{width:100%;height:100%;object-fit:contain;border-radius:8px;-webkit-touch-callout:default;-webkit-user-select:auto;user-select:auto}
 .qrtx{flex:1;min-width:0;display:flex;flex-direction:column;align-items:flex-start;gap:3px}
@@ -1063,10 +1063,8 @@ function renderPicks(){
 function renderInfo(){
 $('#infoBody').innerHTML=`
 <section class="isec" id="s-book"><h2>${T('观影预约','Book Screenings')}</h2>
- <div class="qrc"><button type="button" class="qrth" data-zsmall="1" data-zoom="qr-booking.jpg" aria-label="${T('放大小程序码','Enlarge code')}"><img src="qr-booking.jpg" alt="${T('中国美术学院电影学院小程序码','Mini program code, School of Film, CAA')}" width="120" height="120"></button>
-  <div class="qrtx"><span class="qrk">${T('微信小程序','WeChat mini program')}</span><b>${T('中国美术学院电影学院','School of Film, China Academy of Art')}</b><p>${T('扫码进入小程序，预约展映座位。','Scan to open the mini program and reserve seats.')}</p>
-  <button type="button" class="qrbig" data-zsmall="1" data-zoom="qr-booking.jpg">${T('放大二维码','Show larger')}</button></div></div>
- <p class="qrhint">${T('手机上：在微信里打开本页可长按二维码识别；在其他浏览器里，可截图后用微信“扫一扫”从相册识别。','On a phone: inside WeChat, long-press the code to scan; elsewhere, take a screenshot and scan it from your photos with WeChat.')}</p></section>
+ <div class="qrc"><span class="qrth"><img src="qr-booking.jpg" alt="${T('中国美术学院电影学院小程序码','Mini program code, School of Film, CAA')}" width="120" height="120"></span>
+  <div class="qrtx"><span class="qrk">${T('微信小程序','WeChat mini program')}</span><b>${T('中国美术学院电影学院','School of Film, China Academy of Art')}</b><p>${T('长按二维码或扫描二维码进入小程序，预约展映座位。','Long-press or scan the code to open the mini program and reserve seats.')}</p></div></div></section>
 <section class="isec" id="s-sched"><h2>${T('活动日程','Events')}</h2><p class="lead">${T('学术、创投活动时间来自大会手册，开幕式时间来自排片表。闭幕式与剪辑大师课只有场地、没有具体时间。影片放映场次见“排片”页。','Forum and pitching times come from the festival catalogue; the opening time comes from the screening timetable. The closing ceremony and editing masterclass have venues but no published times. For film screenings, see "Schedule".')}</p>
  ${SDAYS.slice(0,4).map(d=>{const L=EV.map((ev,k)=>[ev,k]).filter(([ev])=>ev.d===d);return `<div class="day"><div class="dayh"><b>${dateL(d)}</b><span>${wd(d)}</span></div>${L.length?L.map(([ev,k])=>evHTML(ev,k)).join(''):`<div class="ev"><div class="t">—</div><div class="v">${T('当日无学术或创投活动，放映场次见“排片”页。','No forums or pitching this day; see "Schedule" for screenings.')}</div></div>`}</div>`;}).join('')}
  <div class="day"><div class="dayh"><b>${T('场地已定 · 时间待通知','Venue set · time TBA')}</b></div>${UNDATED.map(ev=>evHTML(ev,null)).join('')}</div>
@@ -1101,10 +1099,8 @@ $('#infoBody').innerHTML=`
 <section class="isec" id="s-pass"><h2>${T('证件类型','Accreditation')}</h2><p class="lead">${T('大会证件按颜色区分九类。','Festival passes come in nine colors.')}</p>
  <div class="cols">${PASSES.map(([a,b,c])=>`<div class="box badge"><span class="sw" style="background:${c}"></span><div><h3>${T(a,b)}</h3><p>${T(b,a)}</p></div></div>`).join('')}</div></section>
 <section class="isec" id="s-swap"><h2>${T('转票群','Ticket Swap Group')}</h2>
- <div class="qrc"><button type="button" class="qrth blue" data-zsmall="1" data-zoom="qr-tickets.jpg" aria-label="${T('放大二维码','Enlarge code')}"><img src="qr-tickets-code.jpg" alt="${T('转票群微信二维码','WeChat QR code for the ticket swap group')}" width="120" height="120"></button>
-  <div class="qrtx"><span class="qrk">${T('微信 · 加好友入群','WeChat · add to join')}</span><b>一群小麻雀-零号机</b><p>${T('有多余的票或想找票，扫码加好友，进入转票群。','Spare ticket or looking for one? Add this contact to join the swap group.')}</p>
-  <button type="button" class="qrbig" data-zsmall="1" data-zoom="qr-tickets.jpg">${T('放大二维码','Show larger')}</button></div></div>
- <p class="qrhint">${T('手机上：在微信里打开本页可长按二维码识别；在其他浏览器里，可截图后用微信“扫一扫”从相册识别。','On a phone: inside WeChat, long-press the code to scan; elsewhere, take a screenshot and scan it from your photos with WeChat.')}</p></section>
+ <div class="qrc"><span class="qrth blue"><img src="qr-tickets-code.jpg" alt="${T('转票群微信二维码','WeChat QR code for the ticket swap group')}" width="120" height="120"></span>
+  <div class="qrtx"><span class="qrk">${T('微信 · 加好友入群','WeChat · add to join')}</span><b>一群小麻雀-零号机</b><p>${T('有多余的票或想找票？长按二维码或扫描二维码添加好友，进入转票群。','Spare ticket or looking for one? Long-press or scan the code to add this contact and join the swap group.')}</p></div></div></section>
 <section class="isec" id="s-tips"><h2>${T('观影须知','Screening Guidelines')}</h2><ol class="tips">${TIPS.map(t=>`<li>${esc(T(t[0],t[1]))}</li>`).join('')}</ol></section>
 <section class="isec" id="s-city"><h2>${T('行在杭州','Around Hangzhou')}</h2><p class="lead">${T('手册推荐的周边去处。未注明开放时间的，请出发前查询景区公告。','Places recommended in the catalogue. Where no opening hours are listed, check before you go.')}</p>
  <figure class="map"><button type="button" class="mapbtn" data-zoom="map-hangzhou.jpg" aria-label="${T('放大查看杭州地图','Enlarge: Hangzhou map')}"><img src="map-hangzhou.jpg" alt="${T('杭州地图','Hangzhou map')}" width="1280" height="889" loading="lazy"><span class="mapz">${T('点击放大','Tap to enlarge')}</span></button></figure>
