@@ -363,6 +363,22 @@ html{-webkit-tap-highlight-color:transparent}
   .mast-meta b{font-size:17px}
 }
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
+.rform{display:flex;flex-direction:column;gap:8px;border-top:1px dashed var(--line);padding-top:10px}
+.rform textarea{width:100%;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--ink);font:inherit;font-size:16px;line-height:1.5;padding:8px 10px;resize:vertical;min-height:72px}
+.rrow{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.rrow input{flex:1 1 140px;min-width:0;border:1px solid var(--line);border-radius:999px;background:var(--bg);color:var(--ink);font:inherit;font-size:16px;padding:6px 12px}
+.rcount{font-family:var(--f-mono);font-size:11px;color:var(--ink-3)}
+.rpost{border:0;background:var(--ink);color:var(--bg);border-radius:999px;padding:7px 16px;cursor:pointer;font-size:14px}
+.rdel{border:0;background:none;color:var(--ink-3);font-size:12.5px;text-decoration:underline;cursor:pointer}
+.rnote{font-size:12px;color:var(--ink-3);margin:0}
+.rok{font-size:12.5px;color:var(--teal)}
+.revs{margin-top:14px}
+.revs h4{margin:0 0 6px;font-size:12px;letter-spacing:.12em;color:var(--ink-3);font-weight:500}
+.rev{padding:10px 0;border-bottom:1px solid var(--line)}
+.rev .rh2{display:flex;align-items:center;gap:8px;font-size:13px}
+.rev .rd{margin-left:auto;font-family:var(--f-mono);font-size:11px;color:var(--ink-3)}
+.rev p{margin:4px 0 0;font-size:14px;color:var(--ink-2);white-space:pre-wrap;overflow-wrap:anywhere}
+.rcmt{font-size:11px;color:var(--ink-3);white-space:nowrap}
 .st5{display:inline-block;width:20px;height:20px;background:var(--line);-webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 2.2l2.95 6.3 6.85.75-5.1 4.68 1.4 6.77L12 17.3l-6.1 3.4 1.4-6.77-5.1-4.68 6.85-.75z'/%3E%3C/svg%3E") center/contain no-repeat;mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 2.2l2.95 6.3 6.85.75-5.1 4.68 1.4 6.77L12 17.3l-6.1 3.4 1.4-6.77-5.1-4.68 6.85-.75z'/%3E%3C/svg%3E") center/contain no-repeat}
 .st5.full{background:var(--amber)}
 .st5.half{background:linear-gradient(90deg,var(--amber) 50%,var(--line) 50%)}
@@ -716,21 +732,29 @@ const SB_ON=/^https:\/\//.test(SB_URL)&&SB_KEY.length>20;
 let MYR={};try{MYR=JSON.parse(localStorage.getItem('idf26rate')||'{}')||{};}catch(e){}
 let DEV='';try{DEV=localStorage.getItem('idf26dev')||'';if(!DEV){DEV=(crypto.randomUUID?crypto.randomUUID():'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g,c=>{const r=Math.random()*16|0;return (c==='x'?r:(r&3|8)).toString(16);}));localStorage.setItem('idf26dev',DEV);}}catch(e){DEV='';}
 let STATS={};
+let MYC={};try{MYC=JSON.parse(localStorage.getItem('idf26cmt')||'{}')||{};}catch(e){}
+let NICK='';try{NICK=localStorage.getItem('idf26nick')||'';}catch(e){}
+const REV={};let RMSG='';
 const MINR=5;
-async function loadStats(){if(!SB_ON)return;try{const r=await fetch(SB_URL+'/rest/v1/rpc/rating_stats',{headers:{apikey:SB_KEY}});if(!r.ok)return;const a=await r.json();STATS={};a.forEach(x=>STATS[x.film_id]={n:x.n,avg:x.avg==null?null:Number(x.avg)});refreshLists();refreshSheetRating();}catch(e){}}
+async function loadStats(){if(!SB_ON)return;try{const r=await fetch(SB_URL+'/rest/v1/rpc/rating_stats',{headers:{apikey:SB_KEY}});if(!r.ok)return;const a=await r.json();STATS={};a.forEach(x=>STATS[x.film_id]={n:x.n,avg:x.avg==null?null:Number(x.avg),c:x.c||0});refreshLists();refreshSheetRating();}catch(e){}}
 let RERR=false;
-async function setRating(id,score){
-  if(score==null)delete MYR[id];else MYR[id]=score;
-  try{localStorage.setItem('idf26rate',JSON.stringify(MYR));}catch(e){}
+async function loadReviews(id){if(!SB_ON)return;try{const r=await fetch(SB_URL+'/rest/v1/rpc/reviews?p_film='+encodeURIComponent(id),{headers:{apikey:SB_KEY}});if(!r.ok)return;REV[id]=await r.json();refreshSheetRating();}catch(e){}}
+async function setRating(id,score,cmt){
+  if(score==null){delete MYR[id];delete MYC[id];}else MYR[id]=score;
+  if(cmt!==undefined){if(cmt&&cmt.c)MYC[id]=cmt;else delete MYC[id];}
+  try{localStorage.setItem('idf26rate',JSON.stringify(MYR));localStorage.setItem('idf26cmt',JSON.stringify(MYC));}catch(e){}
   updFavN();refreshSheetRating();
   if(!SB_ON||!DEV)return;
-  try{const r=await fetch(SB_URL+'/rest/v1/rpc/rate',{method:'POST',headers:{apikey:SB_KEY,'Content-Type':'application/json'},body:JSON.stringify({p_film:id,p_device:DEV,p_score:score})});RERR=!r.ok;}catch(e){RERR=true;}
-  refreshSheetRating();loadStats();
+  const m=MYC[id]||{};
+  try{const r=await fetch(SB_URL+'/rest/v1/rpc/rate',{method:'POST',headers:{apikey:SB_KEY,'Content-Type':'application/json'},body:JSON.stringify({p_film:id,p_device:DEV,p_score:score,p_comment:score==null?null:(m.c||null),p_nick:score==null?null:(m.n||null)})});
+    RERR=!r.ok;if(!r.ok){let tx='';try{tx=await r.text();}catch(x){}RMSG=/links are not allowed/.test(tx)?T('评语里不能放网址链接。','Links are not allowed in comments.'):'';}else RMSG=cmt!==undefined?T('已发布。','Posted.'):'';}catch(e){RERR=true;RMSG='';}
+  refreshSheetRating();loadStats();loadReviews(id);
 }
 const fmt1=x=>(Math.round(x*10)/10).toFixed(1);
 function starsSVG(v,cls){let h='';for(let k=1;k<=5;k++){const f=v>=k?1:(v>=k-0.5?0.5:0);h+=`<span class="st5 ${f===1?'full':f===0.5?'half':''}"></span>`;}return `<span class="stars ${cls||''}" aria-hidden="true">${h}</span>`;}
 function ratingBadge(f){const s=STATS[f.id];const mine=MYR[f.id];let h='';
   if(s&&s.avg!=null)h+=`<span class="rbadge" title="${T('平均分','Average')}">★ ${fmt1(s.avg)}<small>${s.n}${T('人',' ratings')}</small></span>`;
+  if(s&&s.c)h+=`<span class="rcmt">${T('评语','Reviews')} ${s.c}</span>`;
   if(mine!=null)h+=`<span class="rmine">${T('我','Me')} ${fmt1(mine)}</span>`;
   return h;}
 function ratingBlock(f){const s=STATS[f.id];const mine=MYR[f.id];
@@ -738,8 +762,16 @@ function ratingBlock(f){const s=STATS[f.id];const mine=MYR[f.id];
   let btns='';for(let k=1;k<=5;k++){btns+=`<span class="rs" data-k="${k}"><button type="button" class="rh l" data-score="${k-0.5}" aria-label="${k-0.5}"></button><button type="button" class="rh r" data-score="${k}" aria-label="${k}"></button><span class="st5 ${mine>=k?'full':mine>=k-0.5?'half':''}"></span></span>`;}
   return `<div class="rate" data-film="${f.id}"><div class="rcomm">${comm}</div>
    <div class="rmy"><span class="rlab">${mine!=null?T('我的评分','My rating'):T('点星星打分','Tap to rate')}</span><span class="rbtns" role="group" aria-label="${T('打分','Rate')}">${btns}</span><b class="rval">${mine!=null?fmt1(mine):''}</b>${mine!=null?`<button type="button" class="rclear">${T('清除','Clear')}</button>`:''}</div>
-   ${RERR?`<div class="rerr">${T('网络不稳，评分已存在本机，稍后会再同步。','Network issue: saved on this device; will sync later.')}</div>`:''}</div>`;}
-function refreshSheetRating(){const el=$('#sheetBody .rate');if(!el)return;const f=films.find(x=>x.id===el.dataset.film);if(f)el.outerHTML=ratingBlock(f);}
+   ${mine!=null&&SB_ON?`<div class="rform"><textarea id="rc" maxlength="200" rows="3" placeholder="${T('写几句评语（选填，最多 200 字）','Add a short review (optional, up to 200 characters)')}">${esc((MYC[f.id]||{}).c||'')}</textarea>
+     <div class="rrow"><input id="rn" type="text" maxlength="20" placeholder="${T('昵称（选填）','Nickname (optional)')}" value="${esc((MYC[f.id]||{}).n||NICK)}"><span class="rcount" id="rcount">${((MYC[f.id]||{}).c||'').length}/200</span><button type="button" class="rpost">${MYC[f.id]?T('更新评语','Update'):T('发布评语','Post')}</button>${MYC[f.id]?`<button type="button" class="rdel">${T('删除评语','Delete')}</button>`:''}</div>
+     <div class="rnote">${T('评语会公开显示，请友善发言。','Reviews are public. Please be kind.')}</div></div>`:''}
+   ${!SB_ON&&mine!=null?`<div class="rnote">${T('评语请在公开网站上发布和查看。','Reviews can be posted and read on the public website.')}</div>`:''}
+   ${RMSG?`<div class="rok">${RMSG}</div>`:''}
+   ${RERR&&!RMSG?`<div class="rerr">${T('网络不稳，评分已存在本机，稍后会再同步。','Network issue: saved on this device; will sync later.')}</div>`:''}</div>
+   ${SB_ON?reviewsHTML(f):''}`;}
+function reviewsHTML(f){const L=REV[f.id];const n=L?L.length:((STATS[f.id]||{}).c||0);
+  return `<div class="revs" data-film="${f.id}"><h4>${T('观众评语','Audience reviews')} · ${n}</h4>${!L?(n?`<p class="rnote">${T('加载中…','Loading…')}</p>`:`<p class="rnote">${T('还没有评语。打分后就可以写一句。','No reviews yet. Rate the film to add one.')}</p>`):(L.length?L.map(r=>`<div class="rev"><div class="rh2"><b>${esc(r.nickname||T('匿名观众','Anonymous'))}</b>${starsSVG(Number(r.score),'sm')}<span class="rd">${esc(String(r.updated_at||'').slice(5,10).replace('-','.'))}</span></div><p>${esc(r.comment)}</p></div>`).join(''):`<p class="rnote">${T('还没有评语。打分后就可以写一句。','No reviews yet. Rate the film to add one.')}</p>`)}</div>`;}
+function refreshSheetRating(){const el=$('#sheetBody .rbox');if(!el)return;const f=films.find(x=>x.id===el.dataset.film);if(!f)return;const a=document.activeElement;const keep=a&&(a.id==='rc'||a.id==='rn')?{id:a.id,v:a.value,s:a.selectionStart}:null;const cv=$('#rc')?$('#rc').value:null,nv=$('#rn')?$('#rn').value:null;el.innerHTML=ratingBlock(f);if(cv!=null&&$('#rc')&&!RMSG)$('#rc').value=cv;if(nv!=null&&$('#rn')&&!RMSG)$('#rn').value=nv;if(keep&&$('#'+keep.id)){const x=$('#'+keep.id);x.focus();try{x.setSelectionRange(keep.s,keep.s);}catch(e){}}}
 const FS={section:'all',prog:'all',type:'all',prem:'all',day:'all',sort:'page',fav:false,rated:false};
 function chips(el,opts,key,state,rerender){
   el.innerHTML=opts.map(([v,l,n])=>`<button class="chip" type="button" data-v="${esc(v)}" aria-pressed="${state[key]===v}">${esc(l)}${n!=null?`<span class="n">${n}</span>`:''}</button>`).join('');
@@ -852,7 +884,7 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape'&&sheet.classList.con
 function para(t){return String(t||'').split(/\n+/).filter(Boolean).map(p=>`<p>${esc(p)}</p>`).join('');}
 function evRefsFilm(ev,f){return ev.film===f.title||ev.ppl.some(([,n])=>typeof n==='string'&&n.split('、').some(x=>NOTE[x]&&NOTE[x][0].includes('《'+f.title+'》')));}
 function openFilm(id){
-  const f=films.find(x=>x.id===id);if(!f)return;const p=progOf.get(f.id);
+  const f=films.find(x=>x.id===id);if(!f)return;RMSG='';RERR=false;if(SB_ON)loadReviews(id);const p=progOf.get(f.id);
   const rel=guestsOfFilm(f);
   const evs=EV.filter(ev=>evRefsFilm(ev,f));
   const sc=scrOf.get(f.id);
@@ -861,7 +893,7 @@ function openFilm(id){
   openSheet(`${f.section==='competition'?T('西湖荣誉 · 评优入围','IDF Competition'):T('纪录之光','Glory')+' · '+(p?F(p,'name'):'')} · ${T('手册','Catalogue')} P.${f.page}`,`
     <div class="top" style="display:flex;gap:6px;flex-wrap:wrap">${secTag(f)}${premTag(f)}${f.note?`<span class="tag">${T(esc(f.note),'Mary Stephen Retrospective')}</span>`:''}</div>
     <h2 id="sheetTitle"${EN()?' class="h2en"':''}>${esc(ftitle(f))}</h2><div class="en">${esc(fsub(f))}</div>
-    ${ratingBlock(f)}
+    <div class="rbox" data-film="${f.id}">${ratingBlock(f)}</div>
     <dl class="credits">${cr.map(([k,v])=>`<dt>${k}</dt><dd>${v}</dd>`).join('')}</dl>
     ${sc.length?`<div class="sec"><h4>${T('放映场次','Screenings')} · ${sc.length}<span class="h4n">${T('点 ☆ 加入想看','Tap ☆ to save')}</span></h4><div class="slist">${sc.map(s=>`<div class="sitem${WANT.has(s.key)?' on':''}"><button type="button" class="wbtn${WANT.has(s.key)?' on':''}" data-want="${s.key}" aria-pressed="${WANT.has(s.key)}" aria-label="${T('想看这一场','Save this screening')}">${WANT.has(s.key)?'★':'☆'}</button><b>${dateL(s.d)} ${wd(s.d)}</b><span class="tt">${s.t}–${s.end}</span><span>${esc(venL(s.v))}</span>${s.lab?`<span class="sl">${esc(labL(s))}${s.films.length>1?T('：',': ')+s.films.map(x=>x.id===f.id?esc(ftitle(x)):`<button class="pname" data-film="${x.id}">${esc(ftitle(x))}</button>`).join(T('、',', ')):''}</span>`:''}</div>`).join('')}</div></div>`:''}
     <div class="sec"><h4>${T('影片简介','Synopsis')}</h4>${para(F(f,'synopsis'))}${!EN()&&f.synopsis_en?`<details class="more"><summary>English synopsis</summary><p>${esc(f.synopsis_en)}</p></details>`:''}${EN()&&f.synopsis?`<details class="more"><summary>中文简介</summary><p>${esc(f.synopsis)}</p></details>`:''}</div>
@@ -884,9 +916,12 @@ function openGuest(name){
     ${fl.length?`<div class="sec"><h4>${T('相关影片','Related Films')}</h4><div class="links">${fl.map(f=>`<button class="lnk" data-film="${f.id}">${esc(quote(ftitle(f)))}<small>${esc(F(f,'director'))}</small></button>`).join('')}</div></div>`:''}
     ${evs.length?`<div class="sec"><h4>${T('参与活动','Events')}</h4><div class="links">${evs.map(ev=>`<button class="lnk" data-ev="${EV.indexOf(ev)}">${ev.d?dateL(ev.d)+' '+T(ev.t[0],ev.t[1]):T('时间待定','Time TBA')}<small>${esc(T(ev.title[0],ev.title[1]))}</small></button>`).join('')}</div></div>`:''}`,['g',name]);
 }
+$('#sheetBody').addEventListener('input',e=>{if(e.target.id==='rc'){const c=$('#rcount');if(c)c.textContent=e.target.value.length+'/200';}});
 $('#sheetBody').onclick=e=>{
   const rh=e.target.closest('.rh');if(rh){const id=rh.closest('.rate').dataset.film;const sc=+rh.dataset.score;setRating(id,MYR[id]===sc?null:sc);return;}
   if(e.target.closest('.rclear')){setRating(e.target.closest('.rate').dataset.film,null);return;}
+  if(e.target.closest('.rpost')){const id=e.target.closest('.rate').dataset.film;const c=($('#rc').value||'').trim().slice(0,200),n=($('#rn').value||'').trim().slice(0,20);if(n){NICK=n;try{localStorage.setItem('idf26nick',n);}catch(x){}}if(/(https?:\/\/|www\.)/i.test(c)){RMSG=T('评语里不能放网址链接。','Links are not allowed in comments.');refreshSheetRating();return;}setRating(id,MYR[id],{c,n});return;}
+  if(e.target.closest('.rdel')){const id=e.target.closest('.rate').dataset.film;setRating(id,MYR[id],{c:'',n:''});return;}
   const w=e.target.closest('[data-want]');if(w){toggleWant(w.dataset.want);const on=WANT.has(w.dataset.want);w.classList.toggle('on',on);w.setAttribute('aria-pressed',on);w.textContent=on?'★':'☆';const it=w.closest('.sitem');if(it)it.classList.toggle('on',on);return;}const a=e.target.closest('[data-film],[data-guest],[data-ev]');if(!a)return;
   if(a.dataset.film)openFilm(a.dataset.film);else if(a.dataset.guest)openGuest(a.dataset.guest);
   else{const k=+a.dataset.ev;closeSheet();go('info');setTimeout(()=>{const el=k>=0?document.getElementById('ev'+k):document.getElementById('s-sched');if(el){el.scrollIntoView({block:'center'});const d=el.querySelector('details');if(d)d.open=true;}},30);}};
