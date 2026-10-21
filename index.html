@@ -2,7 +2,7 @@
 <html lang="zh-CN">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover">
 <meta name="description" content="第八届西湖国际纪录片大会（2026.10.22—10.26）观展手册：50 部影片、67 场放映、97 位嘉宾，带轴排片表、想看收藏、活动日程与场馆交通。中英双语。由 Claude × 麻雀映画整理。">
 <meta name="theme-color" content="#f7f6f2" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#131210" media="(prefers-color-scheme: dark)">
@@ -363,6 +363,7 @@ html{-webkit-tap-highlight-color:transparent}
   .mast-meta b{font-size:17px}
 }
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
+@media (max-width:820px){.search input,#q{font-size:16px!important}.sheet{touch-action:pan-y}}
 /* sheet: one scroll container, close bar pinned at its top */
 .sheet{overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;display:block}
 .sheet-head{position:sticky;top:0;z-index:5;background:var(--paper)}
@@ -871,10 +872,30 @@ $('#guestList').onclick=e=>{const c=e.target.closest('[data-guest]');if(c)openGu
 /* ---------- sheet ---------- */
 const sheet=$('#sheet'),scrim=$('#scrim');let lastFocus=null;
 const STACK=[];let CUR=null;
-function openSheet(crumb,html,ref){if(ref){if(sheet.classList.contains('on')&&CUR&&(CUR[0]!==ref[0]||CUR[1]!==ref[1]))STACK.push(CUR);CUR=ref;}$('#sheetBack').hidden=!STACK.length;lastFocus=lastFocus||document.activeElement;$('#crumb').textContent=crumb;$('#sheetBody').innerHTML=html;sheet.scrollTop=0;$('#sheetBody').scrollTop=0;sheet.classList.add('on');scrim.classList.add('on');document.body.style.overflow='hidden';if(!window.matchMedia('(pointer:coarse)').matches){try{$('#sheetClose').focus({preventScroll:true});}catch(e){}}}
-function closeSheet(){STACK.length=0;CUR=null;refreshLists();sheet.classList.remove('on');scrim.classList.remove('on');document.body.style.overflow='';if(lastFocus){try{lastFocus.focus();}catch(e){}}lastFocus=null;}
+let HDEPTH=0,CLOSING=0,SILENT=false;
+function pushH(){if(SILENT)return;try{history.pushState({idfSheet:HDEPTH+1},'');HDEPTH++;}catch(e){}}
+function openSheet(crumb,html,ref){if(ref){const isNew=!CUR||CUR[0]!==ref[0]||CUR[1]!==ref[1];if(sheet.classList.contains('on')&&CUR&&isNew)STACK.push(CUR);if(isNew)pushH();CUR=ref;}$('#sheetBack').hidden=!STACK.length;lastFocus=lastFocus||document.activeElement;$('#crumb').textContent=crumb;$('#sheetBody').innerHTML=html;sheet.scrollTop=0;$('#sheetBody').scrollTop=0;sheet.classList.add('on');scrim.classList.add('on');document.body.style.overflow='hidden';if(!window.matchMedia('(pointer:coarse)').matches){try{$('#sheetClose').focus({preventScroll:true});}catch(e){}}}
+function closeSheet(fromPop){if(fromPop!==true&&HDEPTH>0){const n=HDEPTH;HDEPTH=0;CLOSING++;try{history.go(-n);}catch(e){CLOSING--;}}HDEPTH=fromPop===true?0:HDEPTH;sheet.style.transform='';STACK.length=0;CUR=null;refreshLists();sheet.classList.remove('on');scrim.classList.remove('on');document.body.style.overflow='';if(lastFocus){try{lastFocus.focus();}catch(e){}}lastFocus=null;}
 $('#sheetClose').onclick=closeSheet;
-$('#sheetBack').onclick=()=>{const r=STACK.pop();if(!r)return;CUR=null;const keep=STACK.slice();(r[0]==='f'?openFilm:openGuest)(r[1]);STACK.length=0;STACK.push(...keep);$('#sheetBack').hidden=!STACK.length;};scrim.onclick=closeSheet;
+function backOne(){const r=STACK.pop();if(!r)return false;CUR=null;const keep=STACK.slice();SILENT=true;(r[0]==='f'?openFilm:openGuest)(r[1]);SILENT=false;STACK.length=0;STACK.push(...keep);$('#sheetBack').hidden=!STACK.length;return true;}
+function sheetBackStep(){if(HDEPTH>0){try{history.back();return;}catch(e){}}if(!backOne())closeSheet();}
+$('#sheetBack').onclick=sheetBackStep;scrim.onclick=()=>closeSheet();
+window.addEventListener('popstate',()=>{
+  if(CLOSING>0){CLOSING--;return;}
+  if(!sheet.classList.contains('on'))return;
+  HDEPTH=Math.max(0,HDEPTH-1);
+  if(!backOne())closeSheet(true);
+});
+/* swipe right on the detail page: go back one level, or close */
+(function(){let sx=0,sy=0,dx=0,drag=false,lock=null;
+  sheet.addEventListener('touchstart',e=>{if(e.touches.length!==1)return;const tt=e.touches[0];sx=tt.clientX;sy=tt.clientY;dx=0;drag=true;lock=null;sheet.style.transition='none';},{passive:true});
+  sheet.addEventListener('touchmove',e=>{if(!drag)return;const tt=e.touches[0];const x=tt.clientX-sx,y=tt.clientY-sy;
+    if(lock===null&&(Math.abs(x)>10||Math.abs(y)>10))lock=Math.abs(x)>Math.abs(y)*1.2&&x>0?'x':'y';
+    if(lock==='x'){dx=Math.max(0,x);sheet.style.transform=`translateX(${dx}px)`;}},{passive:true});
+  sheet.addEventListener('touchend',()=>{if(!drag)return;drag=false;sheet.style.transition='';
+    if(lock==='x'&&dx>90){sheet.style.transform=STACK.length?'':`translateX(110%)`;setTimeout(()=>{sheetBackStep();setTimeout(()=>{sheet.style.transform='';},260);},STACK.length?0:180);}
+    else sheet.style.transform='';},{passive:true});
+})();
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&sheet.classList.contains('on'))closeSheet();});
 function para(t){return String(t||'').split(/\n+/).filter(Boolean).map(p=>`<p>${esc(p)}</p>`).join('');}
 function evRefsFilm(ev,f){return ev.film===f.title||ev.ppl.some(([,n])=>typeof n==='string'&&n.split('、').some(x=>NOTE[x]&&NOTE[x][0].includes('《'+f.title+'》')));}
@@ -916,7 +937,7 @@ $('#sheetBody').onclick=e=>{
   if(e.target.closest('.rclear')){setRating(e.target.closest('.rate').dataset.rid,null);return;}
   const w=e.target.closest('[data-want]');if(w){toggleWant(w.dataset.want);const on=WANT.has(w.dataset.want);w.classList.toggle('on',on);w.setAttribute('aria-pressed',on);w.textContent=on?'★':'☆';const it=w.closest('.sitem');if(it)it.classList.toggle('on',on);return;}const a=e.target.closest('[data-film],[data-guest],[data-ev]');if(!a)return;
   if(a.dataset.film)openFilm(a.dataset.film);else if(a.dataset.guest)openGuest(a.dataset.guest);
-  else{const k=+a.dataset.ev;closeSheet();go('info');setTimeout(()=>{const el=k>=0?document.getElementById('ev'+k):document.getElementById('s-sched');if(el){el.scrollIntoView({block:'center'});const d=el.querySelector('details');if(d)d.open=true;}},30);}};
+  else{const k=+a.dataset.ev;closeSheet();setTimeout(()=>{go('info');const el=k>=0?document.getElementById('ev'+k):document.getElementById('s-sched');if(el){el.scrollIntoView({block:'center'});const d=el.querySelector('details');if(d)d.open=true;}},30);}};
 
 /* ---------- info ---------- */
 function names(n){
@@ -977,7 +998,7 @@ let TAB='films';
 const PH={films:()=>T('搜索片名、导演、国家、关键词…','Search titles, directors, countries, keywords…'),guests:()=>T('搜索嘉宾姓名、机构、作品…','Search guests by name, organization, work…')};
 function go(t){TAB=t;['films','screen','guests','info'].forEach(x=>{$('#view-'+x).hidden=x!==t;$('#t-'+x).setAttribute('aria-selected',x===t);});
   $('#searchBox').hidden=(t==='info'||t==='screen');document.body.dataset.tab=t;window.scrollTo({top:0});if(PH[t])$('#q').placeholder=PH[t]();
-  try{history.replaceState(null,'','#'+t);}catch(e){}
+  try{if(!HDEPTH)history.replaceState(null,'','#'+t);}catch(e){}
   try{localStorage.setItem('idf26tab',t);}catch(e){}
   if(t==='films')renderFilms();if(t==='guests')renderGuests();if(t==='screen')renderSched();}
 document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>go(b.dataset.tab));
@@ -987,7 +1008,7 @@ function setLang(l){
   LANG=l;try{localStorage.setItem('idf26lang',l);}catch(e){}
   applyStatic();renderInfo();
   if(TAB==='films')renderFilms();if(TAB==='guests')renderGuests();if(TAB==='screen')renderSched();
-  if(sheet.classList.contains('on')&&CUR){const r=CUR;const keep=STACK.slice();CUR=null;STACK.length=0;(r[0]==='f'?openFilm:openGuest)(r[1]);STACK.push(...keep);$('#sheetBack').hidden=!STACK.length;}
+  if(sheet.classList.contains('on')&&CUR){const r=CUR;const keep=STACK.slice();CUR=null;STACK.length=0;SILENT=true;(r[0]==='f'?openFilm:openGuest)(r[1]);SILENT=false;STACK.push(...keep);$('#sheetBack').hidden=!STACK.length;}
 }
 document.querySelector('.lang').onclick=e=>{const b=e.target.closest('[data-lang]');if(b&&b.dataset.lang!==LANG)setLang(b.dataset.lang);};
 const TABS=document.querySelector('.tabs'),TABHOME=TABS.parentNode,MQ=window.matchMedia('(max-width:820px)');
