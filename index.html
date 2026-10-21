@@ -1035,6 +1035,7 @@ function wrapText(ctx,text,maxW,maxLines){
   if(lines.length>maxLines){const k=lines.slice(0,maxLines);let l=k[maxLines-1];while(l&&ctx.measureText(l+'…').width>maxW)l=l.slice(0,-1);k[maxLines-1]=l+'…';return k;}
   return lines;
 }
+const QRM=["11111110100011001110001111111","10000010110001100101101000001","10111010110001001000101011101","10111010011111100101101011101","10111010110100000011101011101","10000010001101001110101000001","11111110101010101010101111111","00000000001111111001100000000","10011111100110011101010010111","01111101111010010001010110110","10100011110111010100010100100","00110001000000000110100111001","10100111101010111000101000001","01101101011110111110001111111","10100010100110110011100110101","00111101000010001010010010101","11110110010000100000100101000","11101001011101010101110010110","11101010000010010101101111001","11010001110000111000011011100","11100111100011101100111111110","00000000111000111010100011000","11111110111110111011101011000","10000010100110110111100010001","10111010110011101011111111010","10111010100101011110110100001","10111010000010110101110110111","10000010001101001010001101101","11111110101000000001101111000"];
 function drawRecap(){
   const {L,clash}=mySched();const S=myStats(L);
   const other=S.rated.filter(id=>!S.films.has(id)).map(id=>films.find(f=>f.id===id));
@@ -1073,10 +1074,16 @@ function drawRecap(){
           y+=14;if(draw){ctx.fillStyle=C.line;ctx.fillRect(x0,y,W-P-x0,1);}y+=4;void y0;});});});
     if(other.length)block([T('其他打过分的影片','Also rated'),''],()=>{other.forEach(f=>{const yy=y+14;y=yy;const x0=P,mw=W-2*P-RW;const h=filmRow(f,x0,mw);const ym=yy+Math.max(0,(Math.min(h,96)-50)/2)+2;const xl=pill(W-P,ym,T('我','Me'),String(MYR[f.id]*2),true);pill(xl-12,ym,T('观众','Avg'),wr10(f.id)!=null?fmt1(wr10(f.id)):'—',false);y=yy+Math.max(h,60)+12;});});
     // footer
-    y+=40;if(draw){ctx.fillStyle=C.line;ctx.fillRect(P,y,W-2*P,2);}y+=56;
-    F(24,500);tx(T('观众分：IMDb 式加权评分（满 5 人显示）· 我的分：星级 × 2','Avg: IMDb-style weighted audience score (5+ ratings) · Me: stars × 2'),P,y,C.ink3);y+=48;
-    F(30,700);tx(T('麻雀映画 × Claude · IDF2026 观展手册','Sparrow Cinema × Claude · IDF2026 Guide'),P,y,C.ink);y+=44;
-    F(24,500,MONO);tx('sparrowcinema.github.io/idf2026',P,y,C.amberInk);y+=P;
+    y+=40;if(draw){ctx.fillStyle=C.line;ctx.fillRect(P,y,W-2*P,2);}y+=44;
+    const QS=196,qn=QRM.length,cell=Math.floor((QS-24)/qn),qw=cell*qn,qx=W-P-QS,qy=y,lw=W-2*P-QS-36;
+    rr(qx,qy,QS,QS,18,'#ffffff',C.line);
+    if(draw){ctx.fillStyle=C.ink;const o=(QS-qw)/2;for(let r=0;r<qn;r++)for(let c=0;c<qn;c++)if(QRM[r][c]==='1')ctx.fillRect(qx+o+c*cell,qy+o+r*cell,cell,cell);}
+    F(20,500);tx(T('扫码打开观展手册','Scan for the guide'),qx+QS/2,qy+QS+32,C.ink3,'center');
+    let ly=y+30;F(30,700);wrapText(ctx,T('麻雀映画 × Claude','Sparrow Cinema × Claude'),lw,1).forEach(l=>{tx(l,P,ly,C.ink);ly+=40;});
+    F(26,600);tx(T('IDF2026 观展手册','IDF2026 Festival Guide'),P,ly,C.ink2);ly+=40;
+    F(22,500,MONO);tx('sparrowcinema.github.io/idf2026',P,ly,C.amberInk);ly+=48;
+    F(20,400);wrapText(ctx,T('观众分：IMDb 式加权评分（满 5 人显示）· 我的分：星级 × 2','Avg: IMDb-style weighted audience score (5+ ratings) · Me: stars × 2'),lw,3).forEach(l=>{tx(l,P,ly,C.ink3);ly+=30;});
+    y=Math.max(ly,qy+QS+32)+P-10;
     return y;};
   cv.width=W;cv.height=10;const H=Math.ceil(run(false));cv.width=W;cv.height=H;ctx.fillStyle=C.bg;ctx.fillRect(0,0,W,H);run(true);
   return cv;
