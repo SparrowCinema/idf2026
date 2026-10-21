@@ -504,10 +504,15 @@ html{touch-action:manipulation}
 .rclear{border:0;background:none;color:var(--ink-3);font-size:12.5px;cursor:pointer;text-decoration:underline;padding:4px}
 .rerr{font-size:12px;color:var(--amber-ink)}
 .r10{font-size:12px;color:var(--ink-3,#888);margin:0 6px 0 1px}.rval small{font-size:11px;font-weight:400;opacity:.6;margin-left:1px}.rnote{font-size:11.5px;line-height:1.5;color:var(--ink-3,#888);margin-top:6px}
-.rwrap{margin-left:auto;display:flex;gap:6px;align-items:center}
-.rbadge{font-family:var(--f-mono);font-size:12.5px;color:var(--amber-ink);font-weight:500;white-space:nowrap}
-.rbadge small{margin-left:3px;color:var(--ink-3);font-weight:400;font-size:10.5px}
-.rmine{font-family:var(--f-mono);font-size:11px;padding:2px 6px;border-radius:4px;background:var(--line-2);color:var(--ink-2);white-space:nowrap}
+.hrow{display:flex;align-items:flex-start;gap:10px}.hrow .ttl{flex:1;min-width:0;display:flex;flex-direction:column;gap:8px}.rwrap{margin-left:auto;display:flex;flex-direction:column;gap:5px;align-items:flex-end;flex:none}.rwrap:empty{display:none}
+.rbadge{display:inline-flex;align-items:center;gap:5px;padding:4px 10px 4px 7px;border-radius:999px;background:linear-gradient(135deg,var(--amber-wash),color-mix(in srgb,var(--amber-wash) 55%,var(--paper)));box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--amber) 28%,transparent);white-space:nowrap;line-height:1}
+.rbadge .rbs{width:15px;height:15px;flex:none;background:var(--amber);-webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 2.5l2.9 6.1 6.6.8-4.9 4.6 1.3 6.6L12 17.3l-5.9 3.3 1.3-6.6-4.9-4.6 6.6-.8z'/%3E%3C/svg%3E") center/contain no-repeat;mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 2.5l2.9 6.1 6.6.8-4.9 4.6 1.3 6.6L12 17.3l-5.9 3.3 1.3-6.6-4.9-4.6 6.6-.8z'/%3E%3C/svg%3E") center/contain no-repeat}
+.rbadge b{font-size:19px;font-weight:700;letter-spacing:-.02em;color:var(--amber-ink);font-variant-numeric:tabular-nums}
+.rbadge .rbx{display:flex;flex-direction:column;gap:2px;margin-left:1px}
+.rbadge em{font-style:normal;font-size:10px;font-weight:600;color:var(--amber-ink);opacity:.75}
+.rbadge small{font-size:9.5px;color:var(--ink-3)}
+.rmine{display:inline-flex;align-items:baseline;gap:3px;padding:5px 9px;border-radius:999px;border:1px dashed color-mix(in srgb,var(--amber) 55%,transparent);color:var(--amber-ink);white-space:nowrap;line-height:1}
+.rmine small{font-size:10.5px;color:var(--ink-3)}.rmine b{font-size:14px;font-weight:700;font-variant-numeric:tabular-nums}
 .card .scr span.on{background:var(--amber);color:#1b1a17}
 .wbtn{border:1px solid var(--line);background:var(--paper);color:var(--amber-ink);border-radius:999px;width:28px;height:28px;flex:none;cursor:pointer;font-size:14px;line-height:1;padding:0;display:inline-flex;align-items:center;justify-content:center}
 .wbtn.on{background:var(--amber);border-color:var(--amber);color:#1b1a17}
@@ -862,8 +867,8 @@ async function setRating(id,score){
 const fmt1=x=>(Math.round(x*10)/10).toFixed(1);
 function starsSVG(v,cls){let h='';for(let k=1;k<=5;k++){const f=v>=k?1:(v>=k-0.5?0.5:0);h+=`<span class="st5 ${f===1?'full':f===0.5?'half':''}"></span>`;}return `<span class="stars ${cls||''}" aria-hidden="true">${h}</span>`;}
 function ratingBadge(f){const s=STATS[f.id];const mine=MYR[f.id];let h='';
-  const w=wr10(f.id);if(w!=null)h+=`<span class="rbadge" title="${T('加权评分（10分制）','Weighted rating (out of 10)')}">★ ${fmt1(w)}<small>${s.n}${T('人',' ratings')}</small></span>`;
-  if(mine!=null)h+=`<span class="rmine">${T('我','Me')} ${mine*2}</span>`;
+  const w=wr10(f.id);if(w!=null)h+=`<span class="rbadge" title="${T('加权评分（10分制）','Weighted rating (out of 10)')}"><i class="rbs" aria-hidden="true"></i><b>${fmt1(w)}</b><span class="rbx"><em>/10</em><small>${s.n}${T('人',' votes')}</small></span></span>`;
+  if(mine!=null)h+=`<span class="rmine"><small>${T('我','Me')}</small><b>${mine*2}</b></span>`;
   return h;}
 function ratingBlock(f){const s=STATS[f.id];const mine=MYR[f.id];const w=wr10(f.id);
   const comm=!SB_ON?T('评分仅在公开网站显示。','Scores are shown on the public website.'):w!=null?`<b class="ravg">${fmt1(w)}</b><span class="r10">/10</span>${starsSVG(w/2,'sm')}<span class="rn">${T(`${s.n} 人评分`,`${s.n} ratings`)}</span>`:`<span class="rn">${T(`${s?s.n:0} 人评分 · 满 ${MINR} 人后显示评分`,`${s?s.n:0} rating${s&&s.n===1?'':'s'} · score shows after ${MINR}`)}</span>`;
@@ -911,8 +916,8 @@ function premTag(f){return f.premiere?`<span class="tag prem${f.premiere==='全�
 function secTag(f){const p=progOf.get(f.id);return f.section==='competition'?`<span class="tag comp">${T('西湖荣誉 · 评优入围','IDF Competition')}</span>`:`<span class="tag glory">${T('纪录之光','Glory')} · ${esc(p?F(p,'name'):'')}</span>`;}
 function filmCard(f){
   return `<button class="card" type="button" data-film="${f.id}">
-    <div class="top">${secTag(f)}${premTag(f)}<span class="tag">${esc(TYPEL(f))}</span><span class="rwrap">${ratingBadge(f)}</span></div>
-    <h2${EN()?' class="h2en"':''}>${hl(ftitle(f))}</h2><div class="en">${hl(fsub(f))}</div>
+    <div class="top">${secTag(f)}${premTag(f)}<span class="tag">${esc(TYPEL(f))}</span></div>
+    <div class="hrow"><div class="ttl"><h2${EN()?' class="h2en"':''}>${hl(ftitle(f))}</h2><div class="en">${hl(fsub(f))}</div></div><span class="rwrap">${ratingBadge(f)}</span></div>
     <div class="meta"><span>${hl(F(f,'director'))}</span><span>${hl(F(f,'region'))}</span><span>${esc(f.year)}</span><span class="rt">${f.runtime}′</span></div>
     <p class="syn">${hl(F(f,'synopsis'))}</p>
     <div class="scr">${scrOf.get(f.id).map(s=>`<span class="${WANT.has(s.key)?'on':''}">${WANT.has(s.key)?'★ ':''}${esc(scrShort(s))}</span>`).join('')}</div>
