@@ -378,6 +378,7 @@ html{-webkit-tap-highlight-color:transparent}
 .rev .rh2{display:flex;align-items:center;gap:8px;font-size:13px}
 .rev .rd{margin-left:auto;font-family:var(--f-mono);font-size:11px;color:var(--ink-3)}
 .rev p{margin:4px 0 0;font-size:14px;color:var(--ink-2);white-space:pre-wrap;overflow-wrap:anywhere}
+.rmore{display:block;width:100%;margin-top:10px;border:1px solid var(--line);background:var(--paper);color:var(--amber-ink);border-radius:10px;padding:9px;font-size:13.5px;cursor:pointer}
 .rcmt{font-size:11px;color:var(--ink-3);white-space:nowrap}
 .st5{display:inline-block;width:20px;height:20px;background:var(--line);-webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 2.2l2.95 6.3 6.85.75-5.1 4.68 1.4 6.77L12 17.3l-6.1 3.4 1.4-6.77-5.1-4.68 6.85-.75z'/%3E%3C/svg%3E") center/contain no-repeat;mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 2.2l2.95 6.3 6.85.75-5.1 4.68 1.4 6.77L12 17.3l-6.1 3.4 1.4-6.77-5.1-4.68 6.85-.75z'/%3E%3C/svg%3E") center/contain no-repeat}
 .st5.full{background:var(--amber)}
@@ -734,7 +735,7 @@ let DEV='';try{DEV=localStorage.getItem('idf26dev')||'';if(!DEV){DEV=(crypto.ran
 let STATS={};
 let MYC={};try{MYC=JSON.parse(localStorage.getItem('idf26cmt')||'{}')||{};}catch(e){}
 let NICK='';try{NICK=localStorage.getItem('idf26nick')||'';}catch(e){}
-const REV={};let RMSG='';
+const REV={},REVX={};const REVN=5;let RMSG='';
 const MINR=5;
 async function loadStats(){if(!SB_ON)return;try{const r=await fetch(SB_URL+'/rest/v1/rpc/rating_stats',{headers:{apikey:SB_KEY}});if(!r.ok)return;const a=await r.json();STATS={};a.forEach(x=>STATS[x.film_id]={n:x.n,avg:x.avg==null?null:Number(x.avg),c:x.c||0});refreshLists();refreshSheetRating();}catch(e){}}
 let RERR=false;
@@ -770,7 +771,7 @@ function ratingBlock(f){const s=STATS[f.id];const mine=MYR[f.id];
    ${RERR&&!RMSG?`<div class="rerr">${T('网络不稳，评分已存在本机，稍后会再同步。','Network issue: saved on this device; will sync later.')}</div>`:''}</div>
    ${SB_ON?reviewsHTML(f):''}`;}
 function reviewsHTML(f){const L=REV[f.id];const n=L?L.length:((STATS[f.id]||{}).c||0);
-  return `<div class="revs" data-rid="${f.id}"><h4>${T('观众评语','Audience reviews')} · ${n}</h4>${!L?(n?`<p class="rnote">${T('加载中…','Loading…')}</p>`:`<p class="rnote">${T('还没有评语。打分后就可以写一句。','No reviews yet. Rate the film to add one.')}</p>`):(L.length?L.map(r=>`<div class="rev"><div class="rh2"><b>${esc(r.nickname||T('匿名观众','Anonymous'))}</b>${starsSVG(Number(r.score),'sm')}<span class="rd">${esc(String(r.updated_at||'').slice(5,10).replace('-','.'))}</span></div><p>${esc(r.comment)}</p></div>`).join(''):`<p class="rnote">${T('还没有评语。打分后就可以写一句。','No reviews yet. Rate the film to add one.')}</p>`)}</div>`;}
+  return `<div class="revs" data-rid="${f.id}"><h4>${T('观众评语','Audience reviews')} · ${n}</h4>${!L?(n?`<p class="rnote">${T('加载中…','Loading…')}</p>`:`<p class="rnote">${T('还没有评语。打分后就可以写一句。','No reviews yet. Rate the film to add one.')}</p>`):(L.length?(REVX[f.id]?L:L.slice(0,REVN)).map(r=>`<div class="rev"><div class="rh2"><b>${esc(r.nickname||T('匿名观众','Anonymous'))}</b>${starsSVG(Number(r.score),'sm')}<span class="rd">${esc(String(r.updated_at||'').slice(5,10).replace('-','.'))}</span></div><p>${esc(r.comment)}</p></div>`).join('')+(L.length>REVN?`<button type="button" class="rmore" data-more="${f.id}">${REVX[f.id]?T('收起','Show less'):T(`查看更多（还有 ${L.length-REVN} 条）`,`Show ${L.length-REVN} more`)}</button>`:''):`<p class="rnote">${T('还没有评语。打分后就可以写一句。','No reviews yet. Rate the film to add one.')}</p>`)}</div>`;}
 function refreshSheetRating(){const el=$('#sheetBody .rbox');if(!el)return;const f=films.find(x=>x.id===el.dataset.rid);if(!f)return;const ae=document.activeElement;if(ae&&ae.closest&&ae.closest('.rform')&&!RMSG&&!RERR){const tmp=document.createElement('div');tmp.innerHTML=ratingBlock(f);const nc=tmp.querySelector('.rcomm'),oc=el.querySelector('.rcomm');if(nc&&oc)oc.innerHTML=nc.innerHTML;const nr=tmp.querySelector('.revs'),orv=el.querySelector('.revs');if(nr&&orv)orv.replaceWith(nr);return;}const a=document.activeElement;const keep=a&&(a.id==='rc'||a.id==='rn')?{id:a.id,v:a.value,s:a.selectionStart}:null;const cv=$('#rc')?$('#rc').value:null,nv=$('#rn')?$('#rn').value:null;el.innerHTML=ratingBlock(f);if(cv!=null&&$('#rc')&&!RMSG)$('#rc').value=cv;if(nv!=null&&$('#rn')&&!RMSG)$('#rn').value=nv;if(keep&&$('#'+keep.id)){const x=$('#'+keep.id);x.focus();try{x.setSelectionRange(keep.s,keep.s);}catch(e){}}}
 const FS={section:'all',prog:'all',type:'all',prem:'all',day:'all',sort:'page',fav:false,rated:false};
 function chips(el,opts,key,state,rerender){
@@ -919,6 +920,7 @@ function openGuest(name){
 $('#sheetBody').addEventListener('input',e=>{if(e.target.id==='rc'){const c=$('#rcount');if(c)c.textContent=e.target.value.length+'/200';}});
 $('#sheetBody').onclick=e=>{
   if(e.target.closest('textarea,input,select'))return;
+  const mo=e.target.closest('[data-more]');if(mo){const id=mo.dataset.more;REVX[id]=!REVX[id];const f=films.find(x=>x.id===id);const old=$('#sheetBody .revs');if(f&&old){const tmp=document.createElement('div');tmp.innerHTML=reviewsHTML(f);old.replaceWith(tmp.firstElementChild);}if(!REVX[id]){const r=$('#sheetBody .revs');if(r)r.scrollIntoView({block:'nearest'});}return;}
   const rh=e.target.closest('.rh');if(rh){const id=rh.closest('.rate').dataset.rid;const sc=+rh.dataset.score;setRating(id,MYR[id]===sc?null:sc);return;}
   if(e.target.closest('.rclear')){setRating(e.target.closest('.rate').dataset.rid,null);return;}
   if(e.target.closest('.rpost')){const id=e.target.closest('.rate').dataset.rid;const c=($('#rc').value||'').trim().slice(0,200),n=($('#rn').value||'').trim().slice(0,20);if(n){NICK=n;try{localStorage.setItem('idf26nick',n);}catch(x){}}if(/(https?:\/\/|www\.)/i.test(c)){RMSG=T('评语里不能放网址链接。','Links are not allowed in comments.');refreshSheetRating();return;}setRating(id,MYR[id],{c,n});return;}
