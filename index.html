@@ -518,6 +518,7 @@ html{touch-action:manipulation}
 .mrow .wbtn{flex:none}
 .recapbtn{display:block;width:100%;margin:22px 0 10px;padding:14px;border-radius:14px;border:0;background:var(--ink);color:var(--bg);font-size:15px;font-weight:600;cursor:pointer;font-family:inherit}
 .recap{margin:8px 0 20px;text-align:center}.recap img{width:100%;border-radius:12px;box-shadow:0 6px 24px rgba(0,0,0,.14);-webkit-touch-callout:default}.rhint{font-size:12.5px;color:var(--ink-3);margin:10px 0 8px}.racts{display:flex;gap:8px;justify-content:center}.racts .chip{text-decoration:none}
+.gwrap{overscroll-behavior-y:auto!important;overscroll-behavior-x:contain}.gleg{margin-bottom:max(40px,30vh)!important}
 .hrow{display:flex;align-items:flex-start;gap:10px}.hrow .ttl{flex:1;min-width:0;display:flex;flex-direction:column;gap:8px}.rwrap{margin-left:auto;display:flex;flex-direction:column;gap:5px;align-items:flex-end;flex:none}.rwrap:empty{display:none}
 .rbadge{display:inline-flex;align-items:center;gap:5px;padding:5px 11px 5px 9px;border-radius:999px;background:linear-gradient(135deg,var(--amber-wash),color-mix(in srgb,var(--amber-wash) 55%,var(--paper)));box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--amber) 28%,transparent);white-space:nowrap;line-height:1}
 .rbadge .rbs{width:15px;height:15px;flex:none;background:var(--amber);-webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 2.5l2.9 6.1 6.6.8-4.9 4.6 1.3 6.6L12 17.3l-5.9 3.3 1.3-6.6-4.9-4.6 6.6-.8z'/%3E%3C/svg%3E") center/contain no-repeat;mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 2.5l2.9 6.1 6.6.8-4.9 4.6 1.3 6.6L12 17.3l-5.9 3.3 1.3-6.6-4.9-4.6 6.6-.8z'/%3E%3C/svg%3E") center/contain no-repeat}
@@ -960,12 +961,21 @@ function renderSched(){
   $('#scrSum').innerHTML=T(`${SS.day} 共 <b>${L.length}</b> 场${SS.fav?'（想看）':''}`,`${dateL(SS.day)}: <b>${L.length}</b> screening${L.length===1?'':'s'}${SS.fav?' (mine)':''}`);
   document.querySelectorAll('.seg [data-mode]').forEach(b=>b.setAttribute('aria-pressed',b.dataset.mode===SM));
   if(SM==='gantt'){$('#scrList').innerHTML=L.length?gantt(L):`<p class="empty">${emptySched()}</p>`;
+    fitGantt();
     const now=$('#scrList .gnow');if(now){const w=$('#scrList .gwrap');w.scrollTop=Math.max(0,parseFloat(now.style.top)-120);}return;}
   const ts=[...new Set(L.map(s=>s.t))].sort();
   $('#scrList').innerHTML=L.length?ts.map(t=>{const M=L.filter(s=>s.t===t).sort((a,b)=>a.v-b.v);return `<div class="slot"><div class="sloth"><b>${t}</b><span>${T(`${M.length} 场同时开映`,`${M.length} at once`)}</span></div><div class="sgrid">${M.map(s=>{const fav=WANT.has(s.key);
     return `<div class="scard${fav?' fav':''}"><div class="vn"><span>${esc(venL(s.v))}</span><span class="tm">${s.end?s.t+'–'+s.end:T('时长待定','TBA')}</span>${s.films.length?`<button type="button" class="wbtn${fav?' on':''}" data-want="${s.key}" aria-pressed="${fav}" aria-label="${T('想看这一场','Save this screening')}">${fav?'★':'☆'}</button>`:''}</div>${s.lab?`<div class="lbl">${esc(labL(s))}</div>`:''}
     ${s.films.length?s.films.map(f=>`<button class="sfilm" type="button" data-film="${f.id}"><span class="st">${MYR[f.id]!=null?fmt1(MYR[f.id]):''}</span><span class="nm${EN()?' en':''}">${esc(ftitle(f))}</span><span class="mn">${f.runtime}′</span></button>`).join(''):`<div class="sfilm"><span class="nm" style="color:var(--ink-3)">${T('片目待颁奖后公布','Titles announced after the awards')}</span></div>`}</div>`;}).join('')}</div></div>`;}).join(''):`<p class="empty">${emptySched()}</p>`;
 }
+function fitGantt(){const w=$('#scrList .gwrap');if(!w)return;
+  const ds=$('#dayseg');const stick=ds&&getComputedStyle(ds).position==='sticky'?ds.getBoundingClientRect().height:0;
+  const bar=document.querySelector('.tabs');const tb=bar&&getComputedStyle(bar).position==='fixed'?bar.getBoundingClientRect().height:0;
+  const vh=(window.visualViewport&&visualViewport.height)||innerHeight;
+  w.style.height=Math.max(340,Math.round(vh-stick-tb-14))+'px';
+  if(!w._fit){w._fit=1;w.addEventListener('touchstart',()=>{const ds2=$('#dayseg');const st=ds2&&getComputedStyle(ds2).position==='sticky'?ds2.getBoundingClientRect().height:0;const r=w.getBoundingClientRect();const d=r.top-(st+6);if(Math.abs(d)>6)window.scrollBy({top:d,behavior:'smooth'});},{passive:true});}
+}
+window.addEventListener('resize',()=>{if(SM==='gantt')fitGantt();});
 const PX=2;
 const tmin=t=>{const [h,m]=t.split(':').map(Number);return h*60+m;};
 function gantt(L){
