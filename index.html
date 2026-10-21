@@ -711,7 +711,7 @@ function toggleWant(key){WANT.has(key)?WANT.delete(key):WANT.add(key);saveWant()
 function updFavN(){const n=$('#favN');if(n)n.textContent=films.filter(wantFilm).length;const r=$('#ratedN');if(r)r.textContent=Object.keys(MYR).length;}
 function refreshLists(){if(TAB==='films')renderFilms();if(TAB==='screen')renderSched();}
 /* ratings: my own (this device) + shared stats from Supabase */
-const SB_URL='',SB_KEY='';
+const SB_URL='https://wclivgihyakxzqyupupj.supabase.co',SB_KEY='sb_publishable_vvjIDUUnNuOLGdSkcoQ4yQ_PM67CXRm';
 const SB_ON=/^https:\/\//.test(SB_URL)&&SB_KEY.length>20;
 let MYR={};try{MYR=JSON.parse(localStorage.getItem('idf26rate')||'{}')||{};}catch(e){}
 let DEV='';try{DEV=localStorage.getItem('idf26dev')||'';if(!DEV){DEV=(crypto.randomUUID?crypto.randomUUID():'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g,c=>{const r=Math.random()*16|0;return (c==='x'?r:(r&3|8)).toString(16);}));localStorage.setItem('idf26dev',DEV);}}catch(e){DEV='';}
