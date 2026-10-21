@@ -363,6 +363,8 @@ html{-webkit-tap-highlight-color:transparent}
   .mast-meta b{font-size:17px}
 }
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
+html{touch-action:manipulation}
+.card,.gcard,.sfilm,.gb,.gf,.wbtn{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
 .toast{position:fixed;left:50%;bottom:calc(84px + env(safe-area-inset-bottom,0px));transform:translate(-50%,10px);background:var(--ink);color:var(--bg);padding:9px 16px;border-radius:999px;font-size:13.5px;z-index:60;opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;white-space:nowrap}
 .toast.on{opacity:1;transform:translate(-50%,0)}
 @media (max-width:820px){.search input,#q{font-size:16px!important}.sheet{touch-action:pan-y}}
@@ -815,8 +817,17 @@ function filmCard(f){
     <div class="scr">${scrOf.get(f.id).map(s=>`<span class="${WANT.has(s.key)?'on':''}">${WANT.has(s.key)?'★ ':''}${esc(scrShort(s))}</span>`).join('')}</div>
     <span class="pg">${T('手册','Catalogue')} P.${esc(f.page)}</span></button>`;
 }
-$('#filmList').onclick=e=>{const c=e.target.closest('[data-film]');if(c)openFilm(c.dataset.film);};
+onTap($('#filmList'),tg=>{const c=tg.closest&&tg.closest('[data-film]');if(c){openFilm(c.dataset.film);return true;}});
 
+/* on touch screens, open on the tap itself (touchend) instead of waiting for the browser's click,
+   which iOS sometimes withholds on the first tap */
+function onTap(el,handler){
+  let sx=0,sy=0,st=0,moved=false,tgt=null;
+  el.addEventListener('touchstart',e=>{if(e.touches.length!==1){tgt=null;return;}const t=e.touches[0];sx=t.clientX;sy=t.clientY;st=Date.now();moved=false;tgt=e.target;},{passive:true});
+  el.addEventListener('touchmove',e=>{const t=e.touches[0];if(Math.abs(t.clientX-sx)>10||Math.abs(t.clientY-sy)>10)moved=true;},{passive:true});
+  el.addEventListener('touchend',e=>{if(!tgt||moved||Date.now()-st>700){tgt=null;return;}const tg=tgt;tgt=null;if(handler(tg)===true){e.preventDefault();el._tapAt=Date.now();}},{passive:false});
+  el.addEventListener('click',e=>{if(el._tapAt&&Date.now()-el._tapAt<800)return;handler(e.target,e);});
+}
 /* ---------- schedule view ---------- */
 let SM='gantt';try{SM=localStorage.getItem('idf26mode')||'gantt';}catch(e){}
 const SS={day:null,fav:false};
@@ -857,7 +868,7 @@ function gantt(L){
 document.querySelector('.seg').onclick=e=>{const b=e.target.closest('[data-mode]');if(!b)return;SM=b.dataset.mode;try{localStorage.setItem('idf26mode',SM);}catch(x){}renderSched();};
 $('#dayseg').onclick=e=>{const b=e.target.closest('[data-day]');if(!b)return;SS.day=b.dataset.day;renderSched();window.scrollTo({top:0});};
 $('#favOnly').onclick=e=>{SS.fav=!SS.fav;e.currentTarget.setAttribute('aria-pressed',SS.fav);renderSched();};
-$('#scrList').onclick=e=>{const w=e.target.closest('[data-want]');if(w){e.stopPropagation();toggleWant(w.dataset.want);return;}const c=e.target.closest('[data-film]');if(c){e.stopPropagation();openFilm(c.dataset.film);}};
+onTap($('#scrList'),tg=>{if(!tg.closest)return;const w=tg.closest('[data-want]');if(w){toggleWant(w.dataset.want);return true;}const c=tg.closest('[data-film]');if(c){openFilm(c.dataset.film);return true;}});
 
 /* ---------- guests ---------- */
 function guestHay(g){return [g.name,g.name_en,g.country,g.country_en,g.roles.join(' '),g.roles.map(r=>ROLE_EN[r]||'').join(' '),g.bio,g.bio_en].join(' ');}
@@ -869,7 +880,7 @@ function renderGuests(){
     <div class="roles">${g.roles.map(r=>`<span class="role">${hl(roleL(r))}</span>`).join('')}</div>
     <p class="syn">${hl(F(g,'bio'))}</p></button>`).join(''):`<p class="empty">${T('没有找到这位嘉宾。手册中的影片导演可在“影片”中按导演名搜索。','No guest found. Film directors can be searched by name under "Films".')}</p>`;
 }
-$('#guestList').onclick=e=>{const c=e.target.closest('[data-guest]');if(c)openGuest(c.dataset.guest);};
+onTap($('#guestList'),tg=>{const c=tg.closest&&tg.closest('[data-guest]');if(c){openGuest(c.dataset.guest);return true;}});
 
 /* ---------- sheet ---------- */
 const sheet=$('#sheet'),scrim=$('#scrim');let lastFocus=null;
