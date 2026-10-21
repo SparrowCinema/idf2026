@@ -505,7 +505,7 @@ html{touch-action:manipulation}
 .rerr{font-size:12px;color:var(--amber-ink)}
 .r10{font-size:12px;color:var(--ink-3,#888);margin:0 6px 0 1px}.rval small{font-size:11px;font-weight:400;opacity:.6;margin-left:1px}.rnote{font-size:11.5px;line-height:1.5;color:var(--ink-3,#888);margin-top:6px}
 .hrow{display:flex;align-items:flex-start;gap:10px}.hrow .ttl{flex:1;min-width:0;display:flex;flex-direction:column;gap:8px}.rwrap{margin-left:auto;display:flex;flex-direction:column;gap:5px;align-items:flex-end;flex:none}.rwrap:empty{display:none}
-.rbadge{display:inline-flex;align-items:center;gap:5px;padding:4px 10px 4px 7px;border-radius:999px;background:linear-gradient(135deg,var(--amber-wash),color-mix(in srgb,var(--amber-wash) 55%,var(--paper)));box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--amber) 28%,transparent);white-space:nowrap;line-height:1}
+.rbadge{display:inline-flex;align-items:center;gap:5px;padding:5px 11px 5px 9px;border-radius:999px;background:linear-gradient(135deg,var(--amber-wash),color-mix(in srgb,var(--amber-wash) 55%,var(--paper)));box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--amber) 28%,transparent);white-space:nowrap;line-height:1}
 .rbadge .rbs{width:15px;height:15px;flex:none;background:var(--amber);-webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 2.5l2.9 6.1 6.6.8-4.9 4.6 1.3 6.6L12 17.3l-5.9 3.3 1.3-6.6-4.9-4.6 6.6-.8z'/%3E%3C/svg%3E") center/contain no-repeat;mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 2.5l2.9 6.1 6.6.8-4.9 4.6 1.3 6.6L12 17.3l-5.9 3.3 1.3-6.6-4.9-4.6 6.6-.8z'/%3E%3C/svg%3E") center/contain no-repeat}
 .rbadge b{font-size:19px;font-weight:700;letter-spacing:-.02em;color:var(--amber-ink);font-variant-numeric:tabular-nums}
 .rbadge .rbx{display:flex;flex-direction:column;gap:2px;margin-left:1px}
@@ -867,7 +867,7 @@ async function setRating(id,score){
 const fmt1=x=>(Math.round(x*10)/10).toFixed(1);
 function starsSVG(v,cls){let h='';for(let k=1;k<=5;k++){const f=v>=k?1:(v>=k-0.5?0.5:0);h+=`<span class="st5 ${f===1?'full':f===0.5?'half':''}"></span>`;}return `<span class="stars ${cls||''}" aria-hidden="true">${h}</span>`;}
 function ratingBadge(f){const s=STATS[f.id];const mine=MYR[f.id];let h='';
-  const w=wr10(f.id);if(w!=null)h+=`<span class="rbadge" title="${T('加权评分（10分制）','Weighted rating (out of 10)')}"><i class="rbs" aria-hidden="true"></i><b>${fmt1(w)}</b><span class="rbx"><em>/10</em><small>${s.n}${T('人',' votes')}</small></span></span>`;
+  const w=wr10(f.id);if(w!=null)h+=`<span class="rbadge" title="${T('加权评分（10分制）','Weighted rating (out of 10)')}"><i class="rbs" aria-hidden="true"></i><b>${fmt1(w)}</b></span>`;
   if(mine!=null)h+=`<span class="rmine"><small>${T('我','Me')}</small><b>${mine*2}</b></span>`;
   return h;}
 function ratingBlock(f){const s=STATS[f.id];const mine=MYR[f.id];const w=wr10(f.id);
