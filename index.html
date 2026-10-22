@@ -520,7 +520,8 @@ html{touch-action:manipulation}
 .recap{margin:8px 0 20px;text-align:center}.recap img{width:100%;border-radius:12px;box-shadow:0 6px 24px rgba(0,0,0,.14);-webkit-touch-callout:default}.rhint{font-size:12.5px;color:var(--ink-3);margin:10px 0 8px}.racts{display:flex;gap:8px;justify-content:center}.racts .chip{text-decoration:none}
 .gwrap{overscroll-behavior-y:auto!important;overscroll-behavior-x:contain}.gleg{margin-bottom:16px!important}
 .myrow{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:2px 0 12px}.mybtn{font:inherit;font-size:13.5px;font-weight:600;padding:10px 8px;border-radius:12px;border:1px solid var(--line);background:var(--paper);color:var(--ink);cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px}.mybtn.hot{background:var(--ink);color:var(--bg);border-color:var(--ink)}.mybtn .n{font-family:var(--f-mono);font-size:12px;color:var(--amber-ink);background:var(--amber-wash);border-radius:999px;padding:1px 7px}
-.nowbar{display:flex;align-items:center;gap:8px;width:100%;margin:12px 0 0;padding:10px 12px;border-radius:12px;border:1px solid color-mix(in srgb,var(--amber) 35%,transparent);background:var(--amber-wash);color:var(--amber-ink);font:inherit;font-size:13.5px;font-weight:600;text-align:left;cursor:pointer}.nowbar[hidden]{display:none}.nowbar .nbt{flex:1;min-width:0;line-height:1.35;display:flex;flex-direction:column;gap:2px;overflow:hidden}.nowbar .nbt,.nowbar .nbt small{white-space:nowrap;text-overflow:ellipsis;overflow:hidden}.nowbar .nbt small{font-size:12px;font-weight:500;opacity:.8}.nowbar .nba{font-size:18px;line-height:1;opacity:.7}.nowbar.quiet{background:var(--paper);border-color:var(--line);color:var(--ink-2);font-weight:500}.nowbar.live{background:#fde8df;border-color:#f3b9a3;color:#c2410c}.nowbar.live .nbi{animation:nbp 1.6s ease-in-out infinite}@keyframes nbp{50%{opacity:.25}}
+.nowbar{display:flex;align-items:center;gap:8px;width:100%;margin:12px 0 0;padding:10px 12px;border-radius:12px;border:1px solid color-mix(in srgb,var(--amber) 35%,transparent);background:var(--amber-wash);color:var(--amber-ink);font:inherit;font-size:13.5px;font-weight:600;text-align:left;cursor:pointer}.nowbar[hidden]{display:none}.nowbar .nbt{flex:1;min-width:0;line-height:1.35;display:flex;flex-direction:column;gap:2px;overflow:hidden}.nowbar .nbt,.nowbar .nbt small{white-space:nowrap;text-overflow:ellipsis;overflow:hidden}.nowbar .nbt small{font-size:12px;font-weight:500;opacity:.8}.nowbar .nba{font-size:18px;line-height:1;opacity:.7}.nowbar.late{background:#fde8df;border-color:#f3b9a3;color:#c2410c}.mynext{margin:6px 0 14px;padding:14px 16px;border-radius:16px;background:var(--amber-wash);border:1px solid color-mix(in srgb,var(--amber) 35%,transparent);display:flex;flex-direction:column;gap:5px}.mynext.late{background:#fde8df;border-color:#f3b9a3}.mnk{font-size:12px;color:var(--amber-ink);font-weight:600;letter-spacing:.04em}.mnt{font-family:var(--f-display);font-size:22px;font-weight:700;line-height:1.3}.mnt .pname{font:inherit;color:var(--ink);text-align:left}.mnw{font-size:13.5px;color:var(--ink-2)}.mnv{font-size:14px;font-weight:600}.mnr{font-size:13px;color:var(--ink-2)}.mynext.late .mnr{color:#c2410c}.mynext .recapbtn{margin:8px 0 0}
+.nowbar.quiet{background:var(--paper);border-color:var(--line);color:var(--ink-2);font-weight:500}.nowbar.live{background:#fde8df;border-color:#f3b9a3;color:#c2410c}.nowbar.live .nbi{animation:nbp 1.6s ease-in-out infinite}@keyframes nbp{50%{opacity:.25}}
 .nhead{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:6px}.nhead b{font-family:var(--f-display);font-size:17px}
 .nhere{font:inherit;font-size:12px;border:1px solid var(--line);background:var(--bg);border-radius:999px;padding:4px 10px;color:var(--ink-2);cursor:pointer;max-width:55%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .nnone{font-size:12.5px;color:var(--ink-3);margin:2px 0 4px}
@@ -1066,17 +1067,17 @@ function navSVG(R,a,b){
   return `<svg class="navmap" viewBox="420 240 830 1300" role="img" aria-label="${T('校园地图路线','Campus route map')}"><image href="map-campus.jpg" x="0" y="0" width="1280" height="1778"/><rect x="420" y="240" width="830" height="1300" fill="rgba(255,255,255,.25)"/>${R.path.length>1?`<polyline points="${line}" fill="none" stroke="#fff" stroke-width="22" stroke-linecap="round" stroke-linejoin="round"/><polyline points="${line}" fill="none" stroke="#e39a12" stroke-width="12" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="2 22"/>`:''}${a?mk(a,'#1b1a17',T('起','A')):''}${mk(b,'#e39a12',T('终','B'))}</svg>`;
 }
 function openNav(to,from){
-  to=to||'b2';if(from!=null)HERE=from;if(!HERE||!NP[HERE])HERE='';
+  to=to||'b2';if(!HERE||!NP[HERE])HERE='';const A=(from&&NP[from])?from:HERE;
   const keys=Object.keys(NP);
-  const R=HERE?navRoute(HERE,to):null;
+  const R=A?navRoute(A,to):null;
   const steps=R&&R.path.length>1?R.path.map((k,i)=>i===0?T('从','From ')+T(NP[k].n[0],NP[k].n[1])+T('出发',''):NP[k]?T('到达','Arrive at ')+T(NP[k].n[0],NP[k].n[1]):T('经过','Pass ')+T(NWN[k][0],NWN[k][1])):[];
   const chips=(sel,attr)=>keys.map(k=>`<button type="button" class="chip${sel===k?' on':''}" ${attr}="${k}" aria-pressed="${sel===k}">${esc(T(NP[k].n[0],NP[k].n[1]).replace(/（.*）|\(.*\)/,''))}</button>`).join('');
   const body=`<div class="pre">${T('现场导航','Getting around')}</div><h2 id="sheetTitle">${esc(T(NP[to].n[0],NP[to].n[1]))}</h2>
   <p class="msub">${esc(T(NP[to].hint[0],NP[to].hint[1]))}</p>
   ${R?`<div class="navsum"><b>${R.min}</b><span>${T('分钟步行','min walk')}</span><em>${R.m?T(`约 ${R.m} 米`,`about ${R.m} m`):T('就在这里','you are here')}</em></div>`:`<p class="mwarn" style="color:var(--amber-ink)">${T('选一下你现在在哪儿，就能算出怎么走、要多久。','Pick where you are now to see the route and walking time.')}</p>`}
-  <div class="navpick"><span>${T('我现在在','I am at')}</span><div class="navchips">${chips(HERE,'data-here')}</div></div>
+  <div class="navpick"><span>${T('从','From')}</span><div class="navchips">${chips(A,'data-here')}</div></div>
   <div class="navpick"><span>${T('要去','Going to')}</span><div class="navchips">${chips(to,'data-to')}</div></div>
-  ${navSVG(R||{path:[to]},HERE,to)}
+  ${navSVG(R||{path:[to]},A,to)}
   ${steps.length?`<ol class="navsteps">${steps.map(s=>`<li>${esc(s)}</li>`).join('')}</ol>`:''}
   <p class="msub">${T('时间按地图估算（每分钟约 70 米），人多或上下楼会更久，赶场请多留几分钟。去杭荟城已含过马路和进商场上楼的时间。','Times are estimated from the map (~70 m per minute); crowds and stairs add more, so leave a few spare minutes. Trips to Hanghuicheng include crossing the road and getting up to the cinema.')}</p>`;
   openSheet(T('现场导航','Getting around'),body,['n',to]);
@@ -1100,26 +1101,47 @@ const nCd=(s,now)=>{const m=Math.round((sStart(s)-now)/60000);return m<60?T(`${m
 const sTitle=s=>s.films.length>1?(labL(s)||T('多部短片','Shorts')):ftitle(s.films[0]);
 function nowRow(s,isLive,now){const fav=WANT.has(s.key);const w=HERE?navRoute(HERE,vPlace(s.v)).min:null;const left=Math.round((sStart(s)-now)/60000);const late=!isLive&&w!=null&&w>left;
   return `<div class="nrow${fav?' fav':''}"><div class="ncd${isLive?' live':''}">${isLive?T('放映中','Now'):nCd(s,now)}<small>${s.t}${s.end?'–'+s.end:''}</small></div><div class="nb"><div class="nt">${fav?'★ ':''}${s.films.length>1?esc(sTitle(s)):`<button type="button" class="pname" data-film="${s.films[0].id}">${esc(ftitle(s.films[0]))}</button>`}</div>${s.films.length>1?`<div class="nsub">${s.films.map(f=>`<button type="button" class="pname" data-film="${f.id}">${esc(ftitle(f))}</button>`).join(' · ')}</div>`:''}<button type="button" class="nnav${late?' late':''}" data-nav="${s.v}">📍 ${esc(T(VSH[s.v][0],VSH[s.v][1]))}${w===0?` · ${T('就在这里','you are here')}`:w!=null?` · ${T('走过去约','walk')} ${w} ${T('分钟','min')}${late?T('，来不及了','— too late'):''}`:` · ${T('怎么走','directions')}`}</button></div></div>`;}
+function myNext(now){
+  const mine=SCR.filter(s=>WANT.has(s.key)).sort((a,b)=>sStart(a)-sStart(b));
+  const nxt=mine.find(s=>sStart(s)>now);if(!nxt)return null;
+  const prev=mine.filter(s=>s!==nxt&&s.d===nxt.d&&sEndMs(s)<=sStart(nxt)+5*60000&&sStart(s)<sStart(nxt)).pop();
+  let from=null,gap=null,fromLab='';
+  if(prev&&sEndMs(prev)>now-30*60000){from=vPlace(prev.v);gap=Math.round((sStart(nxt)-sEndMs(prev))/60000);fromLab=T(`《${sTitle(prev)}》散场后`,`after “${sTitle(prev)}”`);}
+  else if(HERE){from=HERE;fromLab=T('从你现在的位置','from where you are');}
+  const w=from?navRoute(from,vPlace(nxt.v)).min:null;
+  const left=Math.round((sStart(nxt)-now)/60000);
+  return {s:nxt,prev,from,gap,fromLab,w,left,late:w!=null&&(gap!=null?w>gap:w>left)};
+}
 function nowCard(){
   const el=$('#nowCard');if(!el)return;const D=nowData();
   if(!D){el.hidden=true;return;}
   const {now,soon,nx,myLive}=D;let cls='',txt='',sub='';
-  const mine=soon.find(s=>WANT.has(s.key));
+  const MN=myNext(now);const mine=MN&&MN.left<=180?MN.s:null;
   const walk=s=>{const w=HERE?navRoute(HERE,vPlace(s.v)).min:null;return w==null?'':w===0?T(' · 就在这里',' · you are here'):T(` · 走过去 ${w} 分钟`,` · ${w} min walk`);};
-  if(myLive.length){cls=' live';txt=T(`正在放映：${sTitle(myLive[0])}`,`Now showing: ${sTitle(myLive[0])}`);sub=T(VSH[myLive[0].v][0],VSH[myLive[0].v][1])+T(` · ${myLive[0].end} 散场`,` · ends ${myLive[0].end}`);}
-  else if(mine){txt=T(`你的《${sTitle(mine)}》${nCd(mine,now)}开场`,`Your “${sTitle(mine)}” starts ${nCd(mine,now)}`);sub=T(VSH[mine.v][0],VSH[mine.v][1])+walk(mine);}
+  if(myLive.length){cls=' live';txt=T(`正在放映：${sTitle(myLive[0])}`,`Now showing: ${sTitle(myLive[0])}`);sub=T(VSH[myLive[0].v][0],VSH[myLive[0].v][1])+T(` · ${myLive[0].end} 散场`,` · ends ${myLive[0].end}`)+(MN&&MN.prev===myLive[0]?T(` · 下一场去 ${VSH[MN.s.v][0]}，走 ${MN.w} 分钟`,` · next: ${VSH[MN.s.v][1]}, ${MN.w} min walk`):'');}
+  else if(mine){txt=T(`你的下一场《${sTitle(mine)}》${nCd(mine,now)}开场`,`Your next: “${sTitle(mine)}” ${nCd(mine,now)}`);sub=T(VSH[mine.v][0],VSH[mine.v][1])+(MN.w==null?T(' · 点开看怎么走',' · tap for directions'):MN.w===0?T(' · 就在这里',' · same venue'):T(` · 走过去 ${MN.w} 分钟`,` · ${MN.w} min walk`))+(MN.late?T('，时间很紧',' — tight!'):'');if(MN.late)cls=' late';}
   else if(soon.length){txt=T(`接下来一小时有 ${soon.length} 场开映`,`${soon.length} screening${soon.length>1?'s':''} start in the next hour`);}
+  else if(MN){txt=T(`你的下一场：${dateL(MN.s.d)} ${wd(MN.s.d)} ${MN.s.t}《${sTitle(MN.s)}》`,`Your next: ${dateL(MN.s.d)} ${MN.s.t} “${sTitle(MN.s)}”`);sub=T(VSH[MN.s.v][0],VSH[MN.s.v][1])+(MN.w!=null&&MN.w>0?T(` · 走过去 ${MN.w} 分钟`,` · ${MN.w} min walk`):'');cls=' quiet';}
   else if(nx.length){cls=' quiet';txt=T(`下一批放映：${nCd(nx[0],now)} · ${nx.length} 场`,`Next: ${nCd(nx[0],now)} · ${nx.length} screening${nx.length>1?'s':''}`);}
   el.className='nowbar'+cls;el.innerHTML=`<span class="nbi">${myLive.length?'●':'⏱'}</span><span class="nbt">${esc(txt)}${sub?`<small>${esc(sub.replace(/^ · /,''))}</small>`:''}</span><span class="nba">›</span>`;el.hidden=false;
 }
 function openNow(){
-  const D=nowData();let h=`<div class="pre">${T('现在','Now')}</div><h2 id="sheetTitle">${T('接下来一小时','Next hour')}</h2>
+  const D=nowData();let h=`<div class="pre">${T('现在','Now')}</div><h2 id="sheetTitle">${T('我的下一场 · 接下来一小时','My next · Next hour')}</h2>
   <div class="nhead"><span class="msub" style="margin:0">${T('按你的位置估算步行时间','Walking times from your location')}</span><button type="button" class="nhere" id="nowHere">📍 ${HERE?esc(T(NP[HERE].n[0],NP[HERE].n[1]).replace(/（.*）|\(.*\)/,'')):T('设置我的位置','Set my location')}</button></div>`;
   if(!D)h+=`<p class="nnone">${T('本届放映已全部结束。','All screenings have ended.')}</p>`;
-  else{const {now,soon,nx,myLive}=D;
+  const MN=D?myNext(D.now):null;
+  if(MN){const x=MN.s;h+=`<div class="mynext${MN.late?' late':''}"><div class="mnk">${T('我的下一场','My next screening')}</div>
+    <div class="mnt">${x.films.length>1?esc(sTitle(x)):`<button type="button" class="pname" data-film="${x.films[0].id}">${esc(ftitle(x.films[0]))}</button>`}</div>
+    <div class="mnw"><b>${dateL(x.d)} ${wd(x.d)} ${x.t}</b> · ${nCd(x,D.now)}</div>
+    <div class="mnv">📍 ${esc(venL(x.v))}</div>
+    ${MN.w!=null?`<div class="mnr">${esc(MN.fromLab)}${MN.w===0?T('，同一场馆不用走',': same venue'):T(`步行约 ${MN.w} 分钟`,`, about ${MN.w} min on foot`)}${MN.gap!=null?T(`（间隔 ${MN.gap} 分钟）`,` (${MN.gap} min gap)`):''}${MN.late?T('，时间很紧，建议提前离场或换一场',' — tight; leave early or pick another slot'):''}</div>`:`<div class="mnr">${T('设置你现在的位置，就能算出走过去要多久。','Set your location to see the walking time.')}</div>`}
+    <button type="button" class="recapbtn" data-navf="${MN.from||''}" data-nav="${x.v}">${T('看路线','Show route')} →</button></div>`;}
+  else if(D)h+=`<p class="nnone">${T('在排片里点 ☆ 标记想看的场次，这里会显示你的下一场在哪、走过去要多久。','Tap ☆ on screenings you want; your next one, where it is and how long the walk takes will show here.')}</p>`;
+  if(D)h+=`<h4 class="mday">${D.soon.length?T('接下来一小时开映','Starting in the next hour'):T('下一批开映','Next screenings')}</h4>`;
+  if(D){const {now,soon,nx,myLive}=D;
     if(myLive.length)h+=myLive.map(s=>nowRow(s,true,now)).join('');
     if(soon.length)h+=soon.map(s=>nowRow(s,false,now)).join('');
-    else if(nx.length)h+=`<p class="nnone">${T('接下来一小时没有开场的放映。下一批：','No screenings start in the next hour. Next up:')}</p>`+nx.map(s=>nowRow(s,false,now)).join('');}
+    else if(nx.length)h+=`<p class="nnone">${T('接下来一小时没有开场的放映。','No screenings start in the next hour.')}</p>`+nx.map(s=>nowRow(s,false,now)).join('');}
   openSheet(T('接下来一小时','Next hour'),h,['x','now']);
   const nh=$('#nowHere');if(nh)nh.onclick=e=>{e.stopPropagation();openNav(HERE||'b2');};
 }
@@ -1401,7 +1423,7 @@ function openGuest(name){
 $('#sheetBody').onclick=e=>{
   const rh=e.target.closest('.rh');if(rh){const id=rh.closest('.rate').dataset.rid;const sc=+rh.dataset.score;setRating(id,MYR[id]===sc?null:sc);return;}
   if(e.target.closest('.rclear')){setRating(e.target.closest('.rate').dataset.rid,null);return;}
-  const nv=e.target.closest('[data-nav]');if(nv){openNav(vPlace(+nv.dataset.nav));return;}
+  const nv=e.target.closest('[data-nav]');if(nv){openNav(vPlace(+nv.dataset.nav),nv.dataset.navf||undefined);return;}
   const w=e.target.closest('[data-want]');if(w){toggleWant(w.dataset.want);if(CUR&&CUR[0]==='m'){const sy=sheet.scrollTop,by=$('#sheetBody').scrollTop,keep=STACK.slice();CUR=null;STACK.length=0;SILENT=true;openMine();SILENT=false;STACK.push(...keep);$('#sheetBack').hidden=!STACK.length;sheet.scrollTop=sy;$('#sheetBody').scrollTop=by;return;}const on=WANT.has(w.dataset.want);w.classList.toggle('on',on);w.setAttribute('aria-pressed',on);w.textContent=on?'★':'☆';const it=w.closest('.sitem');if(it)it.classList.toggle('on',on);return;}const a=e.target.closest('[data-film],[data-guest],[data-ev]');if(!a)return;
   if(a.dataset.film)openFilm(a.dataset.film);else if(a.dataset.guest)openGuest(a.dataset.guest);
   else{const k=+a.dataset.ev;closeSheet();setTimeout(()=>{go('info');const el=k>=0?document.getElementById('ev'+k):document.getElementById('s-sched');if(el){el.scrollIntoView({block:'center'});const d=el.querySelector('details');if(d)d.open=true;}},30);}};
