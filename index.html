@@ -1076,6 +1076,7 @@ function fitGantt(){const w=$('#scrList .gwrap');if(!w)return;
   const bar=document.querySelector('.tabs');const tb=bar&&getComputedStyle(bar).position==='fixed'?bar.getBoundingClientRect().height:0;
   const vh=(window.visualViewport&&visualViewport.height)||innerHeight;
   w.style.height=Math.max(340,Math.round(vh-stick-tb-14))+'px';
+  if(!w._fit){w._fit=1;w.addEventListener('touchstart',()=>{const ds2=$('#dayseg');const st=ds2&&getComputedStyle(ds2).position==='sticky'?ds2.getBoundingClientRect().height:0;const r=w.getBoundingClientRect();const d=r.top-(st+6);if(Math.abs(d)>6)window.scrollBy({top:d,behavior:'smooth'});},{passive:true});}
 }
 window.addEventListener('resize',()=>{if(SM==='gantt')fitGantt();});
 const PX=2;
