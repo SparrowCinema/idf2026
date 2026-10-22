@@ -519,6 +519,18 @@ html{touch-action:manipulation}
 .recapbtn{display:block;width:100%;margin:22px 0 10px;padding:14px;border-radius:14px;border:0;background:var(--ink);color:var(--bg);font-size:15px;font-weight:600;cursor:pointer;font-family:inherit}
 .recap{margin:8px 0 20px;text-align:center}.recap img{width:100%;border-radius:12px;box-shadow:0 6px 24px rgba(0,0,0,.14);-webkit-touch-callout:default}.rhint{font-size:12.5px;color:var(--ink-3);margin:10px 0 8px}.racts{display:flex;gap:8px;justify-content:center}.racts .chip{text-decoration:none}
 .gwrap{overscroll-behavior-y:auto!important;overscroll-behavior-x:contain}.gleg{margin-bottom:16px!important}
+.myrow{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:2px 0 12px}.mybtn{font:inherit;font-size:13.5px;font-weight:600;padding:10px 8px;border-radius:12px;border:1px solid var(--line);background:var(--paper);color:var(--ink);cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px}.mybtn.hot{background:var(--ink);color:var(--bg);border-color:var(--ink)}.mybtn .n{font-family:var(--f-mono);font-size:12px;color:var(--amber-ink);background:var(--amber-wash);border-radius:999px;padding:1px 7px}
+.planlink{display:block;width:100%;text-align:left;margin:4px 0 12px;padding:12px 14px;border-radius:12px;border:1px dashed color-mix(in srgb,var(--amber) 60%,transparent);background:var(--amber-wash);color:var(--amber-ink);font:inherit;font-size:13.5px;font-weight:600;cursor:pointer}
+.ptools{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:4px 0 6px}.pbuf{display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:12.5px;color:var(--ink-3);width:100%}.ptools .chip.on{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.plist{min-width:0;display:flex;flex-direction:column;border-top:1px solid var(--line)}
+.prow{box-sizing:border-box;max-width:100%;display:flex;align-items:center;gap:12px;padding:10px 2px;border:0;border-bottom:1px solid var(--line);background:none;text-align:left;font:inherit;color:var(--ink);cursor:pointer;width:100%}
+.prow .pck{width:22px;height:22px;flex:none;border-radius:7px;border:1.5px solid var(--line);display:grid;place-items:center;font-size:13px;font-weight:700;color:#fff}
+.prow.on .pck{background:var(--amber);border-color:var(--amber)}
+.prow .pnm{flex:1;min-width:0;font-size:14.5px;font-weight:600;display:flex;flex-direction:column;gap:2px}.prow .pnm small{font-size:11.5px;font-weight:400;color:var(--ink-3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.prow .pn{font-family:var(--f-mono);font-size:11.5px;color:var(--ink-3);flex:none}.prow.gone{opacity:.45}
+.pgo{position:sticky;bottom:0;padding:10px 0 calc(10px + env(safe-area-inset-bottom,0px));background:linear-gradient(transparent,var(--paper) 30%);z-index:3}.pgo .recapbtn{margin:0}.recapbtn[disabled]{opacity:.4;cursor:default}
+.pres{margin-top:10px;padding-top:6px;border-top:2px solid var(--ink)}.pname.dim{color:var(--ink-3);font-weight:500}.pbonus{font-size:10.5px;color:var(--ink-3);flex:none}.pwhy{color:var(--ink-3)!important}
+.pacts{display:flex;flex-direction:column;gap:8px;align-items:center;margin:18px 0 24px}.pacts .recapbtn{margin:0}
 .hrow{display:flex;align-items:flex-start;gap:10px}.hrow .ttl{flex:1;min-width:0;display:flex;flex-direction:column;gap:8px}.rwrap{margin-left:auto;display:flex;flex-direction:column;gap:5px;align-items:flex-end;flex:none}.rwrap:empty{display:none}
 .rbadge{display:inline-flex;align-items:center;gap:5px;padding:5px 11px 5px 9px;border-radius:999px;background:linear-gradient(135deg,var(--amber-wash),color-mix(in srgb,var(--amber-wash) 55%,var(--paper)));box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--amber) 28%,transparent);white-space:nowrap;line-height:1}
 .rbadge .rbs{width:15px;height:15px;flex:none;background:var(--amber);-webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 2.5l2.9 6.1 6.6.8-4.9 4.6 1.3 6.6L12 17.3l-5.9 3.3 1.3-6.6-4.9-4.6 6.6-.8z'/%3E%3C/svg%3E") center/contain no-repeat;mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 2.5l2.9 6.1 6.6.8-4.9 4.6 1.3 6.6L12 17.3l-5.9 3.3 1.3-6.6-4.9-4.6 6.6-.8z'/%3E%3C/svg%3E") center/contain no-repeat}
@@ -616,7 +628,8 @@ html[lang="en"] .brand h1{font-size:clamp(22px,3.6vw,34px)}
     <div class="dayseg" id="dayseg" role="tablist" aria-label="Dates"></div>
     <div class="resultline"><span id="scrSum"></span>
       <span class="frow"><span class="seg" role="group" aria-label="View"><button type="button" data-mode="gantt" data-i="gantt"></button><button type="button" data-mode="list" data-i="list"></button></span>
-      <button class="chip" type="button" id="favOnly" aria-pressed="false" data-i="favOnly"></button><button class="chip myall" type="button" id="myAll"><span data-i="myAll"></span><span class="n" id="myAllN">0</span></button></span></div>
+      <button class="chip" type="button" id="favOnly" aria-pressed="false" data-i="favOnly"></button></span></div>
+    <div class="myrow"><button class="mybtn hot" type="button" id="autoPlan"><span data-i="autoPlan"></span></button><button class="mybtn" type="button" id="myAll"><span data-i="myAll"></span><span class="n" id="myAllN">0</span></button></div>
     <div id="scrList"></div>
   </section>
 
@@ -660,7 +673,7 @@ const T=(zh,en)=>EN()?en:zh;
 const F=(o,k)=>EN()&&o[k+'_en']?o[k+'_en']:o[k];
 const I={
  section:['单元','Section'],program:['展播板块','Program'],type:['类型','Type'],premiere:['首映','Premiere'],day:['放映日','Date'],mine:['我的','Mine'],want:['想看场次','My screenings'],rated:['我打过分','Rated by me'],sort:['排序','Sort'],
- gantt:['带轴排片表','Timeline'],list:['列表','List'],favOnly:['只看想看场次','My screenings only'],myAll:['我的全部场次','All mine'],role:['身份','Role'],guestHint:['点击卡片查看完整介绍与相关影片、活动','Tap a card for full bio, related films and events'],
+ gantt:['带轴排片表','Timeline'],list:['列表','List'],favOnly:['只看想看场次','My screenings only'],myAll:['我的全部场次','All my screenings'],autoPlan:['✦ 自动排日程','✦ Auto-plan'],role:['身份','Role'],guestHint:['点击卡片查看完整介绍与相关影片、活动','Tap a card for full bio, related films and events'],
  all:['全部','All'],any:['不限','Any'],back:['‹ 返回','‹ Back']
 };
 const i=k=>T(I[k][0],I[k][1]);
@@ -999,6 +1012,78 @@ document.querySelector('.seg').onclick=e=>{const b=e.target.closest('[data-mode]
 $('#dayseg').onclick=e=>{const b=e.target.closest('[data-day]');if(!b)return;SS.day=b.dataset.day;renderSched();window.scrollTo({top:0});};
 $('#favOnly').onclick=e=>{SS.fav=!SS.fav;e.currentTarget.setAttribute('aria-pressed',SS.fav);renderSched();};
 $('#myAll').onclick=()=>openMine();
+$('#autoPlan').onclick=()=>openPlan();
+/* ---------- auto planner ---------- */
+let PSEL=new Set();try{PSEL=new Set(JSON.parse(localStorage.getItem('idf26plan')||'[]'));}catch(e){}
+let PBUF=15;try{PBUF=+(localStorage.getItem('idf26pbuf')||15);}catch(e){}
+let PRES=null;
+const savePlan=()=>{try{localStorage.setItem('idf26plan',JSON.stringify([...PSEL]));localStorage.setItem('idf26pbuf',String(PBUF));}catch(e){}};
+const sStart=s=>{const [m,d]=s.d.split('.').map(Number);const [h,mi]=s.t.split(':').map(Number);return new Date(2026,m-1,d,h,mi).getTime();};
+const sEndMs=s=>sStart(s)+(s.dur||90)*60000;
+const clashes=(a,b,buf)=>a.d===b.d&&sStart(a)<sEndMs(b)+buf*60000&&sStart(b)<sEndMs(a)+buf*60000;
+const futureScr=f=>scrOf.get(f.id).filter(s=>sStart(s)>Date.now());
+function solvePlan(ids,buf){
+  const F=ids.map(id=>fById(id)).filter(Boolean).map(f=>({f,opts:futureScr(f)}));
+  const dead=F.filter(x=>!x.opts.length).map(x=>x.f);
+  const live=F.filter(x=>x.opts.length).sort((a,b)=>a.opts.length-b.opts.length);
+  let best={n:-1,k:1e9,pick:[]};let nodes=0;
+  const chosen=[];// screenings
+  const covered=new Set();
+  function rec(i,n){
+    if(++nodes>300000)return;
+    if(n+(live.length-i)<best.n)return;
+    if(i===live.length){if(n>best.n||(n===best.n&&chosen.length<best.k))best={n,k:chosen.length,pick:chosen.slice()};return;}
+    const x=live[i];
+    if(covered.has(x.f.id)){rec(i+1,n+1);return;}
+    // try reuse: already-chosen screening containing film handled by covered
+    const opts=x.opts.slice().sort((a,b)=>(b.films.filter(g=>ids.includes(g.id)&&!covered.has(g.id)).length-a.films.filter(g=>ids.includes(g.id)&&!covered.has(g.id)).length)||sStart(a)-sStart(b));
+    for(const s of opts){
+      if(chosen.some(c=>clashes(c,s,buf)))continue;
+      chosen.push(s);const add=s.films.filter(g=>ids.includes(g.id)&&!covered.has(g.id)).map(g=>g.id);add.forEach(id=>covered.add(id));
+      rec(i+1,n+1);
+      add.forEach(id=>covered.delete(id));chosen.pop();
+      if(nodes>300000)break;
+    }
+    rec(i+1,n);
+  }
+  rec(0,0);
+  const pick=best.pick.sort((a,b)=>sStart(a)-sStart(b)||a.v-b.v);
+  const got=new Set();pick.forEach(s=>s.films.forEach(g=>{if(ids.includes(g.id))got.add(g.id);}));
+  const miss=live.filter(x=>!got.has(x.f.id)).map(x=>{const why=new Set();x.opts.forEach(s=>pick.forEach(c=>{if(clashes(c,s,buf))c.films.forEach(g=>{if(got.has(g.id))why.add(g.id);});}));return {f:x.f,why:[...why]};});
+  return {pick,miss,dead,buf};
+}
+function reopenPlan(){const sy=sheet.scrollTop,by=$('#sheetBody').scrollTop,keep=STACK.slice();CUR=null;STACK.length=0;SILENT=true;openPlan();SILENT=false;STACK.push(...keep);$('#sheetBack').hidden=!STACK.length;sheet.scrollTop=sy;$('#sheetBody').scrollTop=by;}
+function planResultHTML(R){
+  if(!R)return '';
+  let h=`<div class="pres" id="planRes"><h3 class="mday">${T('为你排好的日程','Your plan')} <span>${T(`${R.pick.length} 场 · 排进 ${PSEL.size-R.miss.length-R.dead.length}/${PSEL.size} 部`,`${R.pick.length} screenings · ${PSEL.size-R.miss.length-R.dead.length}/${PSEL.size} films`)}</span></h3>`;
+  SDAYS.forEach(d=>{const D=R.pick.filter(s=>s.d===d);if(!D.length)return;
+    h+=`<h4 class="mday">${dateL(d)} <span>${wd(d)}</span></h4><div class="mlist">`+D.map(s=>`<div class="mrow"><div class="mt"><b>${s.t}</b><span>${s.end||''}</span></div><div class="mb"><div class="mv">${esc(venL(s.v))}${s.lab&&s.films.length>1?' · '+esc(labL(s)):''}</div>${s.films.map(f=>`<div class="mf"><button type="button" class="pname${PSEL.has(f.id)?'':' dim'}" data-film="${f.id}">${esc(ftitle(f))}</button>${PSEL.has(f.id)?'':`<small class="pbonus">${T('同场附带','also in this slot')}</small>`}</div>`).join('')}</div></div>`).join('')+'</div>';});
+  if(R.miss.length)h+=`<h4 class="mday">${T('排不进的影片','Could not fit')}</h4><div class="mlist">`+R.miss.map(x=>`<div class="mrow"><div class="mb"><div class="mf"><button type="button" class="pname" data-film="${x.f.id}">${esc(ftitle(x.f))}</button></div><div class="mv pwhy">${x.why.length?T('所有场次都和已排的','All screenings clash with ')+x.why.map(id=>T('《'+fById(id).title+'》',fById(id).title_en)).join(T('、',', '))+T(' 冲突',''):T('场次之间时间太紧','Too little time between screenings')}</div></div></div>`).join('')+'</div>';
+  if(R.dead.length)h+=`<h4 class="mday">${T('已无场次','No screenings left')}</h4><p class="msub">${R.dead.map(f=>esc(ftitle(f))).join(T('、',', '))}${T(' 的场次都已开始或结束。',' — all screenings have started or ended.')}</p>`;
+  if(R.pick.length)h+=`<div class="pacts"><button type="button" class="recapbtn" id="planReplace">${T('用这份日程替换我的想看场次','Replace my screenings with this plan')}</button><button type="button" class="chip" id="planMerge">${T('只追加到我的想看场次','Add to my screenings')}</button></div>`;
+  return h+'</div>';
+}
+function openPlan(){
+  const secs=[['competition',T('“西湖荣誉”评优单元','IDF Competition')],['glory',T('“纪录之光”展播单元','Glory of Documentary')]];
+  const row=f=>{const n=futureScr(f).length;const on=PSEL.has(f.id);return `<button type="button" class="prow${on?' on':''}${n?'':' gone'}" data-pf="${f.id}" aria-pressed="${on}"><span class="pck">${on?'✓':''}</span><span class="pnm">${esc(ftitle(f))}<small>${esc(fsub(f))}</small></span><span class="pn">${n?T(`${n} 场`,`${n}×`):T('已结束','ended')}</span></button>`;};
+  const body=`<div class="pre">${T('我的观影','My Festival')}</div><h2 id="sheetTitle">${T('自动排日程','Auto-plan my schedule')}</h2>
+  <p class="msub">${T('勾选想看的影片，自动挑出互不冲突的场次，尽量把每部都排进去。已开始的场次会自动跳过；短片集里的影片会合并到同一场。','Tick the films you want; the planner picks non-overlapping screenings to fit as many as possible. Screenings that have started are skipped; films in a short-film collection share one slot.')}</p>
+  <div class="ptools"><button type="button" class="chip" id="pFromMine">${T('导入想看和打过分的','Import saved & rated')}</button><button type="button" class="chip" id="pClear">${T('清空','Clear')}</button>
+  <span class="pbuf">${T('场间至少留','Gap')} ${[0,15,30].map(b=>`<button type="button" class="chip${PBUF===b?' on':''}" data-pbuf="${b}" aria-pressed="${PBUF===b}">${b}${T(' 分',' min')}</button>`).join('')}</span></div>
+  ${secs.map(([k,nm])=>`<h4 class="mday">${nm}</h4><div class="plist">${films.filter(f=>f.section===k).map(row).join('')}</div>`).join('')}
+  <div class="pgo"><button type="button" class="recapbtn" id="planGo"${PSEL.size?'':' disabled'}>${PSEL.size?T(`为 ${PSEL.size} 部影片排日程`,`Plan ${PSEL.size} film${PSEL.size>1?'s':''}`):T('先勾选想看的影片','Tick some films first')}</button></div>
+  ${planResultHTML(PRES)}`;
+  openSheet(T('自动排日程','Auto-plan'),body,['p','plan']);
+  const B=$('#sheetBody');
+  B.querySelectorAll('[data-pf]').forEach(el=>el.onclick=e=>{e.stopPropagation();const id=el.dataset.pf;PSEL.has(id)?PSEL.delete(id):PSEL.add(id);PRES=null;savePlan();reopenPlan();});
+  B.querySelectorAll('[data-pbuf]').forEach(el=>el.onclick=e=>{e.stopPropagation();PBUF=+el.dataset.pbuf;PRES=null;savePlan();reopenPlan();});
+  $('#pFromMine').onclick=()=>{SCR.forEach(s=>{if(WANT.has(s.key))s.films.forEach(f=>PSEL.add(f.id));});Object.keys(MYR).forEach(id=>{if(fById(id))PSEL.add(id);});PRES=null;savePlan();reopenPlan();};
+  $('#pClear').onclick=()=>{PSEL.clear();PRES=null;savePlan();reopenPlan();};
+  const go=$('#planGo');if(go)go.onclick=()=>{PRES=solvePlan([...PSEL],PBUF);reopenPlan();setTimeout(()=>{const r=$('#planRes');if(r)r.scrollIntoView({behavior:'smooth',block:'start'});},60);};
+  const apply=replace=>{if(!PRES)return;if(replace)WANT.clear();PRES.pick.forEach(s=>WANT.add(s.key));saveWant();updFavN();refreshLists();if(typeof renderSched==='function')renderSched();toast(replace?T('已替换为新日程','Plan applied'):T('已追加到想看场次','Added to my screenings'));setTimeout(()=>{const keep=STACK.slice();CUR=null;STACK.length=0;SILENT=true;openMine();SILENT=false;STACK.push(...keep);},400);};
+  const r1=$('#planReplace');if(r1)r1.onclick=()=>apply(true);const r2=$('#planMerge');if(r2)r2.onclick=()=>apply(false);
+}
+
 /* ---------- my screenings + recap image ---------- */
 function mySched(){
   const L=SCR.filter(s=>WANT.has(s.key)).sort((a,b)=>SDAYS.indexOf(a.d)-SDAYS.indexOf(b.d)||tmin(a.t)-tmin(b.t)||a.v-b.v);
@@ -1034,8 +1119,8 @@ function openMine(){
   if(other.length)body+=`<h4 class="mday">${T('其他打过分的影片','Other films I rated')}</h4><div class="mlist">${other.map(f=>`<div class="mrow"><div class="mb"><div class="mf"><button type="button" class="pname" data-film="${f.id}">${esc(ftitle(f))}</button><span class="msc">${scorePills(f)}</span></div></div></div>`).join('')}</div>`;
   if(L.length||other.length)body+=`<button type="button" class="recapbtn" id="recapBtn">${T('生成我的 IDF 观影结算图','Create my IDF recap image')}</button><div id="recapOut"></div>`;
   openSheet(T('我的全部场次','All my screenings'),`<div class="pre">${T('我的观影','My Festival')}</div><h2 id="sheetTitle">${T('我的全部场次','All my screenings')}</h2>
-    <p class="msub">${T('观众分为 IMDb 式加权评分（满 5 人显示），个人分为你的星级 × 2。','Audience score = IMDb-style weighted rating (shown after 5 ratings); yours = stars × 2.')}</p>${body}`,['m','all']);
-  const b=$('#recapBtn');if(b)b.onclick=showRecap;
+    <p class="msub">${T('观众分为 IMDb 式加权评分（满 5 人显示），个人分为你的星级 × 2。','Audience score = IMDb-style weighted rating (shown after 5 ratings); yours = stars × 2.')}</p><button type="button" class="planlink" id="toPlan">✦ ${T('挑好想看的片，自动排出不冲突的日程','Pick films and auto-plan a clash-free schedule')} →</button>${body}`,['m','all']);
+  const b=$('#recapBtn');if(b)b.onclick=showRecap;const tp=$('#toPlan');if(tp)tp.onclick=()=>openPlan();
 }
 function wrapText(ctx,text,maxW,maxLines){
   const toks=String(text).match(/[⺀-鿿豈-﫿＀-￯　-〿]|[^\s⺀-鿿豈-﫿＀-￯　-〿]+|\s+/g)||[];
@@ -1124,7 +1209,7 @@ onTap($('#guestList'),tg=>{const c=tg.closest&&tg.closest('[data-guest]');if(c){
 /* ---------- sheet ---------- */
 const sheet=$('#sheet'),scrim=$('#scrim');let lastFocus=null;
 const STACK=[];let CUR=null;
-const OPENR=k=>k==='f'?openFilm:k==='m'?openMine:openGuest;
+const OPENR=k=>k==='f'?openFilm:k==='m'?openMine:k==='p'?openPlan:openGuest;
 let HDEPTH=0,CLOSING=0,SILENT=false;
 let GUARD=false;function armGuard(){if(GUARD)return;try{history.pushState({idfGuard:1},'');GUARD=true;}catch(e){}}
 function pushH(){if(SILENT)return;armGuard();try{history.pushState({idfSheet:HDEPTH+1},'');HDEPTH++;}catch(e){}}
