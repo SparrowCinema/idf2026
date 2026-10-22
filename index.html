@@ -520,7 +520,7 @@ html{touch-action:manipulation}
 .recap{margin:8px 0 20px;text-align:center}.recap img{width:100%;border-radius:12px;box-shadow:0 6px 24px rgba(0,0,0,.14);-webkit-touch-callout:default}.rhint{font-size:12.5px;color:var(--ink-3);margin:10px 0 8px}.racts{display:flex;gap:8px;justify-content:center}.racts .chip{text-decoration:none}
 .gwrap{overscroll-behavior-y:auto!important;overscroll-behavior-x:contain}.gleg{margin-bottom:16px!important}
 .myrow{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:2px 0 12px}.mybtn{font:inherit;font-size:13.5px;font-weight:600;padding:10px 8px;border-radius:12px;border:1px solid var(--line);background:var(--paper);color:var(--ink);cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px}.mybtn.hot{background:var(--ink);color:var(--bg);border-color:var(--ink)}.mybtn .n{font-family:var(--f-mono);font-size:12px;color:var(--amber-ink);background:var(--amber-wash);border-radius:999px;padding:1px 7px}
-.nowcard{margin:14px 0 2px;padding:12px 14px 6px;border-radius:16px;background:var(--paper);border:1px solid var(--line);box-shadow:0 2px 10px rgba(0,0,0,.04)}
+.nowbar{display:flex;align-items:center;gap:8px;width:100%;margin:12px 0 0;padding:10px 12px;border-radius:12px;border:1px solid color-mix(in srgb,var(--amber) 35%,transparent);background:var(--amber-wash);color:var(--amber-ink);font:inherit;font-size:13.5px;font-weight:600;text-align:left;cursor:pointer}.nowbar[hidden]{display:none}.nowbar .nbt{flex:1;min-width:0;line-height:1.35;display:flex;flex-direction:column;gap:2px;overflow:hidden}.nowbar .nbt,.nowbar .nbt small{white-space:nowrap;text-overflow:ellipsis;overflow:hidden}.nowbar .nbt small{font-size:12px;font-weight:500;opacity:.8}.nowbar .nba{font-size:18px;line-height:1;opacity:.7}.nowbar.quiet{background:var(--paper);border-color:var(--line);color:var(--ink-2);font-weight:500}.nowbar.live{background:#fde8df;border-color:#f3b9a3;color:#c2410c}.nowbar.live .nbi{animation:nbp 1.6s ease-in-out infinite}@keyframes nbp{50%{opacity:.25}}
 .nhead{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:6px}.nhead b{font-family:var(--f-display);font-size:17px}
 .nhere{font:inherit;font-size:12px;border:1px solid var(--line);background:var(--bg);border-radius:999px;padding:4px 10px;color:var(--ink-2);cursor:pointer;max-width:55%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .nnone{font-size:12.5px;color:var(--ink-3);margin:2px 0 4px}
@@ -638,7 +638,7 @@ html[lang="en"] .brand h1{font-size:clamp(22px,3.6vw,34px)}
   </section>
 
   <section id="view-screen" class="wrap" hidden>
-    <div class="nowcard" id="nowCard" hidden></div>
+    <button type="button" class="nowbar" id="nowCard" hidden></button>
     <div class="dayseg" id="dayseg" role="tablist" aria-label="Dates"></div>
     <div class="resultline"><span id="scrSum"></span>
       <span class="frow"><span class="seg" role="group" aria-label="View"><button type="button" data-mode="gantt" data-i="gantt"></button><button type="button" data-mode="list" data-i="list"></button></span>
@@ -1086,30 +1086,47 @@ function openNav(to,from){
 }
 function reNav(to){const keep=STACK.slice();CUR=null;STACK.length=0;SILENT=true;openNav(to);SILENT=false;STACK.push(...keep);$('#sheetBack').hidden=!STACK.length;}
 /* ---------- next hour ---------- */
-function nowCard(){
-  const el=$('#nowCard');if(!el)return;
+function nowData(){
   const now=Date.now();const last=Math.max(...SCR.map(sEndMs));
-  if(now>last){el.hidden=true;return;}
+  if(now>last)return null;
   const live=SCR.filter(s=>s.films.length&&sStart(s)<=now&&sEndMs(s)>now);
   const soon=SCR.filter(s=>sStart(s)>now&&sStart(s)<=now+60*60000);
   const next=soon.length?[]:SCR.filter(s=>sStart(s)>now).sort((a,b)=>sStart(a)-sStart(b));
   const nx=next.length?next.filter(s=>s.d===next[0].d&&s.t===next[0].t):[];
   const ord=L=>L.slice().sort((a,b)=>(WANT.has(b.key)-WANT.has(a.key))||sStart(a)-sStart(b)||a.v-b.v);
-  const cd=s=>{const m=Math.round((sStart(s)-now)/60000);return m<60?T(`${m} 分钟后`,`in ${m} min`):m<1440?T(`${Math.floor(m/60)} 小时 ${m%60} 分后`,`in ${Math.floor(m/60)}h ${m%60}m`):`${dateL(s.d)} ${wd(s.d)} ${s.t}`;};
-  const row=(s,isLive)=>{const fav=WANT.has(s.key);const w=HERE?navRoute(HERE,vPlace(s.v)).min:null;const left=Math.round((sStart(s)-now)/60000);const late=!isLive&&w!=null&&w>left;
-    return `<div class="nrow${fav?' fav':''}"><div class="ncd${isLive?' live':''}">${isLive?T('放映中','Now'):cd(s)}<small>${s.t}${s.end?'–'+s.end:''}</small></div><div class="nb"><div class="nt">${fav?'★ ':''}${s.films.length>1?esc(labL(s)||T('多部短片','Shorts')):`<button type="button" class="pname" data-film="${s.films[0].id}">${esc(ftitle(s.films[0]))}</button>`}</div>${s.films.length>1?`<div class="nsub">${s.films.map(f=>`<button type="button" class="pname" data-film="${f.id}">${esc(ftitle(f))}</button>`).join(' · ')}</div>`:''}<button type="button" class="nnav${late?' late':''}" data-nav="${s.v}">📍 ${esc(T(VSH[s.v][0],VSH[s.v][1]))}${w===0?` · ${T('就在这里','you are here')}`:w!=null?` · ${T('走过去约','walk')} ${w} ${T('分钟','min')}${late?T('，来不及了','— too late'):''}`:` · ${T('怎么走','directions')}`}</button></div></div>`;};
-  let h=`<div class="nhead"><b>${T('接下来一小时','Next hour')}</b><button type="button" class="nhere" id="nowHere">📍 ${HERE?esc(T(NP[HERE].n[0],NP[HERE].n[1]).replace(/（.*）|\(.*\)/,'')):T('设置我的位置','Set my location')}</button></div>`;
-  if(live.length&&!soon.length&&!nx.length)h+='';
-  if(soon.length)h+=ord(soon).map(s=>row(s,false)).join('');
-  else if(nx.length)h+=`<p class="nnone">${T('接下来一小时没有开场的放映。下一批：','No screenings start in the next hour. Next up:')}</p>`+ord(nx).map(s=>row(s,false)).join('');
-  const myLive=live.filter(s=>WANT.has(s.key));
-  if(myLive.length)h+=myLive.map(s=>row(s,true)).join('');
-  el.innerHTML=h;el.hidden=false;
+  return {now,live,soon:ord(soon),nx:ord(nx),myLive:live.filter(s=>WANT.has(s.key))};
 }
-setInterval(()=>{if(TAB==='screen')nowCard();},60000);
+const nCd=(s,now)=>{const m=Math.round((sStart(s)-now)/60000);return m<60?T(`${m} 分钟后`,`in ${m} min`):m<1440?T(`${Math.floor(m/60)} 小时 ${m%60} 分后`,`in ${Math.floor(m/60)}h ${m%60}m`):`${dateL(s.d)} ${wd(s.d)} ${s.t}`;};
+const sTitle=s=>s.films.length>1?(labL(s)||T('多部短片','Shorts')):ftitle(s.films[0]);
+function nowRow(s,isLive,now){const fav=WANT.has(s.key);const w=HERE?navRoute(HERE,vPlace(s.v)).min:null;const left=Math.round((sStart(s)-now)/60000);const late=!isLive&&w!=null&&w>left;
+  return `<div class="nrow${fav?' fav':''}"><div class="ncd${isLive?' live':''}">${isLive?T('放映中','Now'):nCd(s,now)}<small>${s.t}${s.end?'–'+s.end:''}</small></div><div class="nb"><div class="nt">${fav?'★ ':''}${s.films.length>1?esc(sTitle(s)):`<button type="button" class="pname" data-film="${s.films[0].id}">${esc(ftitle(s.films[0]))}</button>`}</div>${s.films.length>1?`<div class="nsub">${s.films.map(f=>`<button type="button" class="pname" data-film="${f.id}">${esc(ftitle(f))}</button>`).join(' · ')}</div>`:''}<button type="button" class="nnav${late?' late':''}" data-nav="${s.v}">📍 ${esc(T(VSH[s.v][0],VSH[s.v][1]))}${w===0?` · ${T('就在这里','you are here')}`:w!=null?` · ${T('走过去约','walk')} ${w} ${T('分钟','min')}${late?T('，来不及了','— too late'):''}`:` · ${T('怎么走','directions')}`}</button></div></div>`;}
+function nowCard(){
+  const el=$('#nowCard');if(!el)return;const D=nowData();
+  if(!D){el.hidden=true;return;}
+  const {now,soon,nx,myLive}=D;let cls='',txt='',sub='';
+  const mine=soon.find(s=>WANT.has(s.key));
+  const walk=s=>{const w=HERE?navRoute(HERE,vPlace(s.v)).min:null;return w==null?'':w===0?T(' · 就在这里',' · you are here'):T(` · 走过去 ${w} 分钟`,` · ${w} min walk`);};
+  if(myLive.length){cls=' live';txt=T(`正在放映：${sTitle(myLive[0])}`,`Now showing: ${sTitle(myLive[0])}`);sub=T(VSH[myLive[0].v][0],VSH[myLive[0].v][1])+T(` · ${myLive[0].end} 散场`,` · ends ${myLive[0].end}`);}
+  else if(mine){txt=T(`你的《${sTitle(mine)}》${nCd(mine,now)}开场`,`Your “${sTitle(mine)}” starts ${nCd(mine,now)}`);sub=T(VSH[mine.v][0],VSH[mine.v][1])+walk(mine);}
+  else if(soon.length){txt=T(`接下来一小时有 ${soon.length} 场开映`,`${soon.length} screening${soon.length>1?'s':''} start in the next hour`);}
+  else if(nx.length){cls=' quiet';txt=T(`下一批放映：${nCd(nx[0],now)} · ${nx.length} 场`,`Next: ${nCd(nx[0],now)} · ${nx.length} screening${nx.length>1?'s':''}`);}
+  el.className='nowbar'+cls;el.innerHTML=`<span class="nbi">${myLive.length?'●':'⏱'}</span><span class="nbt">${esc(txt)}${sub?`<small>${esc(sub.replace(/^ · /,''))}</small>`:''}</span><span class="nba">›</span>`;el.hidden=false;
+}
+function openNow(){
+  const D=nowData();let h=`<div class="pre">${T('现在','Now')}</div><h2 id="sheetTitle">${T('接下来一小时','Next hour')}</h2>
+  <div class="nhead"><span class="msub" style="margin:0">${T('按你的位置估算步行时间','Walking times from your location')}</span><button type="button" class="nhere" id="nowHere">📍 ${HERE?esc(T(NP[HERE].n[0],NP[HERE].n[1]).replace(/（.*）|\(.*\)/,'')):T('设置我的位置','Set my location')}</button></div>`;
+  if(!D)h+=`<p class="nnone">${T('本届放映已全部结束。','All screenings have ended.')}</p>`;
+  else{const {now,soon,nx,myLive}=D;
+    if(myLive.length)h+=myLive.map(s=>nowRow(s,true,now)).join('');
+    if(soon.length)h+=soon.map(s=>nowRow(s,false,now)).join('');
+    else if(nx.length)h+=`<p class="nnone">${T('接下来一小时没有开场的放映。下一批：','No screenings start in the next hour. Next up:')}</p>`+nx.map(s=>nowRow(s,false,now)).join('');}
+  openSheet(T('接下来一小时','Next hour'),h,['x','now']);
+  const nh=$('#nowHere');if(nh)nh.onclick=e=>{e.stopPropagation();openNav(HERE||'b2');};
+}
+setInterval(()=>{if(TAB==='screen')nowCard();if(CUR&&CUR[0]==='x'){const sy=sheet.scrollTop,keep=STACK.slice();CUR=null;STACK.length=0;SILENT=true;openNow();SILENT=false;STACK.push(...keep);$('#sheetBack').hidden=!STACK.length;sheet.scrollTop=sy;}},60000);
 
 document.addEventListener('click',e=>{if(e.target.closest&&e.target.closest('#navOpen'))openNav(HERE?'b2':'b2');});
-$('#nowCard').onclick=e=>{const n=e.target.closest('[data-nav]');if(n){openNav(vPlace(+n.dataset.nav));return;}if(e.target.closest('#nowHere')){openNav(HERE||'b2');return;}const f=e.target.closest('[data-film]');if(f)openFilm(f.dataset.film);};
+$('#nowCard').onclick=()=>openNow();
 /* ---------- auto planner ---------- */
 let PSEL=new Set();try{PSEL=new Set(JSON.parse(localStorage.getItem('idf26plan')||'[]'));}catch(e){}
 let PBUF=15;try{PBUF=+(localStorage.getItem('idf26pbuf')||15);}catch(e){}
@@ -1307,7 +1324,7 @@ onTap($('#guestList'),tg=>{const c=tg.closest&&tg.closest('[data-guest]');if(c){
 /* ---------- sheet ---------- */
 const sheet=$('#sheet'),scrim=$('#scrim');let lastFocus=null;
 const STACK=[];let CUR=null;
-const OPENR=k=>k==='f'?openFilm:k==='m'?openMine:k==='p'?openPlan:k==='n'?(x=>openNav(x)):openGuest;
+const OPENR=k=>k==='f'?openFilm:k==='m'?openMine:k==='p'?openPlan:k==='n'?(x=>openNav(x)):k==='x'?openNow:openGuest;
 let HDEPTH=0,CLOSING=0,SILENT=false;
 let GUARD=false;function armGuard(){if(GUARD)return;try{history.pushState({idfGuard:1},'');GUARD=true;}catch(e){}}
 function pushH(){if(SILENT)return;armGuard();try{history.pushState({idfSheet:HDEPTH+1},'');HDEPTH++;}catch(e){}}
