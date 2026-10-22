@@ -887,7 +887,7 @@ function applyStatic(){
   document.querySelectorAll('.lang [data-lang]').forEach(b=>b.setAttribute('aria-pressed',b.dataset.lang===LANG));
   $('#mastMeta').innerHTML=[[films.length,T('部影片','films')],[SCR.length,T('场放映','screenings')],[guests.length,T('位嘉宾','guests')],[pitch.length,T('个创投项目','pitch projects')]].map(([n,l])=>`<span><b>${n}</b>${l}</span>`).join('');
   $('#sheetBack').textContent=i('back');
-  $('#sort').innerHTML=[['page',T('手册顺序','Catalogue order')],['rt-asc',T('时长：短到长','Runtime: short to long')],['rt-desc',T('时长：长到短','Runtime: long to short')],['year',T('年份：新到旧','Year: newest first')],['first',T('首场放映：早到晚','First screening: earliest')],['score',T('评分：高到低','Score: highest first')],['want',T('想看人数：多到少','Most wanted first')]].map(([v,l])=>`<option value="${v}"${FS.sort===v?' selected':''}>${l}</option>`).join('');
+  $('#sort').innerHTML=[['page',T('手册顺序','Catalogue order')],['rt-asc',T('时长：短到长','Runtime: short to long')],['rt-desc',T('时长：长到短','Runtime: long to short')],['year',T('年份：新到旧','Year: newest first')],['first',T('首场放映：早到晚','First screening: earliest')],['score',T('评分：高到低','Score: highest first')]].map(([v,l])=>`<option value="${v}"${FS.sort===v?' selected':''}>${l}</option>`).join('');
   $('#f-prog').innerHTML=`<option value="all">${T('全部板块','All programs')}</option>`+programs.map((p,k)=>`<option value="${k}"${FS.prog===String(k)?' selected':''}>${esc(F(p,'name'))} (${p.films.length})</option>`).join('');
   $('#toc').innerHTML=TOCS.map(([h,a,b],k)=>`<a href="#${h}" class="ti"><span class="tic${k%2?' alt':''}"><svg viewBox="0 0 24 24" aria-hidden="true">${TICON[h]}</svg></span><span class="til">${T(a,b)}</span></a>`).join('');
   initChips();
@@ -945,7 +945,7 @@ function ratingBlock(f){const s=STATS[f.id];const mine=MYR[f.id];const w=wr10(f.
    <div class="rnote">${T(`参考 IMDb 加权算法：打分人数少的影片会向全片平均分靠拢，满 ${MINR} 人后显示。一颗星 = 2 分。`,`IMDb-style weighted rating: films with few votes are pulled toward the overall mean; shown after ${MINR} ratings. One star = 2 points.`)}</div>
    ${RERR?`<div class="rerr">${T('网络不稳，评分已存在本机，稍后会再同步。','Network issue: saved on this device; will sync later.')}</div>`:''}</div>`;}
 function refreshSheetRating(){const el=$('#sheetBody .rate');if(!el)return;const f=films.find(x=>x.id===el.dataset.rid);if(f)el.outerHTML=ratingBlock(f);}
-const FS={section:'all',prog:'all',type:'all',prem:'all',day:'all',theme:'all',sort:'page',fav:false,rated:false,crew:false};
+const FS={section:'all',prog:'all',type:'all',prem:'all',day:'all',theme:'all',sort:'first',fav:false,rated:false,crew:false};
 function chips(el,opts,key,state,rerender){
   el.innerHTML=opts.map(([v,l,n])=>`<button class="chip" type="button" data-v="${esc(v)}" aria-pressed="${state[key]===v}">${esc(l)}${n!=null?`<span class="n">${n}</span>`:''}</button>`).join('');
   el.onclick=e=>{const b=e.target.closest('.chip');if(!b)return;state[key]=b.dataset.v;el.querySelectorAll('.chip').forEach(c=>c.setAttribute('aria-pressed',c.dataset.v===state[key]));rerender();};
@@ -1005,7 +1005,7 @@ function secTag(f){const p=progOf.get(f.id);return f.section==='competition'?`<s
 function filmCard(f){
   return `<button class="card" type="button" data-film="${f.id}">
     <div class="top">${secTag(f)}${premTag(f)}<span class="tag">${esc(TYPEL(f))}</span>${crewTag(f)}</div>
-    <div class="hrow"><div class="ttl"><h2${EN()?' class="h2en"':''}>${hl(ftitle(f))}</h2><div class="en">${hl(fsub(f))}</div></div><span class="rwrap">${ratingBadge(f)}${wantBadge(f)}</span></div>
+    <div class="hrow"><div class="ttl"><h2${EN()?' class="h2en"':''}>${hl(ftitle(f))}</h2><div class="en">${hl(fsub(f))}</div></div><span class="rwrap">${ratingBadge(f)}</span></div>
     <div class="meta"><span>${hl(F(f,'director'))}</span><span>${hl(F(f,'region'))}</span><span>${esc(f.year)}</span><span class="rt">${f.runtime}′</span></div>
     <p class="syn">${hl(F(f,'synopsis'))}</p>
     <div class="scr">${scrOf.get(f.id).map(s=>`<span class="${WANT.has(s.key)?'on':''}">${WANT.has(s.key)?'★ ':''}${esc(scrShort(s))}</span>`).join('')}</div>
@@ -1482,7 +1482,7 @@ function openFilm(id){
   openSheet(`${f.section==='competition'?T('西湖荣誉 · 评优入围','IDF Competition'):T('纪录之光','Glory')+' · '+(p?F(p,'name'):'')} · ${T('手册','Catalogue')} P.${f.page}`,`
     <div class="top" style="display:flex;gap:6px;flex-wrap:wrap">${secTag(f)}${premTag(f)}${crewTag(f)}${f.note?`<span class="tag">${T(esc(f.note),'Mary Stephen Retrospective')}</span>`:''}</div>
     <h2 id="sheetTitle"${EN()?' class="h2en"':''}>${esc(ftitle(f))}</h2><div class="en">${esc(fsub(f))}</div>
-    ${ratingBlock(f)}${wN(f)?`<p class="wline">🔥 ${T(`${wN(f)} 人想看这部片`,`${wN(f)} people want to see this`)}</p>`:''}
+    ${ratingBlock(f)}
     <dl class="credits">${cr.map(([k,v])=>`<dt>${k}</dt><dd>${v}</dd>`).join('')}</dl>
     ${crewSec(f)}
     ${sc.length?`<div class="sec"><h4>${T('放映场次','Screenings')} · ${sc.length}<span class="h4n">${T('点 ☆ 加入想看','Tap ☆ to save')}</span></h4><div class="slist">${sc.map(s=>`<div class="sitem${WANT.has(s.key)?' on':''}"><button type="button" class="wbtn${WANT.has(s.key)?' on':''}" data-want="${s.key}" aria-pressed="${WANT.has(s.key)}" aria-label="${T('想看这一场','Save this screening')}">${WANT.has(s.key)?'★':'☆'}</button><b>${dateL(s.d)} ${wd(s.d)}</b><span class="tt">${s.t}–${s.end}</span><button type="button" class="vnav" data-nav="${s.v}">${esc(venL(s.v))} ›</button>${qaTag(s)}${s.lab?`<span class="sl">${esc(labL(s))}${s.films.length>1?T('：',': ')+s.films.map(x=>x.id===f.id?esc(ftitle(x)):`<button class="pname" data-film="${x.id}">${esc(ftitle(x))}</button>`).join(T('、',', ')):''}</span>`:''}</div>`).join('')}</div></div>`:''}
