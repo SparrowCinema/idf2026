@@ -534,6 +534,11 @@ html{touch-action:manipulation}
 .navpick{display:flex;flex-direction:column;gap:6px;margin:8px 0}.navpick>span{font-size:12px;color:var(--ink-3)}.navchips{display:flex;flex-wrap:wrap;gap:6px}.navchips .chip.on{background:var(--ink);color:var(--bg);border-color:var(--ink)}
 .navmap{display:block;width:100%;height:auto;border-radius:14px;border:1px solid var(--line);margin:12px 0;background:#fff}
 .navsteps{margin:6px 0 10px;padding-left:20px;font-size:13.5px;line-height:1.7;color:var(--ink-2)}
+.crewtag{background:#efe7fb;color:#5b3a99;border-color:transparent}
+.thlist{display:flex;flex-wrap:wrap;gap:6px}.cwarn{margin-top:10px;font-size:12.5px;color:#9a3412;background:#fff1e8;border-radius:8px;padding:7px 10px;line-height:1.5}
+.resultline{flex-wrap:wrap;row-gap:8px}
+.sharebox{margin:20px 0 4px;padding:12px;border-radius:14px;border:1px solid var(--line);background:var(--bg)}.shrow{display:flex;gap:8px;align-items:stretch}.shrow input{flex:1;min-width:0;font:inherit;font-size:16px;padding:10px 12px;border-radius:12px;border:1px solid var(--line);background:var(--paper);color:var(--ink)}.shrow .recapbtn{width:auto;margin:0;padding:10px 14px;white-space:nowrap;font-size:14px}.shareurl{width:100%;margin-top:8px;font:inherit;font-size:13px;padding:8px;border-radius:8px;border:1px solid var(--line);background:var(--paper);color:var(--ink)}
+.mv em.both{background:var(--amber);}
 .planlink{display:block;width:100%;text-align:left;margin:4px 0 12px;padding:12px 14px;border-radius:12px;border:1px dashed color-mix(in srgb,var(--amber) 60%,transparent);background:var(--amber-wash);color:var(--amber-ink);font:inherit;font-size:13.5px;font-weight:600;cursor:pointer}
 .ptools{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:4px 0 6px}.pbuf{display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:12.5px;color:var(--ink-3);width:100%}.ptools .chip.on{background:var(--ink);color:var(--bg);border-color:var(--ink)}
 .plist{min-width:0;display:flex;flex-direction:column;border-top:1px solid var(--line)}
@@ -630,7 +635,8 @@ html[lang="en"] .brand h1{font-size:clamp(22px,3.6vw,34px)}
         <span class="flabel" style="margin-left:8px" data-i="type"></span><div class="frow" id="f-type"></div></div>
       <div class="frow"><span class="flabel" data-i="premiere"></span><div class="frow" id="f-prem"></div></div>
       <div class="frow"><span class="flabel" data-i="day"></span><div class="frow" id="f-day"></div></div>
-      <div class="frow"><span class="flabel" data-i="mine"></span><button class="chip" type="button" id="favFilms" aria-pressed="false"><span data-i="want"></span><span class="n" id="favN">0</span></button><button class="chip" type="button" id="ratedFilms" aria-pressed="false"><span data-i="rated"></span><span class="n" id="ratedN">0</span></button></div>
+      <div class="frow"><span class="flabel" data-i="theme"></span><div class="frow" id="f-theme"></div></div>
+      <div class="frow"><span class="flabel" data-i="mine"></span><button class="chip" type="button" id="favFilms" aria-pressed="false"><span data-i="want"></span><span class="n" id="favN">0</span></button><button class="chip" type="button" id="ratedFilms" aria-pressed="false"><span data-i="rated"></span><span class="n" id="ratedN">0</span></button><button class="chip" type="button" id="crewFilms" aria-pressed="false"><span data-i="crewOnly"></span><span class="n" id="crewN">0</span></button></div>
     </div>
     <div id="progIntro"></div>
     <div class="resultline"><span id="filmSum"></span>
@@ -643,7 +649,7 @@ html[lang="en"] .brand h1{font-size:clamp(22px,3.6vw,34px)}
     <div class="dayseg" id="dayseg" role="tablist" aria-label="Dates"></div>
     <div class="resultline"><span id="scrSum"></span>
       <span class="frow"><span class="seg" role="group" aria-label="View"><button type="button" data-mode="gantt" data-i="gantt"></button><button type="button" data-mode="list" data-i="list"></button></span>
-      <button class="chip" type="button" id="favOnly" aria-pressed="false" data-i="favOnly"></button></span></div>
+      <button class="chip" type="button" id="favOnly" aria-pressed="false" data-i="favOnly"></button><button class="chip" type="button" id="crewOnly" aria-pressed="false" data-i="crewScr"></button></span></div>
     <div class="myrow"><button class="mybtn hot" type="button" id="autoPlan"><span data-i="autoPlan"></span></button><button class="mybtn" type="button" id="myAll"><span data-i="myAll"></span><span class="n" id="myAllN">0</span></button></div>
     <div id="scrList"></div>
   </section>
@@ -687,7 +693,7 @@ const EN=()=>LANG==='en';
 const T=(zh,en)=>EN()?en:zh;
 const F=(o,k)=>EN()&&o[k+'_en']?o[k+'_en']:o[k];
 const I={
- section:['单元','Section'],program:['展播板块','Program'],type:['类型','Type'],premiere:['首映','Premiere'],day:['放映日','Date'],mine:['我的','Mine'],want:['想看场次','My screenings'],rated:['我打过分','Rated by me'],sort:['排序','Sort'],
+ section:['单元','Section'],program:['展播板块','Program'],type:['类型','Type'],premiere:['首映','Premiere'],day:['放映日','Date'],theme:['主题','Theme'],crewOnly:['🎤 主创出席','🎤 Crew attending'],crewScr:['🎤 主创出席场','🎤 Crew attending'],mine:['我的','Mine'],want:['想看场次','My screenings'],rated:['我打过分','Rated by me'],sort:['排序','Sort'],
  gantt:['带轴排片表','Timeline'],list:['列表','List'],favOnly:['只看想看场次','My screenings only'],myAll:['我的全部场次','All my screenings'],autoPlan:['✦ 自动排日程','✦ Auto-plan'],role:['身份','Role'],guestHint:['点击卡片查看完整介绍与相关影片、活动','Tap a card for full bio, related films and events'],
  all:['全部','All'],any:['不限','Any'],back:['‹ 返回','‹ Back']
 };
@@ -921,7 +927,7 @@ function ratingBlock(f){const s=STATS[f.id];const mine=MYR[f.id];const w=wr10(f.
    <div class="rnote">${T(`参考 IMDb 加权算法：打分人数少的影片会向全片平均分靠拢，满 ${MINR} 人后显示。一颗星 = 2 分。`,`IMDb-style weighted rating: films with few votes are pulled toward the overall mean; shown after ${MINR} ratings. One star = 2 points.`)}</div>
    ${RERR?`<div class="rerr">${T('网络不稳，评分已存在本机，稍后会再同步。','Network issue: saved on this device; will sync later.')}</div>`:''}</div>`;}
 function refreshSheetRating(){const el=$('#sheetBody .rate');if(!el)return;const f=films.find(x=>x.id===el.dataset.rid);if(f)el.outerHTML=ratingBlock(f);}
-const FS={section:'all',prog:'all',type:'all',prem:'all',day:'all',sort:'page',fav:false,rated:false};
+const FS={section:'all',prog:'all',type:'all',prem:'all',day:'all',theme:'all',sort:'page',fav:false,rated:false,crew:false};
 function chips(el,opts,key,state,rerender){
   el.innerHTML=opts.map(([v,l,n])=>`<button class="chip" type="button" data-v="${esc(v)}" aria-pressed="${state[key]===v}">${esc(l)}${n!=null?`<span class="n">${n}</span>`:''}</button>`).join('');
   el.onclick=e=>{const b=e.target.closest('.chip');if(!b)return;state[key]=b.dataset.v;el.querySelectorAll('.chip').forEach(c=>c.setAttribute('aria-pressed',c.dataset.v===state[key]));rerender();};
@@ -932,17 +938,37 @@ function initChips(){
   chips($('#f-section'),[['all',i('all'),films.length],['competition',T('“西湖荣誉”评优单元','IDF Competition'),comp],['glory',T('“纪录之光”展播单元','Glory of Documentary'),films.length-comp]],'section',FS,()=>{if(FS.section==='competition'){FS.prog='all';$('#f-prog').value='all';}renderFilms();});
   chips($('#f-type'),[['all',i('all')],['长片',T('长片','Feature'),films.filter(f=>f.type==='长片').length],['短片',T('短片','Short'),films.filter(f=>f.type==='短片').length]],'type',FS,renderFilms);
   chips($('#f-prem'),[['all',i('any')],...prems.map(p=>[p,premL(p),films.filter(f=>f.premiere===p).length])],'prem',FS,renderFilms);
+  chips($('#f-theme'),[['all',i('all')],...THEMES.map(([k])=>[k,thL(k),films.filter(f=>(FTAG[f.id]||[]).includes(k)).length])],'theme',FS,renderFilms);
+  {const n=$('#crewN');if(n)n.textContent=films.filter(f=>crewOf(f).length).length;}
   chips($('#f-day'),[['all',i('any')],...SDAYS.slice(0,4).map(d=>[d,dateL(d)+' '+wd(d),films.filter(f=>scrOf.get(f.id).some(s=>s.d===d)).length])],'day',FS,renderFilms);
   chips($('#f-group'),[['all',i('all'),guests.length],...GROUPS.map(([g])=>[g,grpL(g),guests.filter(x=>x.groups.includes(g)).length])],'group',GS,renderGuests);
 }
 $('#f-prog').onchange=e=>{FS.prog=e.target.value;if(FS.prog!=='all'){FS.section='glory';$('#f-section').querySelectorAll('.chip').forEach(c=>c.setAttribute('aria-pressed',c.dataset.v==='glory'));}renderFilms();};
 $('#favFilms').onclick=e=>{FS.fav=!FS.fav;e.currentTarget.setAttribute('aria-pressed',FS.fav);renderFilms();};
+$('#crewFilms').onclick=e=>{FS.crew=!FS.crew;e.currentTarget.setAttribute('aria-pressed',FS.crew);renderFilms();};
 $('#ratedFilms').onclick=e=>{FS.rated=!FS.rated;e.currentTarget.setAttribute('aria-pressed',FS.rated);renderFilms();};
 $('#sort').onchange=e=>{FS.sort=e.target.value;renderFilms();};
 const progOf=new Map();programs.forEach(p=>p.films.forEach(id=>progOf.set(id,p)));
+/* ---------- crew, themes, content notes ---------- */
+const CREW={"f028": [["张新伟", ["制片人"]]], "f032": [["卡洛琳·基尔贝格", ["制片人"]]], "f040": [["陈玲珍", ["制片人"]], ["陈雨", ["导演"]]], "f050": [["一诺·查卡", ["制片人"]], ["桑霓", ["导演", "制片人"]]], "f074": [["周滔", ["导演"]]], "f078": [["昆顿·米勒", ["导演", "制片人"]]], "f084": [["尼古拉·古罗", ["导演"]]], "f086": [["尼古拉·古罗", ["导演"]]], "f088": [["郑源", ["导演", "制片人"]]], "f098": [["王丹迪", ["制片人"]], ["王小鲁", ["监制"]]], "f104": [["达利娅·扎哈罗娃", ["制片人"]]], "f118": [["李姗姗", ["制片人"]]], "f026": [["穆罕穆德·洛特法利", ["动画导演"]]], "f034": [["田勋", ["监制"]]], "f076": [["伊沃·穆勒", ["主角"]]], "f092": [["耶娃·维韦里泰", ["剪辑师"]]], "f108": [["王寅", ["主角"]]], "f144": [["张峥安", ["摄影师"]]]};
+const CREWR={'导演':'Director','制片人':'Producer','监制':'Executive Producer','动画导演':'Animation Director','主角':'Protagonist','剪辑师':'Editor','摄影师':'Cinematographer'};
+const THEMES=[['mig','移民·流亡','Migration & exile'],['fam','家庭','Family'],['arc','档案影像','Archival footage'],['war','战争·冲突','War & conflict'],['wom','女性','Women'],['ani','动物·自然','Animals & nature'],['city','城市','Cities'],['rur','乡村','Rural life'],['lab','劳动','Labour'],['tech','科技·AI','Tech & AI'],['self','自我·身份','Identity'],['art','艺术与创作','Art & making'],['youth','青少年','Youth'],['faith','信仰','Faith'],['hist','历史','History'],['exp','实验·影像随笔','Experimental & essay'],['love','爱情','Love']];
+const FTAG={"f024": ["lab", "youth"], "f026": ["mig", "wom", "art", "youth"], "f028": ["wom", "fam", "lab"], "f030": ["fam", "ani", "lab"], "f032": ["tech", "arc", "exp"], "f034": ["city", "love"], "f036": ["fam", "ani", "rur"], "f038": ["faith", "rur"], "f040": ["rur", "lab"], "f042": ["self", "faith", "wom"], "f044": ["arc", "mig", "exp", "ani"], "f046": ["lab"], "f048": ["hist", "exp"], "f050": ["ani", "mig", "exp"], "f052": ["lab", "city"], "f058": ["fam", "arc", "self", "hist"], "f062": ["mig", "city", "self"], "f064": ["self", "hist", "mig"], "f066": ["arc", "hist"], "f068": ["mig", "wom", "city"], "f072": ["arc", "hist", "war"], "f074": ["city", "tech", "exp"], "f076": ["exp", "arc"], "f078": ["ani", "arc", "hist"], "f080": ["ani", "faith"], "f084": ["tech", "lab"], "f086": ["tech", "lab"], "f088": ["tech", "exp"], "f092": ["ani", "lab"], "f094": ["youth", "fam", "rur"], "f096": ["exp", "self"], "f098": ["rur", "art", "hist"], "f100": ["art", "self"], "f104": ["war", "city"], "f106": ["mig", "fam"], "f108": ["exp", "ani"], "f112": ["youth"], "f114": ["youth", "city"], "f118": ["fam", "wom", "self"], "f120": ["fam", "mig", "faith", "war"], "f122": ["self", "art"], "f126": ["rur", "lab"], "f128": ["mig", "war"], "f130": ["mig", "city"], "f132": ["war", "ani", "exp"], "f134": ["city", "lab", "hist"], "f138": ["wom", "art"], "f140": ["tech", "exp"], "f142": ["exp"], "f144": ["ani", "exp"]};
+const WARNS={war:['战争影像','War imagery'],vio:['暴力画面','Violence'],death:['死亡','Death'],ill:['重病','Serious illness'],sv:['性暴力话题','Sexual violence (discussed)'],ani:['动物受伤或死亡','Harm to animals'],ext:['极端主义宣传影像','Extremist propaganda imagery']};
+const FWARN={"f024": ["death"], "f030": ["ani"], "f032": ["vio", "ext"], "f034": ["ill"], "f072": ["war"], "f084": ["death"], "f092": ["ani"], "f100": ["death"], "f104": ["war"], "f106": ["vio"], "f118": ["ill"], "f126": ["vio"], "f138": ["sv"], "f144": ["ani", "death"]};
+const thL=k=>{const t=THEMES.find(x=>x[0]===k);return t?T(t[1],t[2]):k;};
+const crewOf=f=>CREW[f.id]||[];
+const hasDir=f=>crewOf(f).some(c=>c[1].includes('导演'));
+const crewTag=f=>{const c=crewOf(f);if(!c.length)return '';return `<span class="tag crewtag">🎤 ${hasDir(f)?T('导演出席','Director attending'):T('主创出席','Crew attending')}</span>`;};
+const scrCrew=s=>s.films.some(f=>crewOf(f).length);
+function crewSec(f){const c=crewOf(f);const th=FTAG[f.id]||[];const w=FWARN[f.id]||[];let h='';
+  if(c.length)h+=`<div class="sec"><h4>🎤 ${T('出席本届的主创','Attending IDF2026')}</h4><div class="links">${c.map(([n,rs])=>{const g=gByName.get(n);return `<button class="lnk" data-guest="${esc(n)}">${esc(g?gname(g):n)}<small>${esc(rs.map(r=>T(r,CREWR[r]||r)).join(' / '))}</small></button>`;}).join('')}</div><p class="h4n" style="display:block;margin-top:6px">${T('名单来自手册的出席嘉宾，具体哪一场有映后交流请以现场安排为准。','From the catalogue guest list; check on site for which screening has a Q&A.')}</p></div>`;
+  if(th.length||w.length)h+=`<div class="sec"><h4>${T('主题','Themes')}</h4><div class="thlist">${th.map(k=>`<button type="button" class="chip thchip" data-theme="${k}">${esc(thL(k))}</button>`).join('')}</div>${w.length?`<div class="cwarn">⚠︎ ${T('内容提示：','Content notes: ')}${w.map(k=>T(WARNS[k][0],WARNS[k][1])).join(T('、',', '))}</div>`:''}<p class="h4n" style="display:block;margin-top:6px">${T('主题与内容提示根据影片简介整理，仅供参考。','Themes and notes are based on the synopsis and are indicative only.')}</p></div>`;
+  return h;}
+
 function filmHay(f){return [f.title,f.title_en,f.director,f.director_en,f.producer,f.producer_en,f.region,f.region_en,f.language,f.language_en,f.year,f.premiere,f.premiere_en,f.program,f.program_en,f.synopsis,f.synopsis_en,f.crew_bio,f.crew_bio_en,f.awards.join(' '),(f.awards_en||[]).join(' ')].join(' ');}
 function renderFilms(){
-  let L=films.filter(f=>(FS.section==='all'||f.section===FS.section)&&(FS.type==='all'||f.type===FS.type)&&(FS.prem==='all'||f.premiere===FS.prem)&&(FS.prog==='all'||programs[+FS.prog].films.includes(f.id))&&(FS.day==='all'||scrOf.get(f.id).some(s=>s.d===FS.day))&&(!FS.fav||wantFilm(f))&&(!FS.rated||MYR[f.id]!=null)&&match(filmHay(f)));
+  let L=films.filter(f=>(FS.section==='all'||f.section===FS.section)&&(FS.type==='all'||f.type===FS.type)&&(FS.prem==='all'||f.premiere===FS.prem)&&(FS.prog==='all'||programs[+FS.prog].films.includes(f.id))&&(FS.day==='all'||scrOf.get(f.id).some(s=>s.d===FS.day))&&(!FS.fav||wantFilm(f))&&(!FS.rated||MYR[f.id]!=null)&&(FS.theme==='all'||(FTAG[f.id]||[]).includes(FS.theme))&&(!FS.crew||crewOf(f).length)&&match(filmHay(f)));
   if(FS.sort==='rt-asc')L=[...L].sort((a,b)=>a.runtime-b.runtime);
   if(FS.sort==='rt-desc')L=[...L].sort((a,b)=>b.runtime-a.runtime);
   if(FS.sort==='first'){const k=f=>{const s=scrOf.get(f.id)[0];return s?s.d+s.t:'99';};L=[...L].sort((a,b)=>k(a)<k(b)?-1:k(a)>k(b)?1:0);}
@@ -959,7 +985,7 @@ function premTag(f){return f.premiere?`<span class="tag prem${f.premiere==='全�
 function secTag(f){const p=progOf.get(f.id);return f.section==='competition'?`<span class="tag comp">${T('西湖荣誉 · 评优入围','IDF Competition')}</span>`:`<span class="tag glory">${T('纪录之光','Glory')} · ${esc(p?F(p,'name'):'')}</span>`;}
 function filmCard(f){
   return `<button class="card" type="button" data-film="${f.id}">
-    <div class="top">${secTag(f)}${premTag(f)}<span class="tag">${esc(TYPEL(f))}</span></div>
+    <div class="top">${secTag(f)}${premTag(f)}<span class="tag">${esc(TYPEL(f))}</span>${crewTag(f)}</div>
     <div class="hrow"><div class="ttl"><h2${EN()?' class="h2en"':''}>${hl(ftitle(f))}</h2><div class="en">${hl(fsub(f))}</div></div><span class="rwrap">${ratingBadge(f)}</span></div>
     <div class="meta"><span>${hl(F(f,'director'))}</span><span>${hl(F(f,'region'))}</span><span>${esc(f.year)}</span><span class="rt">${f.runtime}′</span></div>
     <p class="syn">${hl(F(f,'synopsis'))}</p>
@@ -979,7 +1005,7 @@ function onTap(el,handler){
 }
 /* ---------- schedule view ---------- */
 let SM='gantt';try{SM=localStorage.getItem('idf26mode')||'gantt';}catch(e){}
-const SS={day:null,fav:false};
+const SS={day:null,fav:false,crew:false};
 (function(){const now=new Date();const md=String(now.getMonth()+1)+'.'+String(now.getDate()).padStart(2,'0');SS.day=(now.getFullYear()===2026&&SDAYS.includes(md))?md:'10.23';})();
 const emptySched=()=>SS.fav?T('这一天没有你想看的场次。点场次旁的 ☆ 就能加入。','You have no saved screenings this day. Tap ☆ on a screening to save it.'):T('这一天没有放映。','No screenings this day.');
 function renderSched(){
@@ -987,6 +1013,7 @@ function renderSched(){
   $('#dayseg').innerHTML=SDAYS.map(d=>{const n=SCR.filter(s=>s.d===d).length;return `<button class="dbtn" role="tab" data-day="${d}" aria-selected="${d===SS.day}"><b>${EN()?'Oct '+d.split('.')[1]:d}</b><span>${wd(d)} · ${n}${T(' 场','')}</span></button>`;}).join('');
   let L=SCR.filter(s=>s.d===SS.day);
   if(SS.fav)L=L.filter(s=>WANT.has(s.key));
+  if(SS.crew)L=L.filter(scrCrew);
   $('#scrSum').innerHTML=T(`${SS.day} 共 <b>${L.length}</b> 场${SS.fav?'（想看）':''}`,`${dateL(SS.day)}: <b>${L.length}</b> screening${L.length===1?'':'s'}${SS.fav?' (mine)':''}`);
   document.querySelectorAll('.seg [data-mode]').forEach(b=>b.setAttribute('aria-pressed',b.dataset.mode===SM));
   if(SM==='gantt'){$('#scrList').innerHTML=L.length?gantt(L):`<p class="empty">${emptySched()}</p>`;
@@ -994,7 +1021,7 @@ function renderSched(){
     const now=$('#scrList .gnow');if(now){const w=$('#scrList .gwrap');w.scrollTop=Math.max(0,parseFloat(now.style.top)-120);}return;}
   const ts=[...new Set(L.map(s=>s.t))].sort();
   $('#scrList').innerHTML=L.length?ts.map(t=>{const M=L.filter(s=>s.t===t).sort((a,b)=>a.v-b.v);return `<div class="slot"><div class="sloth"><b>${t}</b><span>${T(`${M.length} 场同时开映`,`${M.length} at once`)}</span></div><div class="sgrid">${M.map(s=>{const fav=WANT.has(s.key);
-    return `<div class="scard${fav?' fav':''}"><div class="vn"><span>${esc(venL(s.v))}</span><span class="tm">${s.end?s.t+'–'+s.end:T('时长待定','TBA')}</span>${s.films.length?`<button type="button" class="wbtn${fav?' on':''}" data-want="${s.key}" aria-pressed="${fav}" aria-label="${T('想看这一场','Save this screening')}">${fav?'★':'☆'}</button>`:''}</div>${s.lab?`<div class="lbl">${esc(labL(s))}</div>`:''}
+    return `<div class="scard${fav?' fav':''}"><div class="vn"><span>${esc(venL(s.v))}</span><span class="tm">${s.end?s.t+'–'+s.end:T('时长待定','TBA')}${scrCrew(s)?' 🎤':''}</span>${s.films.length?`<button type="button" class="wbtn${fav?' on':''}" data-want="${s.key}" aria-pressed="${fav}" aria-label="${T('想看这一场','Save this screening')}">${fav?'★':'☆'}</button>`:''}</div>${s.lab?`<div class="lbl">${esc(labL(s))}</div>`:''}
     ${s.films.length?s.films.map(f=>`<button class="sfilm" type="button" data-film="${f.id}"><span class="st">${MYR[f.id]!=null?fmt1(MYR[f.id]):''}</span><span class="nm${EN()?' en':''}">${esc(ftitle(f))}</span><span class="mn">${f.runtime}′</span></button>`).join(''):`<div class="sfilm"><span class="nm" style="color:var(--ink-3)">${T('片目待颁奖后公布','Titles announced after the awards')}</span></div>`}</div>`;}).join('')}</div></div>`;}).join(''):`<p class="empty">${emptySched()}</p>`;
 }
 function fitGantt(){const w=$('#scrList .gwrap');if(!w)return;
@@ -1015,7 +1042,7 @@ function gantt(L){
   const cols=vs.map(v=>{const B=L.filter(s=>s.v===v).map(s=>{const top=(tmin(s.t)-h0)*PX,ht=(s.dur||90)*PX;const fav=WANT.has(s.key);
      const cp=s.films.length&&s.films.every(f=>f.section==='competition');
      const body=s.films.length?(s.films.length>1?`<span class="gl">${esc(labL(s))}</span>`+s.films.map(f=>`<button class="gf" data-film="${f.id}">${esc(ftitle(f))}<i>${f.runtime}′</i></button>`).join(''):`${s.lab?`<span class="gl">${esc(labL(s))}</span>`:''}<button class="gf gf1${EN()?' en':''}" data-film="${s.films[0].id}">${esc(ftitle(s.films[0]))}</button>`):`<span class="gl">${esc(labL(s))}</span><span class="gf" style="color:var(--ink-3)">${T('片目待公布','Titles TBA')}</span>`;
-     return `<div class="gb${cp?' comp':''}${fav?' fav':''}${s.dur?'':' tbd'}" style="top:${top}px;height:${ht-3}px"${s.films.length===1?` data-film="${s.films[0].id}"`:''}><span class="gt">${s.t}${s.end?'–'+s.end:''}</span>${s.films.length?`<button type="button" class="wbtn g${fav?' on':''}" data-want="${s.key}" aria-pressed="${fav}" aria-label="${T('想看这一场','Save this screening')}">${fav?'★':'☆'}</button>`:''}${body}</div>`;}).join('');
+     return `<div class="gb${cp?' comp':''}${fav?' fav':''}${s.dur?'':' tbd'}" style="top:${top}px;height:${ht-3}px"${s.films.length===1?` data-film="${s.films[0].id}"`:''}><span class="gt">${s.t}${s.end?'–'+s.end:''}${scrCrew(s)?' 🎤':''}</span>${s.films.length?`<button type="button" class="wbtn g${fav?' on':''}" data-want="${s.key}" aria-pressed="${fav}" aria-label="${T('想看这一场','Save this screening')}">${fav?'★':'☆'}</button>`:''}${body}</div>`;}).join('');
     return `<div class="gcol" style="height:${H}px">${B}</div>`;}).join('');
   let nowl='';const n=new Date();const md=String(n.getMonth()+1)+'.'+String(n.getDate()).padStart(2,'0');const nm=n.getHours()*60+n.getMinutes();
   if(n.getFullYear()===2026&&md===SS.day&&nm>=h0&&nm<=h1)nowl=`<div class="gnow" style="top:${(nm-h0)*PX}px"><span>${String(n.getHours()).padStart(2,'0')}:${String(n.getMinutes()).padStart(2,'0')}</span></div>`;
@@ -1028,6 +1055,41 @@ document.querySelector('.seg').onclick=e=>{const b=e.target.closest('[data-mode]
 $('#dayseg').onclick=e=>{const b=e.target.closest('[data-day]');if(!b)return;SS.day=b.dataset.day;renderSched();window.scrollTo({top:0});};
 $('#favOnly').onclick=e=>{SS.fav=!SS.fav;e.currentTarget.setAttribute('aria-pressed',SS.fav);renderSched();};
 $('#myAll').onclick=()=>openMine();
+$('#crewOnly').onclick=e=>{SS.crew=!SS.crew;e.currentTarget.setAttribute('aria-pressed',SS.crew);renderSched();};
+/* ---------- share my schedule ---------- */
+const SITE='https://sparrowcinema.github.io/idf2026/';
+const encPlan=keys=>SCR.filter(s=>keys.has(s.key)).map(s=>s.i.toString(36).padStart(2,'0')).join('');
+const decPlan=c=>{const out=[];for(let k=0;k+1<(c||'').length+1;k+=2){const i=parseInt(c.slice(k,k+2),36);const s=SCR[i];if(s&&!out.includes(s))out.push(s);}return out;};
+let SNAME='';try{SNAME=localStorage.getItem('idf26name')||'';}catch(e){}
+function shareURL(){const u=SITE+'?s='+encPlan(WANT)+(SNAME?'&n='+encodeURIComponent(SNAME):'');return u;}
+async function doShare(){
+  const url=shareURL();const title=T(`${SNAME||'我'}的 IDF2026 观影日程`,`${SNAME||'My'} IDF2026 schedule`);
+  if(navigator.share){try{await navigator.share({title,text:title,url});return;}catch(e){if(e&&e.name==='AbortError')return;}}
+  try{await navigator.clipboard.writeText(url);toast(T('链接已复制，发给朋友吧','Link copied — send it to a friend'));return;}catch(e){}
+  const box=$('#shareBox');if(box){box.hidden=false;const i=box.querySelector('input');i.value=url;i.select();}
+}
+function shareBlock(){return WANT.size?`<div class="sharebox"><div class="shrow"><input type="text" id="shareName" maxlength="12" placeholder="${T('你的名字（可选）','Your name (optional)')}" value="${esc(SNAME)}"><button type="button" class="recapbtn" id="shareBtn">${T('分享日程给朋友','Share with friends')}</button></div><p class="msub" style="margin:6px 0 0">${T('朋友打开链接就能看到你的场次，一键加入他们自己的日程。','Friends can see your screenings and add them to their own schedule in one tap.')}</p><div id="shareBox" hidden><input type="text" readonly class="shareurl"><p class="msub">${T('长按上面的链接复制','Long-press the link to copy')}</p></div></div>`:'';}
+function bindShare(){const b=$('#shareBtn');if(!b)return;const n=$('#shareName');if(n){n.onclick=e=>e.stopPropagation();n.oninput=()=>{SNAME=n.value.trim();try{localStorage.setItem('idf26name',SNAME);}catch(e){}};}b.onclick=e=>{e.stopPropagation();doShare();};}
+let FRIEND=null;
+function openFriend(){
+  const F=FRIEND;if(!F)return;const L=F.list.slice().sort((a,b)=>sStart(a)-sStart(b)||a.v-b.v);
+  const mine=SCR.filter(s=>WANT.has(s.key));
+  const clash=s=>!WANT.has(s.key)&&mine.some(m=>clashes(m,s,0));
+  const both=L.filter(s=>WANT.has(s.key)).length;
+  let h=`<div class="pre">${T('朋友的日程','A friend’s schedule')}</div><h2 id="sheetTitle">${esc(F.name?T(`${F.name}的 IDF2026 日程`,`${F.name}’s IDF2026 schedule`):T('朋友的 IDF2026 日程','A friend’s IDF2026 schedule'))}</h2>
+  <p class="msub">${T(`共 ${L.length} 场${both?`，其中 ${both} 场你也想看`:''}。点 ☆ 加入自己的想看场次。`,`${L.length} screenings${both?`, ${both} also on your list`:''}. Tap ☆ to add to yours.`)}</p>`;
+  if(!L.length)h+=`<p class="nnone">${T('这个链接里没有场次。','No screenings in this link.')}</p>`;
+  SDAYS.forEach(d=>{const D=L.filter(s=>s.d===d);if(!D.length)return;
+    h+=`<h4 class="mday">${dateL(d)} <span>${wd(d)} · ${D.length}${T(' 场','')}</span></h4><div class="mlist">`+D.map(s=>{const on=WANT.has(s.key),cl=clash(s);return `<div class="mrow"><div class="mt"><b>${s.t}</b><span>${s.end||''}</span></div><div class="mb"><div class="mv">${esc(venL(s.v))}${on?`<em class="both">${T('你也想看','You too')}</em>`:''}${cl?`<em>${T('和你的场次冲突','Clashes with yours')}</em>`:''}</div>${s.films.map(f=>`<div class="mf"><button type="button" class="pname" data-film="${f.id}">${esc(ftitle(f))}</button></div>`).join('')}</div><button type="button" class="wbtn${on?' on':''}" data-want="${s.key}" aria-pressed="${on}">${on?'★':'☆'}</button></div>`;}).join('')+'</div>';});
+  const add=L.filter(s=>!WANT.has(s.key));const safe=add.filter(s=>!clash(s));
+  if(add.length)h+=`<div class="pacts"><button type="button" class="recapbtn" id="fAddSafe">${T(`加入不冲突的 ${safe.length} 场`,`Add ${safe.length} non-clashing`)}</button>${safe.length<add.length?`<button type="button" class="chip" id="fAddAll">${T(`全部 ${add.length} 场都加入`,`Add all ${add.length}`)}</button>`:''}</div>`;
+  openSheet(T('朋友的日程','Friend’s schedule'),h,['s','f']);
+  const go=list=>{list.forEach(s=>WANT.add(s.key));saveWant();updFavN();refreshLists();toast(T(`已加入 ${list.length} 场`,`Added ${list.length}`));reFriend();};
+  const a=$('#fAddSafe');if(a)a.onclick=()=>go(safe);const b=$('#fAddAll');if(b)b.onclick=()=>go(add);
+}
+function reFriend(){const sy=sheet.scrollTop,keep=STACK.slice();CUR=null;STACK.length=0;SILENT=true;openFriend();SILENT=false;STACK.push(...keep);$('#sheetBack').hidden=!STACK.length;sheet.scrollTop=sy;}
+(function(){try{const q=new URLSearchParams(location.search);const c=q.get('s');if(c!=null){FRIEND={list:decPlan(c),name:(q.get('n')||'').slice(0,12)};}}catch(e){}})();
+
 $('#autoPlan').onclick=()=>openPlan();
 /* ---------- campus navigation ---------- */
 // map pixel coords on the 1280x1778 campus map
@@ -1100,7 +1162,7 @@ function nowData(){
 const nCd=(s,now)=>{const m=Math.round((sStart(s)-now)/60000);return m<60?T(`${m} 分钟后`,`in ${m} min`):m<1440?T(`${Math.floor(m/60)} 小时 ${m%60} 分后`,`in ${Math.floor(m/60)}h ${m%60}m`):`${dateL(s.d)} ${wd(s.d)} ${s.t}`;};
 const sTitle=s=>s.films.length>1?(labL(s)||T('多部短片','Shorts')):ftitle(s.films[0]);
 function nowRow(s,isLive,now){const fav=WANT.has(s.key);const w=HERE?navRoute(HERE,vPlace(s.v)).min:null;const left=Math.round((sStart(s)-now)/60000);const late=!isLive&&w!=null&&w>left;
-  return `<div class="nrow${fav?' fav':''}"><div class="ncd${isLive?' live':''}">${isLive?T('放映中','Now'):nCd(s,now)}<small>${s.t}${s.end?'–'+s.end:''}</small></div><div class="nb"><div class="nt">${fav?'★ ':''}${s.films.length>1?esc(sTitle(s)):`<button type="button" class="pname" data-film="${s.films[0].id}">${esc(ftitle(s.films[0]))}</button>`}</div>${s.films.length>1?`<div class="nsub">${s.films.map(f=>`<button type="button" class="pname" data-film="${f.id}">${esc(ftitle(f))}</button>`).join(' · ')}</div>`:''}<button type="button" class="nnav${late?' late':''}" data-nav="${s.v}">📍 ${esc(T(VSH[s.v][0],VSH[s.v][1]))}${w===0?` · ${T('就在这里','you are here')}`:w!=null?` · ${T('走过去约','walk')} ${w} ${T('分钟','min')}${late?T('，来不及了','— too late'):''}`:` · ${T('怎么走','directions')}`}</button></div></div>`;}
+  return `<div class="nrow${fav?' fav':''}"><div class="ncd${isLive?' live':''}">${isLive?T('放映中','Now'):nCd(s,now)}<small>${s.t}${s.end?'–'+s.end:''}</small></div><div class="nb"><div class="nt">${fav?'★ ':''}${scrCrew(s)?'🎤 ':''}${s.films.length>1?esc(sTitle(s)):`<button type="button" class="pname" data-film="${s.films[0].id}">${esc(ftitle(s.films[0]))}</button>`}</div>${s.films.length>1?`<div class="nsub">${s.films.map(f=>`<button type="button" class="pname" data-film="${f.id}">${esc(ftitle(f))}</button>`).join(' · ')}</div>`:''}<button type="button" class="nnav${late?' late':''}" data-nav="${s.v}">📍 ${esc(T(VSH[s.v][0],VSH[s.v][1]))}${w===0?` · ${T('就在这里','you are here')}`:w!=null?` · ${T('走过去约','walk')} ${w} ${T('分钟','min')}${late?T('，来不及了','— too late'):''}`:` · ${T('怎么走','directions')}`}</button></div></div>`;}
 function myNext(now){
   const mine=SCR.filter(s=>WANT.has(s.key)).sort((a,b)=>sStart(a)-sStart(b));
   const nxt=mine.find(s=>sStart(s)>now);if(!nxt)return null;
@@ -1254,10 +1316,11 @@ function openMine(){
       body+='</div>';});
   }
   if(other.length)body+=`<h4 class="mday">${T('其他打过分的影片','Other films I rated')}</h4><div class="mlist">${other.map(f=>`<div class="mrow"><div class="mb"><div class="mf"><button type="button" class="pname" data-film="${f.id}">${esc(ftitle(f))}</button><span class="msc">${scorePills(f)}</span></div></div></div>`).join('')}</div>`;
+  body+=shareBlock();
   if(L.length||other.length)body+=`<button type="button" class="recapbtn" id="recapBtn">${T('生成我的 IDF 观影结算图','Create my IDF recap image')}</button><div id="recapOut"></div>`;
   openSheet(T('我的全部场次','All my screenings'),`<div class="pre">${T('我的观影','My Festival')}</div><h2 id="sheetTitle">${T('我的全部场次','All my screenings')}</h2>
     <p class="msub">${T('观众分为 IMDb 式加权评分（满 5 人显示），个人分为你的星级 × 2。','Audience score = IMDb-style weighted rating (shown after 5 ratings); yours = stars × 2.')}</p><button type="button" class="planlink" id="toPlan">✦ ${T('挑好想看的片，自动排出不冲突的日程','Pick films and auto-plan a clash-free schedule')} →</button>${body}`,['m','all']);
-  const b=$('#recapBtn');if(b)b.onclick=showRecap;const tp=$('#toPlan');if(tp)tp.onclick=()=>openPlan();
+  const b=$('#recapBtn');if(b)b.onclick=showRecap;bindShare();const tp=$('#toPlan');if(tp)tp.onclick=()=>openPlan();
 }
 function wrapText(ctx,text,maxW,maxLines){
   const toks=String(text).match(/[⺀-鿿豈-﫿＀-￯　-〿]|[^\s⺀-鿿豈-﫿＀-￯　-〿]+|\s+/g)||[];
@@ -1346,7 +1409,7 @@ onTap($('#guestList'),tg=>{const c=tg.closest&&tg.closest('[data-guest]');if(c){
 /* ---------- sheet ---------- */
 const sheet=$('#sheet'),scrim=$('#scrim');let lastFocus=null;
 const STACK=[];let CUR=null;
-const OPENR=k=>k==='f'?openFilm:k==='m'?openMine:k==='p'?openPlan:k==='n'?(x=>openNav(x)):k==='x'?openNow:openGuest;
+const OPENR=k=>k==='f'?openFilm:k==='m'?openMine:k==='p'?openPlan:k==='n'?(x=>openNav(x)):k==='x'?openNow:k==='s'?openFriend:openGuest;
 let HDEPTH=0,CLOSING=0,SILENT=false;
 let GUARD=false;function armGuard(){if(GUARD)return;try{history.pushState({idfGuard:1},'');GUARD=true;}catch(e){}}
 function pushH(){if(SILENT)return;armGuard();try{history.pushState({idfSheet:HDEPTH+1},'');HDEPTH++;}catch(e){}}
@@ -1395,10 +1458,11 @@ function openFilm(id){
   const cr=[[T('导演','Director'),esc(F(f,'director'))+(EN()?'':(f.director_en?`　<span style="color:var(--ink-3)">${esc(f.director_en)}</span>`:''))],[T('制片人','Producer'),esc(F(f,'producer'))],[T('制片地区','Country / Area'),esc(F(f,'region'))],[T('年份','Year'),esc(f.year)],[T('类型 / 时长','Type / Runtime'),`${esc(TYPEL(f))} · ${f.runtime} ${T('分钟','min')}`],[T('对白语言','Language'),esc(F(f,'language'))],[T('首映','Premiere'),esc(f.premiere?premL(f.premiere):'—')]].filter(r=>r[1]);
   const aw=EN()&&f.awards_en&&f.awards_en.length?f.awards_en:f.awards;
   openSheet(`${f.section==='competition'?T('西湖荣誉 · 评优入围','IDF Competition'):T('纪录之光','Glory')+' · '+(p?F(p,'name'):'')} · ${T('手册','Catalogue')} P.${f.page}`,`
-    <div class="top" style="display:flex;gap:6px;flex-wrap:wrap">${secTag(f)}${premTag(f)}${f.note?`<span class="tag">${T(esc(f.note),'Mary Stephen Retrospective')}</span>`:''}</div>
+    <div class="top" style="display:flex;gap:6px;flex-wrap:wrap">${secTag(f)}${premTag(f)}${crewTag(f)}${f.note?`<span class="tag">${T(esc(f.note),'Mary Stephen Retrospective')}</span>`:''}</div>
     <h2 id="sheetTitle"${EN()?' class="h2en"':''}>${esc(ftitle(f))}</h2><div class="en">${esc(fsub(f))}</div>
     ${ratingBlock(f)}
     <dl class="credits">${cr.map(([k,v])=>`<dt>${k}</dt><dd>${v}</dd>`).join('')}</dl>
+    ${crewSec(f)}
     ${sc.length?`<div class="sec"><h4>${T('放映场次','Screenings')} · ${sc.length}<span class="h4n">${T('点 ☆ 加入想看','Tap ☆ to save')}</span></h4><div class="slist">${sc.map(s=>`<div class="sitem${WANT.has(s.key)?' on':''}"><button type="button" class="wbtn${WANT.has(s.key)?' on':''}" data-want="${s.key}" aria-pressed="${WANT.has(s.key)}" aria-label="${T('想看这一场','Save this screening')}">${WANT.has(s.key)?'★':'☆'}</button><b>${dateL(s.d)} ${wd(s.d)}</b><span class="tt">${s.t}–${s.end}</span><button type="button" class="vnav" data-nav="${s.v}">${esc(venL(s.v))} ›</button>${s.lab?`<span class="sl">${esc(labL(s))}${s.films.length>1?T('：',': ')+s.films.map(x=>x.id===f.id?esc(ftitle(x)):`<button class="pname" data-film="${x.id}">${esc(ftitle(x))}</button>`).join(T('、',', ')):''}</span>`:''}</div>`).join('')}</div></div>`:''}
     <div class="sec"><h4>${T('影片简介','Synopsis')}</h4>${para(F(f,'synopsis'))}${!EN()&&f.synopsis_en?`<details class="more"><summary>English synopsis</summary><p>${esc(f.synopsis_en)}</p></details>`:''}${EN()&&f.synopsis?`<details class="more"><summary>中文简介</summary><p>${esc(f.synopsis)}</p></details>`:''}</div>
     ${F(f,'statement')?`<div class="sec"><h4>${T('导演阐述',"Director's Statement")}</h4>${para(F(f,'statement'))}</div>`:''}
@@ -1423,8 +1487,9 @@ function openGuest(name){
 $('#sheetBody').onclick=e=>{
   const rh=e.target.closest('.rh');if(rh){const id=rh.closest('.rate').dataset.rid;const sc=+rh.dataset.score;setRating(id,MYR[id]===sc?null:sc);return;}
   if(e.target.closest('.rclear')){setRating(e.target.closest('.rate').dataset.rid,null);return;}
+  const thc=e.target.closest('[data-theme]');if(thc){FS.theme=thc.dataset.theme;closeSheet();setTimeout(()=>{go('films');initChips();renderFilms();window.scrollTo(0,0);},30);return;}
   const nv=e.target.closest('[data-nav]');if(nv){openNav(vPlace(+nv.dataset.nav),nv.dataset.navf||undefined);return;}
-  const w=e.target.closest('[data-want]');if(w){toggleWant(w.dataset.want);if(CUR&&CUR[0]==='m'){const sy=sheet.scrollTop,by=$('#sheetBody').scrollTop,keep=STACK.slice();CUR=null;STACK.length=0;SILENT=true;openMine();SILENT=false;STACK.push(...keep);$('#sheetBack').hidden=!STACK.length;sheet.scrollTop=sy;$('#sheetBody').scrollTop=by;return;}const on=WANT.has(w.dataset.want);w.classList.toggle('on',on);w.setAttribute('aria-pressed',on);w.textContent=on?'★':'☆';const it=w.closest('.sitem');if(it)it.classList.toggle('on',on);return;}const a=e.target.closest('[data-film],[data-guest],[data-ev]');if(!a)return;
+  const w=e.target.closest('[data-want]');if(w){toggleWant(w.dataset.want);if(CUR&&CUR[0]==='s'){reFriend();return;}if(CUR&&CUR[0]==='m'){const sy=sheet.scrollTop,by=$('#sheetBody').scrollTop,keep=STACK.slice();CUR=null;STACK.length=0;SILENT=true;openMine();SILENT=false;STACK.push(...keep);$('#sheetBack').hidden=!STACK.length;sheet.scrollTop=sy;$('#sheetBody').scrollTop=by;return;}const on=WANT.has(w.dataset.want);w.classList.toggle('on',on);w.setAttribute('aria-pressed',on);w.textContent=on?'★':'☆';const it=w.closest('.sitem');if(it)it.classList.toggle('on',on);return;}const a=e.target.closest('[data-film],[data-guest],[data-ev]');if(!a)return;
   if(a.dataset.film)openFilm(a.dataset.film);else if(a.dataset.guest)openGuest(a.dataset.guest);
   else{const k=+a.dataset.ev;closeSheet();setTimeout(()=>{go('info');const el=k>=0?document.getElementById('ev'+k):document.getElementById('s-sched');if(el){el.scrollIntoView({block:'center'});const d=el.querySelector('details');if(d)d.open=true;}},30);}};
 
@@ -1567,7 +1632,9 @@ if(!['films','screen','guests','picks','info'].includes(start))start='films';
 try{localStorage.removeItem('idf26fav');}catch(e){}
 updFavN();
 applyStatic();renderInfo();
+if(FRIEND){try{history.replaceState(null,'',location.pathname+location.hash);}catch(e){}start='screen';}
 go(start);
+if(FRIEND)setTimeout(openFriend,250);
 loadStats();
 })();
 </script>
