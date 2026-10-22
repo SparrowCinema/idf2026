@@ -561,6 +561,7 @@ html{touch-action:manipulation}
 .qhint{position:absolute;top:18px;right:18px;font-weight:700;font-size:13px;padding:4px 10px;border-radius:8px;border:2px solid #9ca3af;color:#6b7280;opacity:0;transform:rotate(8deg);transition:opacity .15s}.qcard.goL .qhl{opacity:1}
 .qacts{display:flex;justify-content:center;gap:8px;margin-bottom:20px}.qacts .chip[disabled]{opacity:.4}
 .qdone{text-align:center;padding:40px 10px}.qdone b{font-family:var(--f-display);font-size:24px}.qdone p{color:var(--ink-2)}
+.dbrow{margin:8px 0 2px}.dbbtn{display:inline-flex;align-items:center;gap:4px;font-size:12.5px;font-weight:600;color:#fff;background:#2e963d;border-radius:999px;padding:4px 11px;text-decoration:none}.dbbtn b{font-family:var(--f-mono);font-size:13px}.dbbtn small{font-weight:400;opacity:.85;font-size:11px}.dbmini{color:#2e963d;font-weight:600}
 .planlink{display:block;width:100%;text-align:left;margin:4px 0 12px;padding:12px 14px;border-radius:12px;border:1px dashed color-mix(in srgb,var(--amber) 60%,transparent);background:var(--amber-wash);color:var(--amber-ink);font:inherit;font-size:13.5px;font-weight:600;cursor:pointer}
 .ptools{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:4px 0 6px}.pbuf{display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:12.5px;color:var(--ink-3);width:100%}.ptools .chip.on{background:var(--ink);color:var(--bg);border-color:var(--ink)}
 .plist{min-width:0;display:flex;flex-direction:column;border-top:1px solid var(--line)}
@@ -980,6 +981,11 @@ $('#crewFilms').onclick=e=>{FS.crew=!FS.crew;e.currentTarget.setAttribute('aria-
 $('#ratedFilms').onclick=e=>{FS.rated=!FS.rated;e.currentTarget.setAttribute('aria-pressed',FS.rated);renderFilms();};
 $('#sort').onchange=e=>{FS.sort=e.target.value;renderFilms();};
 const progOf=new Map();programs.forEach(p=>p.films.forEach(id=>progOf.set(id,p)));
+/* ---------- douban ---------- */
+const DOUBAN={"f024": {"id": "37365196"}, "f026": {"id": "37663087"}, "f028": {"id": "36036794"}, "f030": {"id": "36294154"}, "f126": {"id": "36743723", "r": 7.6, "n": 383}};const DB_DATE='10.23';
+const dbURL=f=>{const d=DOUBAN[f.id];return d&&d.id?`https://movie.douban.com/subject/${d.id}/`:`https://search.douban.com/movie/subject_search?search_text=${encodeURIComponent(f.title.split('：')[0])}&cat=1002`;};
+const dbBtn=f=>{const d=DOUBAN[f.id];return `<a class="dbbtn" href="${dbURL(f)}" target="_blank" rel="noopener">${T('豆瓣','Douban')}${d&&d.r?` <b>${d.r.toFixed(1)}</b>`:d&&d.id?` <small>${T('暂无评分','no score')}</small>`:` <small>${T('搜索','search')}</small>`} ↗</a>`;};
+const dbMini=f=>{const d=DOUBAN[f.id];return d&&d.r?`<span class="dbmini">${T('豆瓣','Douban')} ${d.r.toFixed(1)}</span>`:'';};
 /* ---------- crew, themes, content notes ---------- */
 const CREW={"f028": [["张新伟", ["制片人"]]], "f032": [["卡洛琳·基尔贝格", ["制片人"]]], "f040": [["陈玲珍", ["制片人"]], ["陈雨", ["导演"]]], "f050": [["一诺·查卡", ["制片人"]], ["桑霓", ["导演", "制片人"]]], "f074": [["周滔", ["导演"]]], "f078": [["昆顿·米勒", ["导演", "制片人"]]], "f084": [["尼古拉·古罗", ["导演"]]], "f086": [["尼古拉·古罗", ["导演"]]], "f088": [["郑源", ["导演", "制片人"]]], "f098": [["王丹迪", ["制片人"]], ["王小鲁", ["监制"]]], "f104": [["达利娅·扎哈罗娃", ["制片人"]]], "f118": [["李姗姗", ["制片人"]]], "f026": [["穆罕穆德·洛特法利", ["动画导演"]]], "f034": [["田勋", ["监制"]]], "f076": [["伊沃·穆勒", ["主角"]]], "f092": [["耶娃·维韦里泰", ["剪辑师"]]], "f108": [["王寅", ["主角"]]], "f144": [["张峥安", ["摄影师"]]]};
 const CREWR={'导演':'Director','制片人':'Producer','监制':'Executive Producer','动画导演':'Animation Director','主角':'Protagonist','剪辑师':'Editor','摄影师':'Cinematographer'};
@@ -1019,7 +1025,7 @@ function filmCard(f){
   return `<button class="card" type="button" data-film="${f.id}">
     <div class="top">${secTag(f)}${premTag(f)}<span class="tag">${esc(TYPEL(f))}</span>${crewTag(f)}</div>
     <div class="hrow"><div class="ttl"><h2${EN()?' class="h2en"':''}>${hl(ftitle(f))}</h2><div class="en">${hl(fsub(f))}</div></div><span class="rwrap">${ratingBadge(f)}</span></div>
-    <div class="meta"><span>${hl(F(f,'director'))}</span><span>${hl(F(f,'region'))}</span><span>${esc(f.year)}</span><span class="rt">${f.runtime}′</span></div>
+    <div class="meta"><span>${hl(F(f,'director'))}</span><span>${hl(F(f,'region'))}</span><span>${esc(f.year)}</span><span class="rt">${f.runtime}′</span>${dbMini(f)}</div>
     <p class="syn">${hl(F(f,'synopsis'))}</p>
     <div class="scr">${scrOf.get(f.id).map(s=>`<span class="${WANT.has(s.key)?'on':''}">${WANT.has(s.key)?'★ ':''}${esc(scrShort(s))}</span>`).join('')}</div>
     <span class="pg">${T('手册','Catalogue')} P.${esc(f.page)}</span></button>`;
@@ -1149,7 +1155,7 @@ function renderQuick(first){
       <p class="qsyn">${esc(syn.length>120?syn.slice(0,120)+'…':syn)}</p>
       <div class="qstars" role="group" aria-label="${T('打分','Rate')}">${stars}</div><div class="qval" id="qVal">${T('点星星打分，可半星','Tap to rate — halves allowed')}</div>
       <div class="qhint qhl">${T('没看过','Not seen')}</div></div></div>
-    <div class="qacts"><button type="button" class="chip" id="qUndo"${QHIST.length?'':' disabled'}>↶ ${T('上一张','Back')}</button><button type="button" class="chip" id="qSkip">${T('没看过 →','Not seen →')}</button><button type="button" class="chip" data-film="${f.id}">${T('详情','Details')}</button></div>`;}
+    <div class="qacts"><button type="button" class="chip" id="qUndo"${QHIST.length?'':' disabled'}>↶ ${T('撤销重新打分','Undo & re-rate')}</button><button type="button" class="chip" id="qSkip">${T('没看过 →','Not seen →')}</button><button type="button" class="chip" data-film="${f.id}">${T('详情','Details')}</button></div>`;}
   if(first)openSheet(T('快速打分','Quick rate'),h,['q','rate']);else{$('#sheetBody').innerHTML=h;}
   bindQuick();
 }
@@ -1538,6 +1544,7 @@ function openFilm(id){
   openSheet(`${f.section==='competition'?T('西湖荣誉 · 评优入围','IDF Competition'):T('纪录之光','Glory')+' · '+(p?F(p,'name'):'')} · ${T('手册','Catalogue')} P.${f.page}`,`
     <div class="top" style="display:flex;gap:6px;flex-wrap:wrap">${secTag(f)}${premTag(f)}${crewTag(f)}${f.note?`<span class="tag">${T(esc(f.note),'Mary Stephen Retrospective')}</span>`:''}</div>
     <h2 id="sheetTitle"${EN()?' class="h2en"':''}>${esc(ftitle(f))}</h2><div class="en">${esc(fsub(f))}</div>
+    <div class="dbrow">${dbBtn(f)}</div>
     ${ratingBlock(f)}
     <dl class="credits">${cr.map(([k,v])=>`<dt>${k}</dt><dd>${v}</dd>`).join('')}</dl>
     ${crewSec(f)}
