@@ -1076,6 +1076,16 @@ function fitGantt(){const w=$('#scrList .gwrap');if(!w)return;
   const bar=document.querySelector('.tabs');const tb=bar&&getComputedStyle(bar).position==='fixed'?bar.getBoundingClientRect().height:0;
   const vh=(window.visualViewport&&visualViewport.height)||innerHeight;
   w.style.height=Math.max(340,Math.round(vh-stick-tb-14))+'px';
+  if(!w._drag){w._drag=1;const K=0.6;let sx=0,sy=0,sl=0,st=0,act=false,lt=0,lx=0,ly=0,vx=0,vy=0,raf=0;
+    const stop=()=>{if(raf){cancelAnimationFrame(raf);raf=0;}};
+    w.addEventListener('touchstart',e=>{if(e.touches.length!==1)return;stop();const t=e.touches[0];sx=lx=t.clientX;sy=ly=t.clientY;sl=w.scrollLeft;st=w.scrollTop;act=false;lt=performance.now();vx=vy=0;},{passive:true});
+    w.addEventListener('touchmove',e=>{if(e.touches.length!==1)return;const t=e.touches[0];const dx=t.clientX-sx,dy=t.clientY-sy;if(!act&&Math.abs(dx)<6&&Math.abs(dy)<6)return;act=true;
+      const maxT=w.scrollHeight-w.clientHeight,maxL=w.scrollWidth-w.clientWidth;const nt=st-dy*K,nl=sl-dx*K;
+      if((nt<0&&dy>0&&w.scrollTop<=0)||(nt>maxT&&dy<0&&w.scrollTop>=maxT-1)){if(Math.abs(dy)>Math.abs(dx))return;}
+      if(e.cancelable)e.preventDefault();w.scrollTop=Math.max(0,Math.min(maxT,nt));w.scrollLeft=Math.max(0,Math.min(maxL,nl));
+      const now=performance.now(),dt=Math.max(1,now-lt);vx=(t.clientX-lx)/dt*K;vy=(t.clientY-ly)/dt*K;lx=t.clientX;ly=t.clientY;lt=now;},{passive:false});
+    w.addEventListener('touchend',()=>{if(!act)return;act=false;if(performance.now()-lt>80)return;let px=vx*16,py=vy*16;
+      const step=()=>{px*=0.85;py*=0.85;if(Math.abs(px)<0.4&&Math.abs(py)<0.4){raf=0;return;}w.scrollLeft-=px;w.scrollTop-=py;raf=requestAnimationFrame(step);};raf=requestAnimationFrame(step);},{passive:true});}
   if(!w._fit){w._fit=1;w.addEventListener('touchstart',()=>{const ds2=$('#dayseg');const st=ds2&&getComputedStyle(ds2).position==='sticky'?ds2.getBoundingClientRect().height:0;const r=w.getBoundingClientRect();const d=r.top-(st+6);if(Math.abs(d)>6)window.scrollBy({top:d,behavior:'smooth'});},{passive:true});}
 }
 window.addEventListener('resize',()=>{if(SM==='gantt')fitGantt();});
