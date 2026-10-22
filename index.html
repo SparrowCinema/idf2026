@@ -548,6 +548,19 @@ html{touch-action:manipulation}
 .hb{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}.hb .pkbtn{text-align:left}.hb small{font-size:11.5px;color:var(--ink-3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.hm{font-size:11.5px;color:var(--ink-2)}
 .hv{flex:none;display:flex;flex-direction:column;align-items:flex-end}.hv b{font-family:var(--f-mono);font-size:17px;color:var(--amber-ink)}.hv small{font-size:10.5px;color:var(--ink-3)}
 .schips{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;margin:0 0 10px;padding-bottom:2px}.schips::-webkit-scrollbar{display:none}.schips .chip{flex:none}.seg [data-mode]{white-space:nowrap}
+.qprog{display:flex;justify-content:space-between;font-size:12px;color:var(--ink-3);margin:4px 2px 10px}
+.qstack{position:relative;margin:0 0 14px}
+.qcard{position:relative;z-index:2;background:var(--paper);border:1px solid var(--line);border-radius:20px;padding:18px 18px 16px;box-shadow:0 10px 30px rgba(0,0,0,.08);touch-action:pan-y;transition:transform .2s ease;will-change:transform;overflow:hidden}
+.qcard.qback{position:absolute;inset:8px -6px -8px 6px;z-index:1;box-shadow:none;background:var(--bg);transform:rotate(1.5deg)}
+.qtop{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
+.qt{font-family:var(--f-display);font-size:26px;line-height:1.25;margin:0}.qt.en{font-family:var(--f-body);font-size:22px}.qen{font-size:12.5px;color:var(--ink-3);margin:4px 0 8px;letter-spacing:.02em}
+.qmeta{font-size:13px;color:var(--ink-2);margin-bottom:10px}.qsyn{font-size:13px;line-height:1.6;color:var(--ink-2);margin:0 0 14px;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.qstars{display:flex;justify-content:center;gap:6px}.qs{position:relative;width:44px;height:44px}.qs .st5{position:absolute;inset:0;width:100%;height:100%}.qh{position:absolute;top:0;bottom:0;width:50%;z-index:2;border:0;background:none;padding:0;cursor:pointer}.qh.l{left:0}.qh.r{right:0}
+.qval{text-align:center;font-size:12.5px;color:var(--ink-3);margin-top:8px;min-height:20px}.qval b{font-family:var(--f-mono);font-size:22px;color:var(--amber-ink)}
+.qcard.rated{border-color:var(--amber)}
+.qhint{position:absolute;top:18px;right:18px;font-weight:700;font-size:13px;padding:4px 10px;border-radius:8px;border:2px solid #9ca3af;color:#6b7280;opacity:0;transform:rotate(8deg);transition:opacity .15s}.qcard.goL .qhl{opacity:1}
+.qacts{display:flex;justify-content:center;gap:8px;margin-bottom:20px}.qacts .chip[disabled]{opacity:.4}
+.qdone{text-align:center;padding:40px 10px}.qdone b{font-family:var(--f-display);font-size:24px}.qdone p{color:var(--ink-2)}
 .planlink{display:block;width:100%;text-align:left;margin:4px 0 12px;padding:12px 14px;border-radius:12px;border:1px dashed color-mix(in srgb,var(--amber) 60%,transparent);background:var(--amber-wash);color:var(--amber-ink);font:inherit;font-size:13.5px;font-weight:600;cursor:pointer}
 .ptools{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:4px 0 6px}.pbuf{display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:12.5px;color:var(--ink-3);width:100%}.ptools .chip.on{background:var(--ink);color:var(--bg);border-color:var(--ink)}
 .plist{min-width:0;display:flex;flex-direction:column;border-top:1px solid var(--line)}
@@ -1113,6 +1126,49 @@ function reFriend(){const sy=sheet.scrollTop,keep=STACK.slice();CUR=null;STACK.l
 (function(){try{const q=new URLSearchParams(location.search);const c=q.get('s');if(c!=null){FRIEND={list:decPlan(c),name:(q.get('n')||'').slice(0,12)};}}catch(e){}})();
 
 $('#autoPlan').onclick=()=>openPlan();
+/* ---------- swipe-card quick rating ---------- */
+let QSKIP=new Set();try{QSKIP=new Set(JSON.parse(localStorage.getItem('idf26skip')||'[]'));}catch(e){}
+let QHIST=[],QQ=null;
+const saveSkip=()=>{try{localStorage.setItem('idf26skip',JSON.stringify([...QSKIP]));}catch(e){}};
+function qQueue(){const now=Date.now();
+  const seenScore=f=>{const sc=scrOf.get(f.id);const past=sc.some(s=>sStart(s)<now);const mineP=sc.some(s=>WANT.has(s.key)&&sStart(s)<now);return (mineP?0:past?1:2);};
+  return films.filter(f=>MYR[f.id]==null&&!QSKIP.has(f.id)).sort((a,b)=>seenScore(a)-seenScore(b)||(scrOf.get(a.id)[0]?sStart(scrOf.get(a.id)[0]):9e15)-(scrOf.get(b.id)[0]?sStart(scrOf.get(b.id)[0]):9e15));}
+function openQuick(){QQ=qQueue();QHIST=[];renderQuick(true);}
+function renderQuick(first){
+  const f=QQ[0];const done=Object.keys(MYR).filter(id=>fById(id)).length;
+  let h=`<div class="pre">${T('快速打分','Quick rate')}</div><h2 id="sheetTitle">${T('划卡片快速打分','Swipe to rate')}</h2>
+  <p class="msub">${T('看过就点星打分，自动切到下一张；没看过就往左划或点「没看过」。','Tap the stars if you’ve seen it — the next card comes up automatically. Not seen it? Swipe left or tap “Not seen”.')}</p>
+  <div class="qprog"><span>${T(`已打分 ${done} 部`,`${done} rated`)}</span><span>${T(`还剩 ${QQ.length} 张`,`${QQ.length} left`)}</span></div>`;
+  if(!f){h+=`<div class="qdone"><b>${T('全部过完了','All done')}</b><p>${T(`你一共给 ${done} 部影片打了分。`,`You’ve rated ${done} films.`)}</p>${QSKIP.size?`<button type="button" class="chip" id="qReset">${T(`重新看看跳过的 ${QSKIP.size} 部`,`Review ${QSKIP.size} skipped`)}</button>`:''}</div>`;}
+  else{const p=progOf.get(f.id);const syn=(F(f,'synopsis')||'').replace(/\s+/g,' ');
+    let stars='';for(let k=1;k<=5;k++)stars+=`<span class="rs qs" data-k="${k}"><button type="button" class="qh l" data-qs="${k-0.5}" aria-label="${k-0.5}"></button><button type="button" class="qh r" data-qs="${k}" aria-label="${k}"></button><span class="st5"></span></span>`;
+    h+=`<div class="qstack">${QQ[1]?`<div class="qcard qback"></div>`:''}<div class="qcard" id="qCard">
+      <div class="qtop">${secTag(f)}<span class="tag">${esc(TYPEL(f))} · ${f.runtime}′</span>${crewTag(f)}</div>
+      <h3 class="qt${EN()?' en':''}">${esc(ftitle(f))}</h3><div class="qen">${esc(fsub(f))}</div>
+      <div class="qmeta">${esc(F(f,'director'))} · ${esc(F(f,'region'))} · ${esc(f.year)}</div>
+      <p class="qsyn">${esc(syn.length>120?syn.slice(0,120)+'…':syn)}</p>
+      <div class="qstars" role="group" aria-label="${T('打分','Rate')}">${stars}</div><div class="qval" id="qVal">${T('点星星打分，可半星','Tap to rate — halves allowed')}</div>
+      <div class="qhint qhl">${T('没看过','Not seen')}</div></div></div>
+    <div class="qacts"><button type="button" class="chip" id="qUndo"${QHIST.length?'':' disabled'}>↶ ${T('上一张','Back')}</button><button type="button" class="chip" id="qSkip">${T('没看过 →','Not seen →')}</button><button type="button" class="chip" data-film="${f.id}">${T('详情','Details')}</button></div>`;}
+  if(first)openSheet(T('快速打分','Quick rate'),h,['q','rate']);else{$('#sheetBody').innerHTML=h;}
+  bindQuick();
+}
+function qNext(kind){const f=QQ.shift();if(!f)return;QHIST.push([f,kind]);if(kind==='skip'){QSKIP.add(f.id);saveSkip();}renderQuick();}
+function bindQuick(){
+  const B=$('#sheetBody');const card=$('#qCard');
+  const u=$('#qUndo');if(u)u.onclick=e=>{e.stopPropagation();const x=QHIST.pop();if(!x)return;const [f,kind]=x;if(kind==='skip'){QSKIP.delete(f.id);saveSkip();}else setRating(f.id,null);QQ.unshift(f);renderQuick();};
+  const sk=$('#qSkip');if(sk)sk.onclick=e=>{e.stopPropagation();flyOut(-1,()=>qNext('skip'));};
+  const rs=$('#qReset');if(rs)rs.onclick=e=>{e.stopPropagation();QSKIP.clear();saveSkip();QQ=qQueue();renderQuick();};
+  if(!card)return;
+  const paint=v=>card.querySelectorAll('.qs').forEach(el=>{const k=+el.dataset.k;const st=el.querySelector('.st5');st.className='st5'+(v>=k?' full':v>=k-0.5?' half':'');});
+  card.querySelectorAll('[data-qs]').forEach(b=>{b.onclick=e=>{e.stopPropagation();const v=+b.dataset.qs;const f=QQ[0];paint(v);$('#qVal').innerHTML=`<b>${v*2}</b> / 10`;setRating(f.id,v);card.classList.add('rated');setTimeout(()=>flyOut(1,()=>qNext('rate')),420);};});
+  let sx=0,sy=0,dx=0,lock=null;
+  card.addEventListener('touchstart',e=>{e.stopPropagation();if(e.target.closest('[data-qs]'))return;const t=e.touches[0];sx=t.clientX;sy=t.clientY;dx=0;lock=null;card.style.transition='none';},{passive:true});
+  card.addEventListener('touchmove',e=>{e.stopPropagation();const t=e.touches[0];const x=t.clientX-sx,y=t.clientY-sy;if(lock===null&&(Math.abs(x)>8||Math.abs(y)>8))lock=Math.abs(x)>Math.abs(y)?'x':'y';if(lock!=='x')return;if(e.cancelable)e.preventDefault();dx=x;card.style.transform=`translateX(${dx}px) rotate(${dx/18}deg)`;card.classList.toggle('goL',dx<-40);},{passive:false});
+  card.addEventListener('touchend',e=>{e.stopPropagation();card.style.transition='';if(lock==='x'&&dx<-90){flyOut(-1,()=>qNext('skip'));return;}card.style.transform='';card.classList.remove('goL');},{passive:true});
+}
+function flyOut(dir,cb){const c=$('#qCard');if(!c){cb();return;}c.style.transition='transform .28s ease, opacity .28s ease';c.style.transform=`translateX(${dir*130}%) rotate(${dir*14}deg)`;c.style.opacity='0';setTimeout(cb,260);}
+
 /* ---------- campus navigation ---------- */
 // map pixel coords on the 1280x1778 campus map
 const NP={
@@ -1231,7 +1287,7 @@ function openNow(){
 }
 setInterval(()=>{if(TAB==='screen')nowCard();if(CUR&&CUR[0]==='x'){const sy=sheet.scrollTop,keep=STACK.slice();CUR=null;STACK.length=0;SILENT=true;openNow();SILENT=false;STACK.push(...keep);$('#sheetBack').hidden=!STACK.length;sheet.scrollTop=sy;}},60000);
 
-document.addEventListener('click',e=>{if(e.target.closest&&e.target.closest('#navOpen'))openNav(HERE?'b2':'b2');});
+document.addEventListener('click',e=>{if(!e.target.closest)return;if(e.target.closest('#navOpen'))openNav('b2');if(e.target.closest('#toQuick'))openQuick();});
 $('#nowCard').onclick=()=>openNow();
 /* ---------- auto planner ---------- */
 let PSEL=new Set();try{PSEL=new Set(JSON.parse(localStorage.getItem('idf26plan')||'[]'));}catch(e){}
@@ -1341,7 +1397,7 @@ function openMine(){
   body+=shareBlock();
   if(L.length||other.length)body+=`<button type="button" class="recapbtn" id="recapBtn">${T('生成我的 IDF 观影结算图','Create my IDF recap image')}</button><div id="recapOut"></div>`;
   openSheet(T('我的全部场次','All my screenings'),`<div class="pre">${T('我的观影','My Festival')}</div><h2 id="sheetTitle">${T('我的全部场次','All my screenings')}</h2>
-    <p class="msub">${T('观众分为 IMDb 式加权评分（满 5 人显示），个人分为你的星级 × 2。','Audience score = IMDb-style weighted rating (shown after 5 ratings); yours = stars × 2.')}</p><button type="button" class="planlink" id="toPlan">✦ ${T('挑好想看的片，自动排出不冲突的日程','Pick films and auto-plan a clash-free schedule')} →</button>${body}`,['m','all']);
+    <p class="msub">${T('观众分为 IMDb 式加权评分（满 5 人显示），个人分为你的星级 × 2。','Audience score = IMDb-style weighted rating (shown after 5 ratings); yours = stars × 2.')}</p><button type="button" class="planlink" id="toQuick">✦ ${T('划卡片给看过的片快速打分','Swipe to rate films you’ve seen')} →</button><button type="button" class="planlink" id="toPlan">✦ ${T('挑好想看的片，自动排出不冲突的日程','Pick films and auto-plan a clash-free schedule')} →</button>${body}`,['m','all']);
   const b=$('#recapBtn');if(b)b.onclick=showRecap;bindShare();const tp=$('#toPlan');if(tp)tp.onclick=()=>openPlan();
 }
 function wrapText(ctx,text,maxW,maxLines){
@@ -1431,7 +1487,7 @@ onTap($('#guestList'),tg=>{const c=tg.closest&&tg.closest('[data-guest]');if(c){
 /* ---------- sheet ---------- */
 const sheet=$('#sheet'),scrim=$('#scrim');let lastFocus=null;
 const STACK=[];let CUR=null;
-const OPENR=k=>k==='f'?openFilm:k==='m'?openMine:k==='p'?openPlan:k==='n'?(x=>openNav(x)):k==='x'?openNow:k==='s'?openFriend:openGuest;
+const OPENR=k=>k==='f'?openFilm:k==='m'?openMine:k==='p'?openPlan:k==='n'?(x=>openNav(x)):k==='x'?openNow:k==='s'?openFriend:k==='q'?(()=>openQuick()):openGuest;
 let HDEPTH=0,CLOSING=0,SILENT=false;
 let GUARD=false;function armGuard(){if(GUARD)return;try{history.pushState({idfGuard:1},'');GUARD=true;}catch(e){}}
 function pushH(){if(SILENT)return;armGuard();try{history.pushState({idfSheet:HDEPTH+1},'');HDEPTH++;}catch(e){}}
@@ -1538,7 +1594,7 @@ function picksHTML(){
     const byS=films.filter(f=>wr10(f.id)!=null).sort((a,b)=>wr10(b.id)-wr10(a.id)).slice(0,20);
     const tot=Object.values(WSTATS).length?new Set(Object.keys(WSTATS)).size:0;
     const row=(f,k,val)=>{const nx=scrOf.get(f.id).find(s=>sStart(s)>Date.now());return `<li class="hot"><span class="hk${k<3?' top':''}">${k+1}</span><div class="hb"><button type="button" class="pkbtn" data-film="${f.id}">${esc(ftitle(f))}</button><small>${esc(fsub(f))}</small><span class="hm">${nx?T(`下一场 ${dateL(nx.d)} ${nx.t} · ${VSH[nx.v][0]}`,`Next: ${dateL(nx.d)} ${nx.t} · ${VSH[nx.v][1]}`):T('场次已结束','No more screenings')}${crewOf(f).length?' · 🎤':''}</span></div><span class="hv">${val}</span></li>`;};
-    let h=`<div class="pkhead"><h3>${T('观众评分榜','Top rated')}</h3><p>${T(`按观众在本网站的打分，用 IMDb 式加权算法计算，满 ${MINR} 人评分的影片上榜。`,`Audience ratings on this site, IMDb-style weighted; films need ${MINR}+ ratings.`)}</p></div>`;
+    let h=`<button type="button" class="planlink" id="toQuick">✦ ${T('看过几部了？划卡片快速打分','Seen a few? Swipe to rate them quickly')} →</button><div class="pkhead"><h3>${T('观众评分榜','Top rated')}</h3><p>${T(`按观众在本网站的打分，用 IMDb 式加权算法计算，满 ${MINR} 人评分的影片上榜。`,`Audience ratings on this site, IMDb-style weighted; films need ${MINR}+ ratings.`)}</p></div>`;
     h+=byS.length?`<ol class="hotlist">${byS.map((f,k)=>row(f,k,`<b>★ ${fmt1(wr10(f.id))}</b><small>${STATS[f.id].n}${T(' 人评',' votes')}</small>`)).join('')}</ol>`:`<p class="msub">${T(`满 ${MINR} 人评分的影片会出现在这里。`,`Films with ${MINR}+ ratings appear here.`)}</p>`;
     return h;
   }
