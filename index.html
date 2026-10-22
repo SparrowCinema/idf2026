@@ -899,7 +899,7 @@ $('#n-films').textContent=films.length; $('#n-guests').textContent=guests.length
 /* ---------- films ---------- */
 /* my screenings (per viewer, this device) */
 let WANT=new Set();try{WANT=new Set(JSON.parse(localStorage.getItem('idf26want')||'[]'));}catch(e){}
-function saveWant(){try{localStorage.setItem('idf26want',JSON.stringify([...WANT]));}catch(e){}try{syncWants();}catch(e){}}
+function saveWant(){try{localStorage.setItem('idf26want',JSON.stringify([...WANT]));}catch(e){}}
 /* ---------- want counts ---------- */
 let WSTATS={},WS_OK=false,_wsT=null;
 async function loadWants(){if(!SB_ON)return;try{const r=await fetch(SB_URL+'/rest/v1/rpc/want_stats',{headers:{apikey:SB_KEY}});if(!r.ok)return;const a=await r.json();WSTATS={};a.forEach(x=>WSTATS[x.film_id]=x.n);WS_OK=true;refreshLists();if(TAB==='picks'&&PK==='hot')renderPicks();}catch(e){}}
@@ -919,7 +919,7 @@ let DEV='';try{DEV=localStorage.getItem('idf26dev')||'';if(!DEV){DEV=(crypto.ran
 let STATS={};
 const MINR=5;
 let GMEAN=null;
-async function loadStats(){if(!SB_ON)return;try{const r=await fetch(SB_URL+'/rest/v1/rpc/rating_stats',{headers:{apikey:SB_KEY}});if(!r.ok)return;const a=await r.json();STATS={};let sw=0,sn=0;a.forEach(x=>{const avg=x.avg==null?null:Number(x.avg);STATS[x.film_id]={n:x.n,avg};if(avg!=null){sw+=avg*x.n;sn+=x.n;}});GMEAN=sn?sw/sn:null;refreshLists();refreshSheetRating();}catch(e){}}
+async function loadStats(){if(!SB_ON)return;try{const r=await fetch(SB_URL+'/rest/v1/rpc/rating_stats',{headers:{apikey:SB_KEY}});if(!r.ok)return;const a=await r.json();STATS={};let sw=0,sn=0;a.forEach(x=>{const avg=x.avg==null?null:Number(x.avg);STATS[x.film_id]={n:x.n,avg};if(avg!=null){sw+=avg*x.n;sn+=x.n;}});GMEAN=sn?sw/sn:null;refreshLists();refreshSheetRating();if(TAB==='picks'&&PK==='hot')renderPicks();}catch(e){}}
 /* IMDb-style weighted rating: WR=(v/(v+m))R+(m/(v+m))C, m=MINR; returns 10-point score */
 function wr10(id){const s=STATS[id];if(!s||s.avg==null||s.n<MINR)return null;const C=GMEAN==null?s.avg:GMEAN;return 2*((s.n/(s.n+MINR))*s.avg+(MINR/(s.n+MINR))*C);}
 let RERR=false;
@@ -1535,13 +1535,10 @@ function picksHTML(){
   const P=D.picks;if(!P)return '';
   if(PK==='hot'){
     const byW=films.filter(f=>wN(f)).sort((a,b)=>wN(b)-wN(a)||a.page-b.page).slice(0,20);
-    const byS=films.filter(f=>wr10(f.id)!=null).sort((a,b)=>wr10(b.id)-wr10(a.id)).slice(0,10);
+    const byS=films.filter(f=>wr10(f.id)!=null).sort((a,b)=>wr10(b.id)-wr10(a.id)).slice(0,20);
     const tot=Object.values(WSTATS).length?new Set(Object.keys(WSTATS)).size:0;
     const row=(f,k,val)=>{const nx=scrOf.get(f.id).find(s=>sStart(s)>Date.now());return `<li class="hot"><span class="hk${k<3?' top':''}">${k+1}</span><div class="hb"><button type="button" class="pkbtn" data-film="${f.id}">${esc(ftitle(f))}</button><small>${esc(fsub(f))}</small><span class="hm">${nx?T(`下一场 ${dateL(nx.d)} ${nx.t} · ${VSH[nx.v][0]}`,`Next: ${dateL(nx.d)} ${nx.t} · ${VSH[nx.v][1]}`):T('场次已结束','No more screenings')}${crewOf(f).length?' · 🎤':''}</span></div><span class="hv">${val}</span></li>`;};
-    let h=`<div class="pkhead"><h3>${T('热门榜','Popular')}</h3><p>${T('按观众在本网站标记的「想看」实时统计。','Live count of “want to see” marks on this site.')}</p></div>`;
-    h+=`<h4 class="pktier">${T('最多人想看','Most wanted')}</h4>`;
-    h+=byW.length?`<ol class="hotlist">${byW.map((f,k)=>row(f,k,`<b>${wN(f)}</b><small>${T('人想看','want')}</small>`)).join('')}</ol>`:`<p class="msub">${WS_OK?T('还没有人标记想看。去排片表点 ☆，你就是第一个。','No one has marked a film yet. Tap ☆ in the schedule to be the first.'):T('统计加载中，或暂未开放。','Loading, or not yet available.')}</p>`;
-    h+=`<h4 class="pktier">${T('观众评分榜','Top rated')}</h4>`;
+    let h=`<div class="pkhead"><h3>${T('观众评分榜','Top rated')}</h3><p>${T(`按观众在本网站的打分，用 IMDb 式加权算法计算，满 ${MINR} 人评分的影片上榜。`,`Audience ratings on this site, IMDb-style weighted; films need ${MINR}+ ratings.`)}</p></div>`;
     h+=byS.length?`<ol class="hotlist">${byS.map((f,k)=>row(f,k,`<b>★ ${fmt1(wr10(f.id))}</b><small>${STATS[f.id].n}${T(' 人评',' votes')}</small>`)).join('')}</ol>`:`<p class="msub">${T(`满 ${MINR} 人评分的影片会出现在这里。`,`Films with ${MINR}+ ratings appear here.`)}</p>`;
     return h;
   }
@@ -1559,8 +1556,8 @@ function picksHTML(){
       return `<li class="pk"><div class="pkt"><span class="no">${String(n).padStart(2,'0')}</span>${pkTitle(it.id,it.t)}${f?`<span class="pken">${esc(EN()?f.title:f.title_en)}</span>`:''}</div>${it.rec?`<div class="pktx">${para(EN()&&it.rec_en?it.rec_en:it.rec)}</div>`:''}</li>`;}).join('')}</ol>`).join('');
 }
 function renderPicks(){
-  $('#picksView').innerHTML=`<div class="pkwrap"><h2 class="pkh2">${T('片单推荐','Recommended Films')}</h2><p class="lead">${T('观众实时热门榜，以及两份不同视角的观影推荐。点片名可以查看影片详情和放映场次。','A live popularity chart plus two sets of picks from different perspectives. Tap a title for details and screenings. Picks translated from the Chinese.')}</p>
-  <div class="seg pkseg" role="tablist">${[['hot','🔥 热门榜','🔥 Popular'],['zx','张献民片单','ZHANG Xianmin'],['mq','麻雀映画片单','Sparrow Cinema']].map(([k,a,b])=>`<button type="button" data-pk="${k}" aria-pressed="${PK===k}">${T(a,b)}</button>`).join('')}</div>
+  $('#picksView').innerHTML=`<div class="pkwrap"><h2 class="pkh2">${T('片单推荐','Recommended Films')}</h2><p class="lead">${T('观众评分榜，以及两份不同视角的观影推荐。点片名可以查看影片详情和放映场次。','Audience top-rated chart plus two sets of picks from different perspectives. Tap a title for details and screenings. Picks translated from the Chinese.')}</p>
+  <div class="seg pkseg" role="tablist">${[['hot','⭐ 评分榜','⭐ Top rated'],['zx','张献民片单','ZHANG Xianmin'],['mq','麻雀映画片单','Sparrow Cinema']].map(([k,a,b])=>`<button type="button" data-pk="${k}" aria-pressed="${PK===k}">${T(a,b)}</button>`).join('')}</div>
   <div id="pkBody">${picksHTML()}</div></div>`;
 }
 function renderInfo(){
@@ -1669,7 +1666,7 @@ applyStatic();renderInfo();
 if(FRIEND){try{history.replaceState(null,'',location.pathname+location.hash);}catch(e){}start='screen';}
 go(start);
 if(FRIEND)setTimeout(openFriend,250);
-loadStats();loadWants();setTimeout(syncWants,2500);
+loadStats();
 })();
 </script>
 
