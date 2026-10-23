@@ -1006,6 +1006,7 @@ const crewOf=f=>CREW[f.id]||[];
 const hasDir=f=>crewOf(f).some(c=>c[1].includes('导演'));
 const crewTag=f=>{const c=crewOf(f);if(!c.length)return '';return `<span class="tag crewtag">🎤 ${hasDir(f)?T('导演出席','Director attending'):T('主创出席','Crew attending')}</span>`;};
 const scrCrew=s=>s.films.some(f=>crewOf(f).length);
+SCR.forEach(s=>{if(scrCrew(s))s.qa=true;});
 function crewSec(f){const c=crewOf(f);const th=FTAG[f.id]||[];const w=FWARN[f.id]||[];let h='';
   if(c.length)h+=`<div class="sec"><h4>🎤 ${T('出席本届的主创','Attending IDF2026')}</h4><div class="links">${c.map(([n,rs])=>{const g=gByName.get(n);return `<button class="lnk" data-guest="${esc(n)}">${esc(g?gname(g):n)}<small>${esc(rs.map(r=>T(r,CREWR[r]||r)).join(' / '))}</small></button>`;}).join('')}</div><p class="h4n" style="display:block;margin-top:6px">${T('名单来自手册的出席嘉宾，具体哪一场有映后交流请以现场安排为准。','From the catalogue guest list; check on site for which screening has a Q&A.')}</p></div>`;
   if(th.length||w.length)h+=`<div class="sec"><h4>${T('主题','Themes')}</h4><div class="thlist">${th.map(k=>`<button type="button" class="chip thchip" data-theme="${k}">${esc(thL(k))}</button>`).join('')}</div>${w.length?`<div class="cwarn">⚠︎ ${T('内容提示：','Content notes: ')}${w.map(k=>T(WARNS[k][0],WARNS[k][1])).join(T('、',', '))}</div>`:''}<p class="h4n" style="display:block;margin-top:6px">${T('主题与内容提示根据影片简介整理，仅供参考。','Themes and notes are based on the synopsis and are indicative only.')}</p></div>`;
