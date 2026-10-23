@@ -567,6 +567,7 @@ html{touch-action:manipulation}
 .rel{display:flex;flex-direction:column;gap:8px}.relc{display:flex;flex-direction:column;gap:3px;text-align:left;padding:11px 13px;border-radius:12px;border:1px solid var(--line);background:var(--bg);font:inherit;cursor:pointer;color:var(--ink)}.relc b{font-size:15px}.relc .rw{font-size:12.5px;color:var(--amber-ink)}.relc small{font-size:11.5px;color:var(--ink-3)}
 .ah3{font-family:var(--f-display);font-size:18px;margin:22px 0 10px}.tbl.walk th,.tbl.walk td{text-align:center;padding:6px 4px;font-size:12px;white-space:nowrap}.tbl.walk td{font-family:var(--f-mono)}.tbl.walk td.z{color:var(--ink-3)}
 .calbox .calhd{display:flex;justify-content:space-between;align-items:baseline;gap:8px}.calbox .calhd b{font-size:15px}.calbox .calhd span{font-family:var(--f-mono);font-size:11.5px;color:var(--ink-3)}.calrow{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin:0 0 10px}.calrow .msub{margin:0 4px 0 0}.calbox .recapbtn{width:100%;margin:0}.caltip{margin:8px 0 0}.offb{position:fixed;left:50%;transform:translateX(-50%);top:calc(env(safe-area-inset-top) + 8px);z-index:90;background:var(--ink);color:var(--bg);font-size:12px;padding:6px 12px;border-radius:999px;box-shadow:0 4px 16px rgba(0,0,0,.18);white-space:nowrap;max-width:calc(100vw - 32px);overflow:hidden;text-overflow:ellipsis}
+.sup{margin-top:12px}.supz{padding:10px 0;border-top:1px solid var(--line)}.supz:first-of-type{border-top:0;padding-top:2px}.supz h4{margin:0 0 2px;font-size:14.5px}.supz>.msub{margin:0 0 6px}.supg{margin:6px 0 0}.supk{display:block;font-size:12px;font-weight:600;color:var(--ink-3);margin-bottom:2px}.supg ul{list-style:none;margin:0;padding:0}.supg li{display:flex;justify-content:space-between;gap:10px;padding:4px 0;font-size:13.5px;border-bottom:1px dashed var(--line)}.supg li:last-child{border-bottom:0}.supg li b{font-weight:600;min-width:0}.supg li span{color:var(--ink-3);font-size:12px;text-align:right;flex:none;max-width:52%}
 .planlink{display:block;width:100%;text-align:left;margin:4px 0 12px;padding:12px 14px;border-radius:12px;border:1px dashed color-mix(in srgb,var(--amber) 60%,transparent);background:var(--amber-wash);color:var(--amber-ink);font:inherit;font-size:13.5px;font-weight:600;cursor:pointer}
 .ptools{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:4px 0 6px}.pbuf{display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:12.5px;color:var(--ink-3);width:100%}.ptools .chip.on{background:var(--ink);color:var(--bg);border-color:var(--ink)}
 .plist{min-width:0;display:flex;flex-direction:column;border-top:1px solid var(--line)}
@@ -1734,6 +1735,20 @@ function renderPicks(){
   <div class="seg pkseg" role="tablist">${[['hot','⭐ 评分榜','⭐ Top rated'],['zx','张献民片单','ZHANG Xianmin'],['mq','麻雀映画片单','Sparrow Cinema']].map(([k,a,b])=>`<button type="button" data-pk="${k}" aria-pressed="${PK===k}">${T(a,b)}</button>`).join('')}</div>
   <div id="pkBody">${picksHTML()}</div></div>`;
 }
+const SUPPLY=[
+ {z:['杭荟城 · 美院北街','Hanghuicheng · Meiyuan N. St'],note:['校园北侧，北 2 门出、过美院北路即到；离 2、3 号楼和长江影城最近。','Just north of campus via North Gate 2 — closest to Bldgs 2/3 and Changjiang Cinema.'],g:[
+  ['☕',['咖啡','Coffee'],[['星巴克（之江星光荟店）','Starbucks','美院北街 88 号','¥30'],['咖愫','Kasu','杭荟城',''],['库迪咖啡（镜象城店）','Cotti Coffee','镜象城 5 号楼','¥9'],['三土 SAMTO（甜品）','SAMTO dessert','杭荟城 6 号楼 2 楼','¥29']]],
+  ['🍜',['吃饭','Food'],[['永盛茶餐厅','Yongsheng HK café','杭荟城西门旁','¥32'],['汉堡王','Burger King','杭荟城 6 号楼','¥27'],['鱼你在一起（酸菜鱼）','Pickled-fish rice','杭荟城 6 号楼','¥36'],['湘缘道客（湘菜）','Hunan food','杭荟城 6 号楼','¥45'],['窑鸡王','Kiln chicken','杭荟城 9 号楼','¥47'],['土包子（酱肉包）','Tubaozi buns','塘人街市','¥55'],['Grab Bagel','Grab Bagel','塘人街市 1 层','¥42']]],
+  ['🏪',['便利店','Convenience'],[['杭荟城 24h 便利店','24h store','杭荟城 5 号楼',''],['罗森','Lawson','星光荟 7 幢',''],['左邻右舍','Zuolin Youshe','镜象城 1 幢','']]],
+  ['🚻',['洗手间','Restrooms'],[['商场内洗手间','Mall restrooms','杭荟城各楼层',''],['无障碍洗手间','Accessible restroom','美院北街 15 号（星光荟）',''],['公共厕所','Public toilet','直街与美院北街交叉口','']]]]},
+ {z:['美院象山站 · 美院南街','CAA Xiangshan Stn · Meiyuan S. St'],note:['地铁站一带，赶地铁前后顺路。','Around the metro station — handy before or after the train.'],g:[
+  ['☕',['咖啡','Coffee'],[['瑞幸咖啡（象山大厦店）','Luckin','美院南街 89 号 F1','¥13'],['库迪咖啡（华润万家店）','Cotti Coffee','美院南街 89 号 1F','¥9']]],
+  ['🏪',['超市 · 便利店','Shops'],[['华润万家','CR Vanguard','美院南街 89 号',''],['十足便利店','Shizu','6 号线美院象山站 C 口内',''],['左邻右舍','Zuolin Youshe','象山国际广场（C 口步行约 3 分钟）','']]]]},
+ {z:['象山艺术公社','Xiangshan Art Commune'],note:['安静、能坐久一点的咖啡馆。','Quieter cafés for a longer sit.'],g:[
+  ['☕',['咖啡','Coffee'],[['SENSEL 感官咖啡','SENSEL','创意路 313 号 D1 幢','¥37'],['111white 三白','111white','象山艺术区 3 幢 3 楼','¥48'],['色客小馆（咖啡 · 精酿）','Seke café-bar','象山艺术公社 E3','']]]]},
+ {z:['校内','On campus'],note:['高德标有「山北生活区食堂」，但校外人员能否就餐没查到，以现场为准。','Maps show a canteen (Shanbei dining hall); whether visitors can eat there is unconfirmed.'],g:[]}
+];
+function supplyHTML(){return `<div class="box sup"><h3>${T('吃喝补给 · 洗手间','Food, coffee & restrooms')}</h3>${SUPPLY.map(Z=>`<div class="supz"><h4>${esc(T(Z.z[0],Z.z[1]))}</h4><p class="msub">${esc(T(Z.note[0],Z.note[1]))}</p>${Z.g.map(([ic,h,L])=>`<div class="supg"><span class="supk">${ic} ${esc(T(h[0],h[1]))}</span><ul>${L.map(([zh,en,ad,pr])=>`<li><b>${esc(T(zh,en))}</b><span>${esc(ad)}${pr?' · '+pr+T('/人','pp'):''}</span></li>`).join('')}</ul></div>`).join('')}</div>`).join('')}<p class="msub">${T('地点和人均来自高德地图（2026 年 10 月查询），营业时间以现场为准。商场和连锁咖啡店里一般能借到共享充电宝。','Places and prices from Amap (checked Oct 2026); opening hours may vary. Malls and chain cafés usually have power-bank rentals.')}</p></div>`;}
 function aroundHTML(){
   const P=['b2','b3','b11','b8','hhc','ssj','cdm'];
   const nm=k=>T(NP[k].n[0],NP[k].n[1]).replace(/（.*）|\(.*\)/,'').replace(/ ?小剧场/,'').replace('中国国际','').replace('长江影城','').replace(' Theatre','');
@@ -1744,7 +1759,7 @@ function aroundHTML(){
   <div class="cols" style="margin-top:12px">
    <div class="box"><h3>${T('校园 ↔ 杭荟城','Campus ↔ Hanghuicheng')}</h3><p>${T('杭荟城在校园北侧，隔着美院北路。从 2 号楼、3 号楼一带走北 2 门出校，过美院北路即到商场，再上楼到长江影城。从 2 号楼、3 号楼、西湖剧场出发步行约 8–10 分钟（含过马路和上楼），从 11 号楼约 13 分钟。','Hanghuicheng lies just north of campus across Meiyuan North Road. From Bldgs 2/3, leave by North Gate 2, cross the road and go up to Changjiang Cinema — about 8–10 min from Bldgs 2/3 or the West Lake Theater (incl. crossing and stairs), about 13 min from Bldg 11.')}</p></div>
    <div class="box"><h3>${T('地铁 6 号线 · 美院象山站 末班车','Metro Line 6 · last trains at CAA Xiangshan')}</h3><p>${T('往市区（枸桔弄方向）末班约 22:38，部分时段 23:01；往双浦方向约 23:53；往桂花西路方向约 23:43。首班约 06:05–06:13。晚场 19:00 的放映散场后时间充裕。','Towards the city (Gouju Nong) the last train is about 22:38 (23:01 on some patterns); to Shuangpu about 23:53; to Guihua West Rd about 23:43. First trains about 06:05–06:13.')}</p><p class="msub">${T('数据来自地铁通 MetroMan，以车站公告为准。','Source: MetroMan; follow station notices.')}</p></div>
-  </div>`;
+  </div>${supplyHTML()}`;
 }
 function renderInfo(){
 $('#infoBody').innerHTML=`
