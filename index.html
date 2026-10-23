@@ -1639,7 +1639,7 @@ let HDEPTH=0,CLOSING=0,SILENT=false;
 let GUARD=false;function armGuard(){if(GUARD)return;try{history.pushState({idfGuard:1},'');GUARD=true;}catch(e){}}
 function pushH(){if(SILENT)return;armGuard();try{history.pushState({idfSheet:HDEPTH+1},'');HDEPTH++;}catch(e){}}
 function wxHint(){if(!IN_WX||!window.matchMedia('(pointer:coarse)').matches)return;try{if(localStorage.getItem('idf26wxhint'))return;localStorage.setItem('idf26wxhint','1');}catch(e){return;}
-  let el=document.createElement('div');el.className='wxhint';el.innerHTML=`<b>${T('微信里的返回手势','Going back in WeChat')}</b><span>${T('从屏幕中间向右滑，可返回上一层；贴着左边缘右滑会直接退出网页。也可以点右上角的 × 关闭。','Swipe right from the middle of the screen to go back one level — swiping from the very left edge closes the page in WeChat. You can also tap × at the top right.')}</span><button type="button" aria-label="OK">${T('知道了','Got it')}</button>`;
+  document.querySelectorAll('.wxhint').forEach(x=>x.remove());let el=document.createElement('div');el.className='wxhint';el.innerHTML=`<b>${T('微信里的返回手势','Going back in WeChat')}</b><span>${T('从屏幕中间向右滑，可返回上一层；贴着左边缘右滑会直接退出网页。也可以点右上角的 × 关闭。','Swipe right from the middle of the screen to go back one level — swiping from the very left edge closes the page in WeChat. You can also tap × at the top right.')}</span><button type="button" aria-label="OK">${T('知道了','Got it')}</button>`;
   document.body.appendChild(el);requestAnimationFrame(()=>el.classList.add('on'));const off=()=>{el.classList.remove('on');setTimeout(()=>el.remove(),300);};el.querySelector('button').onclick=e=>{e.stopPropagation();off();};setTimeout(off,7000);}
 function openSheet(crumb,html,ref){if(ref){const isNew=!CUR||CUR[0]!==ref[0]||CUR[1]!==ref[1];if(sheet.classList.contains('on')&&CUR&&isNew)STACK.push(CUR);if(isNew)pushH();CUR=ref;}$('#sheetBack').hidden=!STACK.length;lastFocus=lastFocus||document.activeElement;$('#crumb').textContent=crumb;$('#sheetBody').innerHTML=html;sheet.scrollTop=0;$('#sheetBody').scrollTop=0;sheet.classList.add('on');scrim.classList.add('on');document.body.style.overflow='hidden';wxHint();if(!window.matchMedia('(pointer:coarse)').matches){try{$('#sheetClose').focus({preventScroll:true});}catch(e){}}}
 function closeSheet(fromPop){if(fromPop!==true&&HDEPTH>0){const n=HDEPTH;HDEPTH=0;CLOSING++;try{history.go(-n);}catch(e){CLOSING--;}}HDEPTH=fromPop===true?0:HDEPTH;sheet.style.transform='';STACK.length=0;CUR=null;refreshLists();sheet.classList.remove('on');scrim.classList.remove('on');document.body.style.overflow='';if(lastFocus){try{lastFocus.focus();}catch(e){}}lastFocus=null;}
@@ -1923,6 +1923,9 @@ applyStatic();renderInfo();
 if(FRIEND||RESTORE){try{history.replaceState(null,'',location.pathname+location.hash);}catch(e){}if(FRIEND)start='screen';}
 go(start);
 if(FRIEND)setTimeout(openFriend,250);else if(RESTORE)setTimeout(openRestore,250);
+if(IN_WX)setTimeout(()=>{if(document.querySelector('.wxhint'))return;let k=null;try{if(localStorage.getItem('idf26wxfloat'))return;localStorage.setItem('idf26wxfloat','1');}catch(e){return;}
+  const el=document.createElement('div');el.className='wxhint';el.innerHTML=`<b>${T('添加到浮窗，随时打开','Keep it as a WeChat Floating Window')}</b><span>${T('点右上角「···」，选择「浮窗」。之后在微信里可以从浮窗直接回到手册，不用再翻聊天记录找链接。','Tap “···” at the top right and choose “Floating Window” (浮窗) — you can then reopen the guide from WeChat any time without hunting for the link.')}</span><button type="button">${T('知道了','Got it')}</button>`;
+  document.body.appendChild(el);requestAnimationFrame(()=>el.classList.add('on'));const off=()=>{el.classList.remove('on');setTimeout(()=>el.remove(),300);};el.querySelector('button').onclick=e=>{e.stopPropagation();off();};setTimeout(off,9000);},1800);
 loadStats();
 })();
 </script>
