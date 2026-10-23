@@ -1925,9 +1925,9 @@ applyStatic();renderInfo();
 if(FRIEND||RESTORE){try{history.replaceState(null,'',location.pathname+location.hash);}catch(e){}if(FRIEND)start='screen';}
 go(start);
 if(FRIEND)setTimeout(openFriend,250);else if(RESTORE)setTimeout(openRestore,250);
-if(IN_WX)setTimeout(()=>{if(document.querySelector('.wxhint'))return;let k=null;try{if(localStorage.getItem('idf26wxfloat'))return;localStorage.setItem('idf26wxfloat','1');}catch(e){return;}
-  const el=document.createElement('div');el.className='wxhint';el.innerHTML=`<b>${T('添加到浮窗，随时打开','Keep it as a WeChat Floating Window')}</b><span>${T('点右上角「···」，选择「浮窗」。之后在微信里可以从浮窗直接回到手册，不用再翻聊天记录找链接。','Tap “···” at the top right and choose “Floating Window” (浮窗) — you can then reopen the guide from WeChat any time without hunting for the link.')}</span><button type="button">${T('知道了','Got it')}</button>`;
-  document.body.appendChild(el);requestAnimationFrame(()=>el.classList.add('on'));const off=()=>{el.classList.remove('on');setTimeout(()=>el.remove(),300);};el.querySelector('button').onclick=e=>{e.stopPropagation();off();};setTimeout(off,9000);},1800);
+if(IN_WX)setTimeout(()=>{if(document.querySelector('.wxhint'))return;let k=null;try{if(localStorage.getItem('idf26wxtip'))return;localStorage.setItem('idf26wxtip','1');}catch(e){return;}
+  const el=document.createElement('div');el.className='wxhint';el.innerHTML=`<b>${T('微信内使用提示','Using this guide in WeChat')}</b><span>${T('为获得完整体验（如导入手机日历、返回手势），建议点击右上角「···」，选择「在浏览器中打开」，使用系统默认浏览器或 Chrome 浏览。如继续在微信中使用，可点击右上角「···」，选择「浮窗」，以便随时返回本手册。','For the full experience (calendar import, back gestures), tap “···” at the top right and choose “Open in Browser” to use your default browser or Chrome. To stay in WeChat, tap “···” and choose “Floating Window” (浮窗) so you can return to the guide at any time.')}</span><button type="button">${T('知道了','Got it')}</button>`;
+  document.body.appendChild(el);requestAnimationFrame(()=>el.classList.add('on'));const off=()=>{el.classList.remove('on');setTimeout(()=>el.remove(),300);};el.querySelector('button').onclick=e=>{e.stopPropagation();off();};setTimeout(off,12000);},1800);
 loadStats();
 })();
 </script>
