@@ -1063,9 +1063,11 @@ function renderSched(){
   if(SS.qa)L=L.filter(s=>s.qa);
   $('#scrSum').innerHTML=T(`${SS.day} 共 <b>${L.length}</b> 场${SS.fav?'（想看）':''}`,`${dateL(SS.day)}: <b>${L.length}</b> screening${L.length===1?'':'s'}${SS.fav?' (mine)':''}`);
   document.querySelectorAll('.seg [data-mode]').forEach(b=>b.setAttribute('aria-pressed',b.dataset.mode===SM));
-  if(SM==='gantt'){$('#scrList').innerHTML=L.length?gantt(L):`<p class="empty">${emptySched()}</p>`;
-    fitGantt();
-    const now=$('#scrList .gnow');if(now){const w=$('#scrList .gwrap');w.scrollTop=Math.max(0,parseFloat(now.style.top)-120);}return;}
+  if(SM==='gantt'){const ow=$('#scrList .gwrap');const keep=ow&&renderSched._k===SS.day+'|'+SS.fav+SS.qa+SS.crew?[ow.scrollTop,ow.scrollLeft]:null;const py=window.scrollY;
+    $('#scrList').innerHTML=L.length?gantt(L):`<p class="empty">${emptySched()}</p>`;renderSched._k=SS.day+'|'+SS.fav+SS.qa+SS.crew;
+    fitGantt();const w=$('#scrList .gwrap');
+    if(w&&keep){w.scrollTop=keep[0];w.scrollLeft=keep[1];window.scrollTo(0,py);}
+    else{const now=$('#scrList .gnow');if(now&&w){w.scrollTop=Math.max(0,parseFloat(now.style.top)-120);}}return;}
   const ts=[...new Set(L.map(s=>s.t))].sort();
   $('#scrList').innerHTML=L.length?ts.map(t=>{const M=L.filter(s=>s.t===t).sort((a,b)=>a.v-b.v);return `<div class="slot"><div class="sloth"><b>${t}</b><span>${T(`${M.length} 场同时开映`,`${M.length} at once`)}</span></div><div class="sgrid">${M.map(s=>{const fav=WANT.has(s.key);
     return `<div class="scard${fav?' fav':''}"><div class="vn"><span>${esc(venL(s.v))}</span><span class="tm">${s.end?s.t+'–'+s.end:T('时长待定','TBA')}${scrCrew(s)?' 🎤':''}</span>${qaTag(s)}${s.films.length?`<button type="button" class="wbtn${fav?' on':''}" data-want="${s.key}" aria-pressed="${fav}" aria-label="${T('想看这一场','Save this screening')}">${fav?'★':'☆'}</button>`:''}</div>${s.lab?`<div class="lbl">${esc(labL(s))}</div>`:''}
