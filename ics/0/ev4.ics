@@ -1,0 +1,21 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Sparrow Cinema//IDF2026//ZH
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+X-WR-CALNAME:IDF2026
+X-WR-TIMEZONE:Asia/Shanghai
+BEGIN:VEVENT
+UID:ev4@idf2026.sparrowcinema
+DTSTAMP:20261023T051232Z
+DTSTART:20261025T020000Z
+DTEND:20261025T030000Z
+SUMMARY:第一场｜未竟的档案——历史的现场、记忆的再
+ 造与未来的显影
+LOCATION:中国美术学院象山校区 · 水岸山居 会议室，杭
+ 州
+DESCRIPTION:创作研讨｜实验无疆\nhttps://sparrowcinema.github.io/
+ idf2026/
+URL:https://sparrowcinema.github.io/idf2026/
+END:VEVENT
+END:VCALENDAR

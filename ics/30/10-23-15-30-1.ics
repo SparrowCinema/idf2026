@@ -1,0 +1,27 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Sparrow Cinema//IDF2026//ZH
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+X-WR-CALNAME:IDF2026
+X-WR-TIMEZONE:Asia/Shanghai
+BEGIN:VEVENT
+UID:10.23-15:30-1@idf2026.sparrowcinema
+DTSTAMP:20261023T051232Z
+DTSTART:20261023T073000Z
+DTEND:20261023T091500Z
+SUMMARY:IDF · 无限之河 / 居民们 / 清点（含映后）
+LOCATION:中国美术学院象山校区 · 3 号楼 113 小剧场，杭
+ 州
+DESCRIPTION:无限之河 — 贡萨洛·皮纳\n居民们 — 莫琳·法
+ 森代洛\n清点 — 伊万·马尔科维奇\n映后交流约 20 分钟
+ \n座位预约请以官方小程序为准\nhttps://sparrowcinema.github.
+ io/idf2026/
+URL:https://sparrowcinema.github.io/idf2026/
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:IDF · 无限之河 / 居民们 / 清点（含映后）
+TRIGGER:-PT30M
+END:VALARM
+END:VEVENT
+END:VCALENDAR

@@ -1,0 +1,22 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Sparrow Cinema//IDF2026//ZH
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+X-WR-CALNAME:IDF2026
+X-WR-TIMEZONE:Asia/Shanghai
+BEGIN:VEVENT
+UID:10.23-10:00-5@idf2026.sparrowcinema
+DTSTAMP:20261023T051232Z
+DTSTART:20261023T020000Z
+DTEND:20261023T035600Z
+SUMMARY:IDF · 涅科 / 寻找木屋的女孩 / 咒语 / 丘拉（含映
+ 后）
+LOCATION:中国美术学院象山校区 · 西湖剧场，杭州
+DESCRIPTION:涅科 — 伊内斯·奥利维拉\n寻找木屋的女孩 —
+  范妮·蒙特\n咒语 — 郑陆心源\n丘拉 — 伊芙吉妮娅·
+ 阿布盖娃\n映后交流约 20 分钟\n座位预约请以官方小程
+ 序为准\nhttps://sparrowcinema.github.io/idf2026/
+URL:https://sparrowcinema.github.io/idf2026/
+END:VEVENT
+END:VCALENDAR

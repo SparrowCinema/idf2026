@@ -1,0 +1,21 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Sparrow Cinema//IDF2026//ZH
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+X-WR-CALNAME:IDF2026
+X-WR-TIMEZONE:Asia/Shanghai
+BEGIN:VEVENT
+UID:10.23-15:30-4@idf2026.sparrowcinema
+DTSTAMP:20261023T051232Z
+DTSTART:20261023T073000Z
+DTEND:20261023T090900Z
+SUMMARY:IDF · 白银（含映后）
+LOCATION:中国美术学院象山校区 · 11 号楼 113 小剧场，杭
+ 州
+DESCRIPTION:白银 — 娜塔莉亚·康尼亚什\n映后交流约 20 分
+ 钟\n座位预约请以官方小程序为准\nhttps://sparrowcinema.gith
+ ub.io/idf2026/
+URL:https://sparrowcinema.github.io/idf2026/
+END:VEVENT
+END:VCALENDAR

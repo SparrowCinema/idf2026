@@ -1,0 +1,20 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Sparrow Cinema//IDF2026//ZH
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+X-WR-CALNAME:IDF2026
+X-WR-TIMEZONE:Asia/Shanghai
+BEGIN:VEVENT
+UID:10.23-19:00-0@idf2026.sparrowcinema
+DTSTAMP:20261023T051232Z
+DTSTART:20261023T110000Z
+DTEND:20261023T123700Z
+SUMMARY:IDF · 狐与粉月（含映后）
+LOCATION:中国美术学院象山校区 · 2 号楼小剧场，杭州
+DESCRIPTION:狐与粉月 — 梅尔达德·奥斯库维、索拉娅·阿
+ 赫拉希\n映后交流约 20 分钟\n座位预约请以官方小程序
+ 为准\nhttps://sparrowcinema.github.io/idf2026/
+URL:https://sparrowcinema.github.io/idf2026/
+END:VEVENT
+END:VCALENDAR

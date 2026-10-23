@@ -1,0 +1,20 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Sparrow Cinema//IDF2026//ZH
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+X-WR-CALNAME:IDF2026
+X-WR-TIMEZONE:Asia/Shanghai
+BEGIN:VEVENT
+UID:10.23-15:30-0@idf2026.sparrowcinema
+DTSTAMP:20261023T051232Z
+DTSTART:20261023T073000Z
+DTEND:20261023T091400Z
+SUMMARY:IDF · 最好在野外疯狂（含映后）
+LOCATION:中国美术学院象山校区 · 2 号楼小剧场，杭州
+DESCRIPTION:最好在野外疯狂 — 米罗·雷莫\n映后交流约 20 
+ 分钟\n座位预约请以官方小程序为准\nhttps://sparrowcinema.g
+ ithub.io/idf2026/
+URL:https://sparrowcinema.github.io/idf2026/
+END:VEVENT
+END:VCALENDAR
