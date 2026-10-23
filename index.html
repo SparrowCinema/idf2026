@@ -1947,8 +1947,8 @@ const TABS=document.querySelector('.tabs'),TABHOME=TABS.parentNode,MQ=window.mat
 function placeTabs(){if(MQ.matches){if(TABS.parentNode!==document.body)document.body.appendChild(TABS);}else if(TABS.parentNode!==TABHOME)TABHOME.insertBefore(TABS,TABHOME.firstChild);}
 placeTabs();try{MQ.addEventListener('change',placeTabs);}catch(e){MQ.addListener&&MQ.addListener(placeTabs);}
 let start=(location.hash||'').slice(1);
-if(!['films','screen','guests','picks','info'].includes(start)){try{start=localStorage.getItem('idf26tab')||'films';}catch(e){start='films';}}
-if(!['films','screen','guests','picks','info'].includes(start))start='films';
+if(!['films','screen','guests','picks','info'].includes(start)){try{start=localStorage.getItem('idf26tab')||'screen';}catch(e){start='screen';}}
+if(!['films','screen','guests','picks','info'].includes(start))start='screen';
 try{localStorage.removeItem('idf26fav');}catch(e){}
 updFavN();
 applyStatic();renderInfo();
