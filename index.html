@@ -1205,8 +1205,9 @@ function openRestore(){const B=RESTORE;if(!B)return;
   $('#rsGo').onclick=()=>{w.forEach(k=>WANT.add(k));saveWant();r.forEach(id=>{MYR[id]=B.r[id];});try{localStorage.setItem('idf26rate',JSON.stringify(MYR));}catch(e){}
     (B.p||[]).forEach(k=>PSEL.add(k));savePlan();if(B.n&&!SNAME){SNAME=B.n;try{localStorage.setItem('idf26name',SNAME);}catch(e){}}
     if(B.d&&B.d!==DEV&&r.length){DEV=B.d;try{localStorage.setItem('idf26dev',DEV);}catch(e){}}
-    RESTORE=null;updFavN();refreshLists();if(typeof renderSched==='function')renderSched();toast(T('已恢复','Restored'));setTimeout(()=>{CUR=null;STACK.length=0;openMine();},300);};}
-(function(){try{const q=new URLSearchParams(location.search);const c=q.get('b');if(c){const o=JSON.parse(b64d(c));if(o&&o.v===1)RESTORE=o;}}catch(e){}})();
+    RESTORE=null;updFavN();refreshLists();if(typeof renderSched==='function')renderSched();toast(T('已恢复','Restored'));setTimeout(()=>{CUR=null;STACK.length=0;openMine();if(TOCAL){TOCAL=false;setTimeout(()=>{const cb=document.querySelector('.calbox');if(cb)cb.scrollIntoView({behavior:'smooth',block:'start'});},200);}},300);};}
+let TOCAL=false;
+(function(){try{const q=new URLSearchParams(location.search);const c=q.get('b');TOCAL=q.get('cal')==='1';if(c){const o=JSON.parse(b64d(c));if(o&&o.v===1)RESTORE=o;}}catch(e){}})();
 /* ---------- export to phone calendar (.ics) ---------- */
 let CALA=15;try{const v=localStorage.getItem('idf26alarm');if(v!=null)CALA=+v;}catch(e){}
 const IN_WX=/MicroMessenger/i.test(navigator.userAgent);
@@ -1240,12 +1241,12 @@ function calEv(s){const st=icsUTC(s),en=st+((s.dur||90)+(s.qa?QA_MIN:0))*60000;c
   return {st,en,sum:(s.ev!=null?'':'IDF · ')+title+(s.qa?T('（含映后）',' (+Q&A)'):''),loc:(vPlace(s.v)==='hhc'?'':T('中国美术学院象山校区 · ','China Academy of Art, Xiangshan Campus · '))+venL(s.v)+T('，杭州',', Hangzhou')};}
 const andIntent=s=>{const e=calEv(s);const q=v=>encodeURIComponent(v);return `intent:#Intent;action=android.intent.action.INSERT;type=vnd.android.cursor.item/event;S.title=${q(e.sum)};l.beginTime=${e.st};l.endTime=${e.en};S.eventLocation=${q(e.loc)};S.description=${q(SITE)};end`;};
 function calBlock(){if(!WANT.size)return '';const L=calList();const n=L.length;
-  const main=IS_IOS?T('一次性导出全部场次','Export all at once'):IS_AND?T('下载日历文件（.ics）','Download calendar file (.ics)'):T('导出到日历','Export to calendar');
+  const main=IOS_SAFARI?T('一次性导出全部场次','Export all at once'):IS_IOS?T('在 Safari 中打开并添加','Open in Safari to add'):IS_AND?T('下载日历文件（.ics）','Download calendar file (.ics)'):T('导出到日历','Export to calendar');
   let extra='';
-  if(IS_IOS&&!IN_WX&&n)extra+=`<details class="calone" open><summary>${T('逐场添加到日历（推荐）','Add screenings one by one (recommended)')}</summary><p class="msub">${T('点「添加」会打开系统日历的添加页面，确认即可，提醒时间按上面的选择。','Each tap opens the system “Add to Calendar” page — just confirm. Reminders follow the setting above.')}</p><ul>${L.map(s=>{const e=calEv(s);return `<li><span><b>${s.d} ${s.t}</b>${esc(e.sum)}</span><a class="amap" href="${icsURL(s)}">${T('添加','Add')}</a></li>`;}).join('')}</ul></details>`;
+  if(IS_IOS&&!IN_WX&&n)extra+=`<details class="calone"${IOS_SAFARI?' open':''}><summary>${IOS_SAFARI?T('逐场添加到日历（推荐）','Add screenings one by one (recommended)'):T('逐场添加到日历','Add screenings one by one')}</summary><p class="msub">${T('点「添加」会打开系统日历的添加页面，确认即可，提醒时间按上面的选择。','Each tap opens the system “Add to Calendar” page — just confirm. Reminders follow the setting above.')}</p><ul>${L.map(s=>{const e=calEv(s);return `<li><span><b>${s.d} ${s.t}</b>${esc(e.sum)}</span><a class="amap" href="${icsURL(s)}">${T('添加','Add')}</a></li>`;}).join('')}</ul></details>`;
   if(IS_AND&&!IN_WX&&n)extra+=`<details class="calone"><summary>${T('逐场添加到系统日历','Add screenings one by one')}</summary><p class="msub">${T('适用于 Google 日历等无法打开 .ics 文件的日历。点一场会打开日历的新建页面，确认保存即可（提醒时间以日历默认设置为准）。','For calendars that can’t open .ics files, such as Google Calendar. Each tap opens your calendar’s new-event screen — just save (reminder follows your calendar’s default).')}</p><ul>${L.map(s=>{const e=calEv(s);const d=new Date(e.st+8*3600000);return `<li><span><b>${s.d} ${s.t}</b>${esc(e.sum)}</span><a class="amap" href="${andIntent(s)}">${T('添加','Add')}</a></li>`;}).join('')}</ul></details>`;
   const how=IOS_SAFARI?T('Safari 会提示下载 IDF2026.ics：点「下载」后，再点地址栏左侧的下载图标打开文件，选择「全部添加」。若嫌麻烦，可直接用下方「逐场添加」。','Safari will offer to download IDF2026.ics — tap Download, open it from the downloads icon in the address bar and choose “Add All”. Or use “Add one by one” below.')
-    :IS_IOS?T(`${BRANDF()?BRANDF()+' ':'当前浏览器'}会下载 IDF2026.ics：在下载提示或「文件」App 中打开它，选择「添加到日历」。也可以直接用下方「逐场添加」。`,`${BRANDF()||'Your browser'} will download IDF2026.ics — open it from the download prompt or the Files app and choose “Add to Calendar”. Or use “Add one by one” below.`)
+    :IS_IOS?T(`iPhone 上只有 Safari 能直接调起系统日历，${BRANDF()?BRANDF()+' ':'当前浏览器'}暂不支持。点上方按钮会自动跳到 Safari，并带上你的想看场次和评分；在 Safari 中点「恢复到这台设备」，再点「添加」即可。`,`On iPhone only Safari can open the system calendar; ${BRANDF()||'this browser'} can’t. The button above switches to Safari and carries over your saved screenings and ratings — tap “Restore to this device”, then “Add”.`)
     :IS_AND?T('下载后在通知栏或「文件管理 / 下载」中打开 IDF2026.ics，选择系统日历导入。华为、小米、OPPO、vivo、荣耀、三星等系统日历可直接导入；使用 Google 日历的话，请用下方「逐场添加」。','Open IDF2026.ics from the notification or your Downloads and import it with your calendar app. Most system calendars (Samsung, Xiaomi, Huawei, OPPO, vivo…) can import it; for Google Calendar use “Add screenings one by one” below.')
     :T('下载 IDF2026.ics 后双击打开，即可导入电脑上的日历应用。','Download IDF2026.ics and open it to import into your calendar app.');
   return `<div class="sharebox calbox"><div class="calhd"><b>${T('加入手机日历','Add to phone calendar')}</b><span>${T(`${n} 场未开始`,`${n} upcoming`)}</span></div>
@@ -1257,7 +1258,11 @@ function dlICS(txt){const url=URL.createObjectURL(new Blob([txt],{type:'text/cal
 async function doCal(){const L=calList();if(!L.length)return;
   if(IN_WX){toast(T('请先在浏览器中打开','Open in your browser first'));return;}
   const txt=buildICS(L);
-  if(IS_IOS){if(IOS_SAFARI){dlICS(txt);return;}try{const f=new File([txt],'IDF2026.ics',{type:'text/calendar'});if(navigator.canShare&&navigator.canShare({files:[f]})){await navigator.share({files:[f],title:'IDF2026'});return;}}catch(e){if(e&&e.name==='AbortError')return;}
+  if(IS_IOS){if(IOS_SAFARI){dlICS(txt);return;}
+    const u=backupURL()+'&cal=1';let gone=false;const vh=()=>{if(document.hidden)gone=true;};document.addEventListener('visibilitychange',vh);
+    location.href='x-safari-'+u;
+    setTimeout(async()=>{document.removeEventListener('visibilitychange',vh);if(gone)return;try{await navigator.clipboard.writeText(u);toast(T('未能自动跳转：链接已复制，请粘贴到 Safari 打开','Couldn’t switch automatically — link copied, paste it into Safari'));}catch(x){prompt(T('复制这个链接，到 Safari 中打开','Copy this link and open it in Safari'),u);}},1500);return;
+    try{const f=new File([txt],'IDF2026.ics',{type:'text/calendar'});if(navigator.canShare&&navigator.canShare({files:[f]})){await navigator.share({files:[f],title:'IDF2026'});return;}}catch(e){if(e&&e.name==='AbortError')return;}
     dlICS(txt);return;}
   dlICS(txt);toast(T('已开始下载 IDF2026.ics','Downloading IDF2026.ics'));
 }
