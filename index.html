@@ -566,6 +566,7 @@ html{touch-action:manipulation}
 .ev .t{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.ev .t .evw{width:30px;height:30px;font-size:15px}
 .rel{display:flex;flex-direction:column;gap:8px}.relc{display:flex;flex-direction:column;gap:3px;text-align:left;padding:11px 13px;border-radius:12px;border:1px solid var(--line);background:var(--bg);font:inherit;cursor:pointer;color:var(--ink)}.relc b{font-size:15px}.relc .rw{font-size:12.5px;color:var(--amber-ink)}.relc small{font-size:11.5px;color:var(--ink-3)}
 .ah3{font-family:var(--f-display);font-size:18px;margin:22px 0 10px}.tbl.walk th,.tbl.walk td{text-align:center;padding:6px 4px;font-size:12px;white-space:nowrap}.tbl.walk td{font-family:var(--f-mono)}.tbl.walk td.z{color:var(--ink-3)}
+.calbox .calhd{display:flex;justify-content:space-between;align-items:baseline;gap:8px}.calbox .calhd b{font-size:15px}.calbox .calhd span{font-family:var(--f-mono);font-size:11.5px;color:var(--ink-3)}.calrow{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin:0 0 10px}.calrow .msub{margin:0 4px 0 0}.calbox .recapbtn{width:100%;margin:0}.caltip{margin:8px 0 0}.offb{position:fixed;left:50%;transform:translateX(-50%);top:calc(env(safe-area-inset-top) + 8px);z-index:90;background:var(--ink);color:var(--bg);font-size:12px;padding:6px 12px;border-radius:999px;box-shadow:0 4px 16px rgba(0,0,0,.18);white-space:nowrap;max-width:calc(100vw - 32px);overflow:hidden;text-overflow:ellipsis}
 .planlink{display:block;width:100%;text-align:left;margin:4px 0 12px;padding:12px 14px;border-radius:12px;border:1px dashed color-mix(in srgb,var(--amber) 60%,transparent);background:var(--amber-wash);color:var(--amber-ink);font:inherit;font-size:13.5px;font-weight:600;cursor:pointer}
 .ptools{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:4px 0 6px}.pbuf{display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:12.5px;color:var(--ink-3);width:100%}.ptools .chip.on{background:var(--ink);color:var(--bg);border-color:var(--ink)}
 .plist{min-width:0;display:flex;flex-direction:column;border-top:1px solid var(--line)}
@@ -943,7 +944,9 @@ let DEV='';try{DEV=localStorage.getItem('idf26dev')||'';if(!DEV){DEV=(crypto.ran
 let STATS={};
 const MINR=5;
 let GMEAN=null;
-async function loadStats(){if(!SB_ON)return;try{const r=await fetch(SB_URL+'/rest/v1/rpc/rating_stats',{headers:{apikey:SB_KEY}});if(!r.ok)return;const a=await r.json();STATS={};let sw=0,sn=0;a.forEach(x=>{const avg=x.avg==null?null:Number(x.avg);STATS[x.film_id]={n:x.n,avg};if(avg!=null){sw+=avg*x.n;sn+=x.n;}});GMEAN=sn?sw/sn:null;refreshLists();refreshSheetRating();if(TAB==='picks'&&PK==='hot')renderPicks();}catch(e){}}
+function applyStats(a){STATS={};let sw=0,sn=0;a.forEach(x=>{const avg=x.avg==null?null:Number(x.avg);STATS[x.film_id]={n:x.n,avg};if(avg!=null){sw+=avg*x.n;sn+=x.n;}});GMEAN=sn?sw/sn:null;}
+async function loadStats(){if(!SB_ON)return;try{const r=await fetch(SB_URL+'/rest/v1/rpc/rating_stats',{headers:{apikey:SB_KEY}});if(!r.ok)return;const a=await r.json();applyStats(a);try{localStorage.setItem('idf26stats',JSON.stringify(a));}catch(e){}refreshLists();refreshSheetRating();if(TAB==='picks'&&PK==='hot')renderPicks();}catch(e){}}
+try{const c=JSON.parse(localStorage.getItem('idf26stats')||'null');if(c&&SB_ON)applyStats(c);}catch(e){}
 /* IMDb-style weighted rating: WR=(v/(v+m))R+(m/(v+m))C, m=MINR; returns 10-point score */
 function wr10(id){const s=STATS[id];if(!s||s.avg==null||s.n<MINR)return null;const C=GMEAN==null?s.avg:GMEAN;return 2*((s.n/(s.n+MINR))*s.avg+(MINR/(s.n+MINR))*C);}
 let RERR=false;
@@ -1169,6 +1172,42 @@ async function doShare(){
   try{await navigator.clipboard.writeText(url);toast(T('链接已复制，发给朋友吧','Link copied — send it to a friend'));return;}catch(e){}
   const box=$('#shareBox');if(box){box.hidden=false;const i=box.querySelector('input');i.value=url;i.select();}
 }
+/* ---------- export to phone calendar (.ics) ---------- */
+let CALA=15;try{const v=localStorage.getItem('idf26alarm');if(v!=null)CALA=+v;}catch(e){}
+const IN_WX=/MicroMessenger/i.test(navigator.userAgent);
+const IS_IOS=/iP(hone|ad|od)/.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
+function icsEsc(t){return String(t).replace(/\\/g,'\\\\').replace(/;/g,'\;').replace(/,/g,'\\,').replace(/\r?\n/g,'\\n');}
+function icsFold(line){const enc=new TextEncoder();let out='',cur='',n=0;for(const ch of line){const b=enc.encode(ch).length;if(n+b>73){out+=cur+'\r\n ';cur='';n=1;}cur+=ch;n+=b;}return out+cur;}
+function icsTime(ms){return new Date(ms).toISOString().replace(/[-:]/g,'').replace(/\.\d{3}/,'');}
+function icsUTC(s){const [m,d]=s.d.split('.').map(Number);const [h,mi]=s.t.split(':').map(Number);return Date.UTC(2026,m-1,d,h-8,mi);}
+function buildICS(L){
+  const now=icsTime(Date.now());
+  const ev=L.map(s=>{const st=icsUTC(s),en=st+((s.dur||90)+(s.qa?QA_MIN:0))*60000;
+    const title=s.ev!=null?T(s.title[0],s.title[1]):s.films.map(f=>ftitle(f)).join(' / ');
+    const sum=(s.ev!=null?'':'IDF · ')+title+(s.qa?T('（含映后）',' (+Q&A)'):'');
+    const desc=(s.ev!=null?[T(s.kn[0],s.kn[1])]:s.films.map(f=>ftitle(f)+(f.director?' — '+T(f.director,f.director_en||f.director):''))).concat(s.qa?[T(`映后交流约 ${QA_MIN} 分钟`,`Q&A approx. ${QA_MIN} min`)]:[],...(s.ev!=null?[SITE]:[T('座位预约请以官方小程序为准','Seat booking: see the official mini program'),SITE])).join('\n');
+    const a=[ 'BEGIN:VEVENT','UID:'+s.key+'@idf2026.sparrowcinema','DTSTAMP:'+now,'DTSTART:'+icsTime(st),'DTEND:'+icsTime(en),
+      'SUMMARY:'+icsEsc(sum),'LOCATION:'+icsEsc((vPlace(s.v)==='hhc'?'':T('中国美术学院象山校区 · ','China Academy of Art, Xiangshan Campus · '))+venL(s.v)+T('，杭州',', Hangzhou')),'DESCRIPTION:'+icsEsc(desc),'URL:'+SITE];
+    if(CALA>0)a.push('BEGIN:VALARM','ACTION:DISPLAY','DESCRIPTION:'+icsEsc(sum),'TRIGGER:-PT'+CALA+'M','END:VALARM');
+    a.push('END:VEVENT');return a.map(icsFold).join('\r\n');});
+  return ['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//Sparrow Cinema//IDF2026//ZH','CALSCALE:GREGORIAN','METHOD:PUBLISH','X-WR-CALNAME:IDF2026','X-WR-TIMEZONE:Asia/Shanghai'].join('\r\n')+'\r\n'+ev.join('\r\n')+'\r\nEND:VCALENDAR\r\n';
+}
+function calList(){return ITEMS().filter(s=>WANT.has(s.key)&&sStart(s)+((s.dur||90)*60000)>Date.now()).sort((a,b)=>sStart(a)-sStart(b));}
+function calBlock(){if(!WANT.size)return '';const n=calList().length;
+  return `<div class="sharebox calbox"><div class="calhd"><b>${T('加入手机日历','Add to phone calendar')}</b><span>${T(`${n} 场未开始`,`${n} upcoming`)}</span></div>
+  <p class="msub" style="margin:4px 0 8px">${T('把想看的场次导入苹果或安卓日历，开场前自动提醒，不用一直开着网页。','Import your screenings into Apple or Android Calendar and get a reminder before each one.')}</p>
+  <div class="calrow"><span class="msub">${T('提前提醒','Remind me')}</span>${[0,15,30,60].map(m=>`<button type="button" class="chip${CALA===m?' on':''}" data-cala="${m}" aria-pressed="${CALA===m}">${m?(m===60?T('1 小时','1 h'):m+T(' 分',' min')):T('不提醒','None')}</button>`).join('')}</div>
+  <button type="button" class="recapbtn" id="calBtn"${n?'':' disabled'}>${n?T('导出到日历','Export to calendar'):T('没有未开始的场次','Nothing upcoming')}</button>
+  <div id="calTip" class="msub caltip"${IN_WX?'':' hidden'}>${IN_WX?T('微信里无法导入日历：请点右上角「···」，选择「在浏览器打开」后再点导出。','WeChat can’t import calendars: tap “···” at top right, choose “Open in Browser”, then export.'):''}</div></div>`;}
+function doCal(){const L=calList();if(!L.length)return;
+  if(IN_WX){toast(T('请先在浏览器中打开','Open in your browser first'));return;}
+  const txt=buildICS(L);const tip=$('#calTip');
+  if(IS_IOS){location.href='data:text/calendar;charset=utf-8,'+encodeURIComponent(txt);
+    if(tip){tip.hidden=false;tip.textContent=T('在弹出的页面点「全部添加」即可。没有弹出的话，请用 Safari 打开本页再试。','Tap “Add All” on the page that opens. If nothing appears, open this page in Safari and try again.');}
+  }else{const url=URL.createObjectURL(new Blob([txt],{type:'text/calendar;charset=utf-8'}));const a=document.createElement('a');a.href=url;a.download='IDF2026.ics';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),30000);
+    if(tip){tip.hidden=false;tip.textContent=T('已下载 IDF2026.ics。打开这个文件，选择用「日历」导入即可。','Downloaded IDF2026.ics — open it and choose your Calendar app to import.');}}
+}
+function bindCal(){const B=$('#sheetBody');B.querySelectorAll('[data-cala]').forEach(el=>el.onclick=e=>{e.stopPropagation();CALA=+el.dataset.cala;try{localStorage.setItem('idf26alarm',String(CALA));}catch(e){}B.querySelectorAll('[data-cala]').forEach(x=>{const on=+x.dataset.cala===CALA;x.classList.toggle('on',on);x.setAttribute('aria-pressed',on);});});const b=$('#calBtn');if(b)b.onclick=e=>{e.stopPropagation();doCal();};}
 function shareBlock(){return WANT.size?`<div class="sharebox"><div class="shrow"><input type="text" id="shareName" maxlength="12" placeholder="${T('你的名字（可选）','Your name (optional)')}" value="${esc(SNAME)}"><button type="button" class="recapbtn" id="shareBtn">${T('分享日程给朋友','Share with friends')}</button></div><p class="msub" style="margin:6px 0 0">${T('朋友打开链接就能看到你的场次，一键加入他们自己的日程。','Friends can see your screenings and add them to their own schedule in one tap.')}</p><div id="shareBox" hidden><input type="text" readonly class="shareurl"><p class="msub">${T('长按上面的链接复制','Long-press the link to copy')}</p></div></div>`:'';}
 function bindShare(){const b=$('#shareBtn');if(!b)return;const n=$('#shareName');if(n){n.onclick=e=>e.stopPropagation();n.oninput=()=>{SNAME=n.value.trim();try{localStorage.setItem('idf26name',SNAME);}catch(e){}};}b.onclick=e=>{e.stopPropagation();doShare();};}
 let FRIEND=null;
@@ -1355,6 +1394,8 @@ setInterval(()=>{if(TAB==='screen')nowCard();if(CUR&&CUR[0]==='x'){const sy=shee
 
 document.addEventListener('click',e=>{if(!e.target.closest)return;const ew=e.target.closest('#infoBody [data-want]');if(ew){toggleWant(ew.dataset.want);const on=WANT.has(ew.dataset.want);ew.classList.toggle('on',on);ew.textContent=on?'★':'☆';ew.setAttribute('aria-pressed',on);toast(on?T('已加入我的日程','Added to my schedule'):T('已从我的日程移除','Removed'));return;}if(e.target.closest('#navOpen')||e.target.closest('#navOpen2'))openNav('b2');if(e.target.closest('#toQuick'))openQuick();});
 $('#nowCard').onclick=()=>openNow();
+function offBadge(){let el=document.getElementById('offb');if(navigator.onLine){if(el)el.remove();return;}if(!el){el=document.createElement('div');el.id='offb';el.className='offb';document.body.appendChild(el);}el.textContent=T('离线中 · 排片、地图和你的日程照常可用','Offline · timetable, maps and your schedule still work');}
+window.addEventListener('online',offBadge);window.addEventListener('offline',offBadge);offBadge();
 /* ---------- auto planner ---------- */
 let PSEL=new Set();try{PSEL=new Set(JSON.parse(localStorage.getItem('idf26plan')||'[]'));}catch(e){}
 let PBUF=15;try{PBUF=+(localStorage.getItem('idf26pbuf')||15);}catch(e){}
@@ -1466,11 +1507,11 @@ function openMine(){
       body+='</div>';});
   }
   if(other.length)body+=`<h4 class="mday">${T('其他打过分的影片','Other films I rated')}</h4><div class="mlist">${other.map(f=>`<div class="mrow"><div class="mb"><div class="mf"><button type="button" class="pname" data-film="${f.id}">${esc(ftitle(f))}</button><span class="msc">${scorePills(f)}</span></div></div></div>`).join('')}</div>`;
-  body+=shareBlock();
+  body+=calBlock()+shareBlock();
   if(L.length||other.length)body+=`<button type="button" class="recapbtn" id="recapBtn">${T('生成我的 IDF 观影结算图','Create my IDF recap image')}</button><div id="recapOut"></div>`;
   openSheet(T('我的全部场次','All my screenings'),`<div class="pre">${T('我的观影','My Festival')}</div><h2 id="sheetTitle">${T('我的全部场次','All my screenings')}</h2>
     <p class="msub">${T('观众分为 IMDb 式加权评分（满 5 人显示），个人分为你的星级 × 2。','Audience score = IMDb-style weighted rating (shown after 5 ratings); yours = stars × 2.')}</p><button type="button" class="planlink" id="toQuick">✦ ${T('划卡片给看过的片快速打分','Swipe to rate films you’ve seen')} →</button><button type="button" class="planlink" id="toPlan">✦ ${T('挑好想看的片，自动排出不冲突的日程','Pick films and auto-plan a clash-free schedule')} →</button>${body}`,['m','all']);
-  const b=$('#recapBtn');if(b)b.onclick=showRecap;bindShare();const tp=$('#toPlan');if(tp)tp.onclick=()=>openPlan();
+  const b=$('#recapBtn');if(b)b.onclick=showRecap;bindCal();bindShare();const tp=$('#toPlan');if(tp)tp.onclick=()=>openPlan();
 }
 function wrapText(ctx,text,maxW,maxLines){
   const toks=String(text).match(/[⺀-鿿豈-﫿＀-￯　-〿]|[^\s⺀-鿿豈-﫿＀-￯　-〿]+|\s+/g)||[];

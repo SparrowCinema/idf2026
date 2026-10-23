@@ -1,5 +1,5 @@
 /* IDF2026 影展手册 · offline cache */
-const C='idf26-v1';
+const C='idf26-v2';
 const CORE=['./','./index.html','./map-campus.jpg','./map-hangzhou.jpg','./qr-booking.jpg','./qr-tickets.jpg','./qr-tickets-code.jpg','./icon-512.png','./apple-touch-icon.png','./favicon-32.png','./manifest.webmanifest'];
 self.addEventListener('install',e=>{e.waitUntil(caches.open(C).then(c=>c.addAll(CORE)).then(()=>self.skipWaiting()));});
 self.addEventListener('activate',e=>{e.waitUntil(caches.keys().then(ks=>Promise.all(ks.filter(k=>k!==C).map(k=>caches.delete(k)))).then(()=>self.clients.claim()));});
@@ -12,7 +12,10 @@ self.addEventListener('fetch',e=>{
   }
   if(r.mode==='navigate'||u.pathname.endsWith('/')||u.pathname.endsWith('.html')){
     // network first, so updates show up; fall back to cache offline
-    e.respondWith(fetch(r).then(res=>{const cp=res.clone();caches.open(C).then(c=>c.put('./index.html',cp));return res;}).catch(()=>caches.match('./index.html')));
+    // weak signal: wait at most 3.5 s for the network, then serve the cached copy
+    const net=fetch(r).then(res=>{const cp=res.clone();caches.open(C).then(c=>c.put('./index.html',cp));return res;});
+    const slow=new Promise(ok=>setTimeout(ok,3500)).then(()=>caches.match('./index.html'));
+    e.respondWith(Promise.race([net.catch(()=>caches.match('./index.html')),slow.then(m=>m||net)]).then(x=>x||net));
     return;
   }
   e.respondWith(caches.match(r).then(m=>m||fetch(r).then(res=>{const cp=res.clone();caches.open(C).then(c=>c.put(r,cp));return res;})));
