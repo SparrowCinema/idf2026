@@ -1745,10 +1745,12 @@ const SUPPLY=[
   ['☕',['咖啡','Coffee'],[['瑞幸咖啡（象山大厦店）','Luckin','美院南街 89 号 F1','¥13'],['库迪咖啡（华润万家店）','Cotti Coffee','美院南街 89 号 1F','¥9']]],
   ['🏪',['超市 · 便利店','Shops'],[['华润万家','CR Vanguard','美院南街 89 号',''],['十足便利店','Shizu','6 号线美院象山站 C 口内',''],['左邻右舍','Zuolin Youshe','象山国际广场（C 口步行约 3 分钟）','']]]]},
  {z:['象山艺术公社','Xiangshan Art Commune'],note:['安静、能坐久一点的咖啡馆。','Quieter cafés for a longer sit.'],g:[
-  ['☕',['咖啡','Coffee'],[['SENSEL 感官咖啡','SENSEL','创意路 313 号 D1 幢','¥37'],['111white 三白','111white','象山艺术区 3 幢 3 楼','¥48'],['色客小馆（咖啡 · 精酿）','Seke café-bar','象山艺术公社 E3','']]]]},
- {z:['校内','On campus'],note:['高德标有「山北生活区食堂」，但校外人员能否就餐没查到，以现场为准。','Maps show a canteen (Shanbei dining hall); whether visitors can eat there is unconfirmed.'],g:[]}
+  ['☕',['咖啡','Coffee'],[['SENSEL 感官咖啡','SENSEL','创意路 313 号 D1 幢','¥37'],['111white 三白','111white','象山艺术区 3 幢 3 楼 · 有露台','¥48'],['色客小馆（咖啡 · 精酿）','Seke café-bar','象山艺术公社 E3','']]]]},
+ {z:['校内','On campus'],note:['以下来自小红书网友分享，仅供参考。','Shared by visitors on Xiaohongshu — for reference only.'],g:[
+  ['☕',['咖啡 · 歇脚','Coffee & a seat'],[['大黑屋 cafe','Dahei Wu café','校内 · 学生常去，室内外都有座位，适合中途歇脚',''],['几帧咖啡（象山美院店）','Jizhen Coffee','校内 · 比较安静','']]],
+  ['🍚',['食堂','Canteen'],[['山北生活区食堂','Shanbei dining hall','网友说预约进校后可以去吃，口碑褒贬不一','']]]]}
 ];
-function supplyHTML(){return `<div class="box sup"><h3>${T('吃喝补给 · 洗手间','Food, coffee & restrooms')}</h3>${SUPPLY.map(Z=>`<div class="supz"><h4>${esc(T(Z.z[0],Z.z[1]))}</h4><p class="msub">${esc(T(Z.note[0],Z.note[1]))}</p>${Z.g.map(([ic,h,L])=>`<div class="supg"><span class="supk">${ic} ${esc(T(h[0],h[1]))}</span><ul>${L.map(([zh,en,ad,pr])=>`<li><b>${esc(T(zh,en))}</b><span>${esc(ad)}${pr?' · '+pr+T('/人','pp'):''}</span></li>`).join('')}</ul></div>`).join('')}</div>`).join('')}<p class="msub">${T('地点和人均来自高德地图（2026 年 10 月查询），营业时间以现场为准。商场和连锁咖啡店里一般能借到共享充电宝。','Places and prices from Amap (checked Oct 2026); opening hours may vary. Malls and chain cafés usually have power-bank rentals.')}</p></div>`;}
+function supplyHTML(){return `<div class="box sup"><h3>${T('吃喝补给 · 洗手间','Food, coffee & restrooms')}</h3>${SUPPLY.map(Z=>`<div class="supz"><h4>${esc(T(Z.z[0],Z.z[1]))}</h4><p class="msub">${esc(T(Z.note[0],Z.note[1]))}</p>${Z.g.map(([ic,h,L])=>`<div class="supg"><span class="supk">${ic} ${esc(T(h[0],h[1]))}</span><ul>${L.map(([zh,en,ad,pr])=>`<li><b>${esc(T(zh,en))}</b><span>${esc(ad)}${pr?' · '+pr+T('/人','pp'):''}</span></li>`).join('')}</ul></div>`).join('')}</div>`).join('')}<p class="msub">${T('地点和人均来自高德地图，校内信息来自小红书（2026 年 10 月查询），营业时间以现场为准。商场和连锁咖啡店里一般能借到共享充电宝。','Places and prices from Amap, campus tips from Xiaohongshu (checked Oct 2026); opening hours may vary. Malls and chain cafés usually have power-bank rentals.')}</p></div>`;}
 function aroundHTML(){
   const P=['b2','b3','b11','b8','hhc','ssj','cdm'];
   const nm=k=>T(NP[k].n[0],NP[k].n[1]).replace(/（.*）|\(.*\)/,'').replace(/ ?小剧场/,'').replace('中国国际','').replace('长江影城','').replace(' Theatre','');
