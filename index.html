@@ -564,6 +564,8 @@ html{touch-action:manipulation}
 .dbrow{margin:8px 0 2px;display:flex;flex-wrap:wrap;gap:6px}.xbtn{display:inline-flex;align-items:center;gap:4px;font-size:12.5px;font-weight:600;border-radius:999px;padding:4px 11px;text-decoration:none;color:#fff}.xbtn b{font-family:var(--f-mono);font-size:13px}.xbtn small{font-weight:400;opacity:.85;font-size:11px}.xbtn.imdb{background:#f5c518;color:#111}.xbtn.lbx{background:#202830}.xbtn.mtc{background:#ffcc34;color:#000;box-shadow:inset 0 0 0 1px #00000022}.dbbtn{display:inline-flex;align-items:center;gap:4px;font-size:12.5px;font-weight:600;color:#fff;background:#2e963d;border-radius:999px;padding:4px 11px;text-decoration:none}.dbbtn b{font-family:var(--f-mono);font-size:13px}.dbbtn small{font-weight:400;opacity:.85;font-size:11px}.dbmini{color:var(--ink-3);font-weight:500;font-size:.92em}
 .evtag{display:inline-block;font-size:10.5px;font-weight:600;color:#fff;background:#6d5bd0;border-radius:4px;padding:1px 5px;margin-right:6px;vertical-align:1px}.evt{font-size:15px;font-weight:600}
 .ev .t{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.ev .t .evw{width:30px;height:30px;font-size:15px}
+.rel{display:flex;flex-direction:column;gap:8px}.relc{display:flex;flex-direction:column;gap:3px;text-align:left;padding:11px 13px;border-radius:12px;border:1px solid var(--line);background:var(--bg);font:inherit;cursor:pointer;color:var(--ink)}.relc b{font-size:15px}.relc .rw{font-size:12.5px;color:var(--amber-ink)}.relc small{font-size:11.5px;color:var(--ink-3)}
+.ah3{font-family:var(--f-display);font-size:18px;margin:22px 0 10px}.tbl.walk th,.tbl.walk td{text-align:center;padding:6px 4px;font-size:12px;white-space:nowrap}.tbl.walk td{font-family:var(--f-mono)}.tbl.walk td.z{color:var(--ink-3)}
 .planlink{display:block;width:100%;text-align:left;margin:4px 0 12px;padding:12px 14px;border-radius:12px;border:1px dashed color-mix(in srgb,var(--amber) 60%,transparent);background:var(--amber-wash);color:var(--amber-ink);font:inherit;font-size:13.5px;font-weight:600;cursor:pointer}
 .ptools{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:4px 0 6px}.pbuf{display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:12.5px;color:var(--ink-3);width:100%}.ptools .chip.on{background:var(--ink);color:var(--bg);border-color:var(--ink)}
 .plist{min-width:0;display:flex;flex-direction:column;border-top:1px solid var(--line)}
@@ -1002,6 +1004,32 @@ const extBtns=f=>{const e=EXT[f.id]||{};let h=dbBtn(f);
   if(e.ms)h+=`<a class="xbtn mtc" href="https://www.imdb.com/title/${e.im}/criticreviews/" target="_blank" rel="noopener">Metacritic <b>${e.ms}</b> ↗</a>`;
   return h;};
 const extMini=f=>{const e=EXT[f.id]||{},d=DOUBAN[f.id]||{};const a=[];if(d.r)a.push(T('豆瓣','Douban')+' '+d.r.toFixed(1));if(e.ir)a.push('IMDb '+e.ir.toFixed(1));if(e.lr)a.push('LB '+e.lr.toFixed(1));if(e.ms)a.push('MC '+e.ms);return a.length?`<span class="dbmini">${a.join(' · ')}</span>`:'';};
+/* ---------- related films ---------- */
+const AFF=[
+ ['arc',['重新使用档案影像','Reworking archival footage'],['f072','f066','f044','f078','f058','f048','f032']],
+ ['scr',['追问屏幕、算法与观看','Screens, algorithms and the act of looking'],['f032','f084','f086','f088','f140','f074']],
+ ['mig',['迁徙、边境与无处安放的人','Migration, borders and the displaced'],['f026','f120','f106','f128','f130','f062','f068']],
+ ['war',['战争如何渗进日常','How war seeps into everyday life'],['f104','f064','f132','f072','f128']],
+ ['fam',['家庭里的牵绊与裂缝','Family ties and fractures'],['f094','f118','f028','f036','f058','f030']],
+ ['lab',['劳动者和劳动的身体','Workers and working bodies'],['f046','f052','f024','f134','f084','f092','f086']],
+ ['ani',['人与动物、自然的关系','People, animals and nature'],['f092','f078','f080','f050','f144','f030','f036']],
+ ['uto',['离开主流，试一种别的活法','Stepping aside to live differently'],['f038','f126','f040','f042','f112']],
+ ['sf',['纪实与幻想、科幻的边界','Where documentary meets fantasy and sci-fi'],['f096','f076','f140','f050','f108','f142']],
+ ['me',['第一人称的自我书写','First-person self-portraits'],['f122','f118','f058','f042','f100','f062']],
+ ['yth',['少年人的成长','Growing up'],['f094','f114','f112','f024','f026']],
+ ['cn',['中国当下的现实切片','Slices of China today'],['f028','f034','f040','f094','f098','f074','f088']],
+ ['land',['守护土地与传统','Holding on to land and tradition'],['f098','f040','f126']],
+ ['dir',['同一位导演','Same director'],['f084','f086']]
+];
+function related(f){
+  const mine=AFF.filter(a=>a[2].includes(f.id));const sc=new Map();
+  mine.forEach(a=>a[2].forEach(id=>{if(id===f.id)return;const x=sc.get(id)||{n:0,why:[]};x.n+=(a[0]==='dir'?3:1);if(a[0]==='dir')x.why.unshift(a[1]);else x.why.push(a[1]);sc.set(id,x);}));
+  const th=FTAG[f.id]||[];
+  films.forEach(g=>{if(g.id===f.id)return;const sh=(FTAG[g.id]||[]).filter(t=>th.includes(t));if(sh.length){const x=sc.get(g.id)||{n:0,why:[]};x.n+=0.3*sh.length;if(!x.why.length)x.why.push([`同属「${thL(sh[0])}」主题`.replace(/「(.*)」/,'「$1」'),`Also about ${thL(sh[0])}`]);sc.set(g.id,x);}});
+  return [...sc.entries()].sort((a,b)=>b[1].n-a[1].n||(wr10(b[0])||0)-(wr10(a[0])||0)).slice(0,3).map(([id,x])=>({g:fById(id),why:x.why[0]})).filter(r=>r.g);
+}
+function relatedSec(f){const R=related(f);if(!R.length)return '';
+  return `<div class="sec"><h4>${T('看完这部，还可以看','If you liked this')}</h4><div class="rel">${R.map(({g,why})=>{const nx=scrOf.get(g.id).find(s=>sStart(s)>Date.now());return `<button type="button" class="relc" data-film="${g.id}"><b>${esc(ftitle(g))}</b><span class="rw">${esc(T(why[0],why[1]))}</span><small>${nx?T(`下一场 ${dateL(nx.d)} ${nx.t} · ${VSH[nx.v][0]}`,`Next: ${dateL(nx.d)} ${nx.t} · ${VSH[nx.v][1]}`):T('本届场次已结束','No more screenings')}</small></button>`;}).join('')}</div></div>`;}
 /* ---------- crew, themes, content notes ---------- */
 const CREW={"f028": [["张新伟", ["制片人"]]], "f032": [["卡洛琳·基尔贝格", ["制片人"]]], "f040": [["陈玲珍", ["制片人"]], ["陈雨", ["导演"]]], "f050": [["一诺·查卡", ["制片人"]], ["桑霓", ["导演", "制片人"]]], "f074": [["周滔", ["导演"]]], "f078": [["昆顿·米勒", ["导演", "制片人"]]], "f084": [["尼古拉·古罗", ["导演"]]], "f086": [["尼古拉·古罗", ["导演"]]], "f088": [["郑源", ["导演", "制片人"]]], "f098": [["王丹迪", ["制片人"]], ["王小鲁", ["监制"]]], "f104": [["达利娅·扎哈罗娃", ["制片人"]]], "f118": [["李姗姗", ["制片人"]]], "f026": [["穆罕穆德·洛特法利", ["动画导演"]]], "f034": [["田勋", ["监制"]]], "f076": [["伊沃·穆勒", ["主角"]]], "f092": [["耶娃·维韦里泰", ["剪辑师"]]], "f108": [["王寅", ["主角"]]], "f144": [["张峥安", ["摄影师"]]]};
 const CREWR={'导演':'Director','制片人':'Producer','监制':'Executive Producer','动画导演':'Animation Director','主角':'Protagonist','剪辑师':'Editor','摄影师':'Cinematographer'};
@@ -1322,7 +1350,7 @@ function openNow(){
 }
 setInterval(()=>{if(TAB==='screen')nowCard();if(CUR&&CUR[0]==='x'){const sy=sheet.scrollTop,keep=STACK.slice();CUR=null;STACK.length=0;SILENT=true;openNow();SILENT=false;STACK.push(...keep);$('#sheetBack').hidden=!STACK.length;sheet.scrollTop=sy;}},60000);
 
-document.addEventListener('click',e=>{if(!e.target.closest)return;const ew=e.target.closest('#infoBody [data-want]');if(ew){toggleWant(ew.dataset.want);const on=WANT.has(ew.dataset.want);ew.classList.toggle('on',on);ew.textContent=on?'★':'☆';ew.setAttribute('aria-pressed',on);toast(on?T('已加入我的日程','Added to my schedule'):T('已从我的日程移除','Removed'));return;}if(e.target.closest('#navOpen'))openNav('b2');if(e.target.closest('#toQuick'))openQuick();});
+document.addEventListener('click',e=>{if(!e.target.closest)return;const ew=e.target.closest('#infoBody [data-want]');if(ew){toggleWant(ew.dataset.want);const on=WANT.has(ew.dataset.want);ew.classList.toggle('on',on);ew.textContent=on?'★':'☆';ew.setAttribute('aria-pressed',on);toast(on?T('已加入我的日程','Added to my schedule'):T('已从我的日程移除','Removed'));return;}if(e.target.closest('#navOpen')||e.target.closest('#navOpen2'))openNav('b2');if(e.target.closest('#toQuick'))openQuick();});
 $('#nowCard').onclick=()=>openNow();
 /* ---------- auto planner ---------- */
 let PSEL=new Set();try{PSEL=new Set(JSON.parse(localStorage.getItem('idf26plan')||'[]'));}catch(e){}
@@ -1587,6 +1615,7 @@ function openFilm(id){
     ${aw.length?`<div class="sec"><h4>${T('获奖与参展经历','Previous Screenings and Awards')}</h4><ul>${aw.map(a=>`<li>${esc(a)}</li>`).join('')}</ul></div>`:''}
     ${rel.length?`<div class="sec"><h4>${T('到场相关嘉宾','Related Guests')}</h4><div class="links">${rel.map(g=>`<button class="lnk" data-guest="${esc(g.name)}">${esc(gname(g))}<small>${esc(roleL(g.roles[0]))}</small></button>`).join('')}</div></div>`:''}
     ${evs.length?`<div class="sec"><h4>${T('相关活动','Related Events')}</h4><div class="links">${evs.map(ev=>`<button class="lnk" data-ev="${EV.indexOf(ev)}">${dateL(ev.d)} ${T(ev.t[0],ev.t[1])}<small>${esc(T(ev.title[0],ev.title[1]))}</small></button>`).join('')}</div></div>`:''}
+    ${relatedSec(f)}
     ${p?`<div class="sec"><h4>${T('所属板块','Program')} · ${esc(F(p,'name'))}</h4><p style="color:var(--ink-2);font-size:14px">${esc(F(p,'intro'))}</p></div>`:''}`,['f',id]);
 }
 function evHasGuest(ev,name){return ev.ppl.some(([,n])=>typeof n==='string'&&n.split('、').includes(name));}
@@ -1655,6 +1684,18 @@ function renderPicks(){
   <div class="seg pkseg" role="tablist">${[['hot','⭐ 评分榜','⭐ Top rated'],['zx','张献民片单','ZHANG Xianmin'],['mq','麻雀映画片单','Sparrow Cinema']].map(([k,a,b])=>`<button type="button" data-pk="${k}" aria-pressed="${PK===k}">${T(a,b)}</button>`).join('')}</div>
   <div id="pkBody">${picksHTML()}</div></div>`;
 }
+function aroundHTML(){
+  const P=['b2','b3','b11','b8','hhc','ssj','cdm'];
+  const nm=k=>T(NP[k].n[0],NP[k].n[1]).replace(/（.*）|\(.*\)/,'').replace(/ ?小剧场/,'').replace('中国国际','').replace('长江影城','').replace(' Theatre','');
+  const head=`<tr><th></th>${P.map(k=>`<th>${esc(nm(k))}</th>`).join('')}</tr>`;
+  const rows=P.map(a=>`<tr><th>${esc(nm(a))}</th>${P.map(b=>`<td${a===b?' class="z"':''}>${a===b?'—':navRoute(a,b).min}</td>`).join('')}</tr>`).join('');
+  return `<h3 class="ah3">${T('赶场速查','Getting between screenings')}</h3>
+  <div class="box"><h3>${T('场馆间步行时间（分钟）','Walking time between venues (min)')}</h3><div class="tblwrap"><table class="tbl walk">${head}${rows}</table></div><p class="msub" style="margin-top:8px">${T('按校园地图估算，赶场请多留几分钟；点下面的按钮看具体路线。','Estimated from the campus map — leave a few spare minutes. Tap below for routes.')}</p><button type="button" class="chip" id="navOpen2">📍 ${T('打开现场导航','Open campus navigation')}</button></div>
+  <div class="cols" style="margin-top:12px">
+   <div class="box"><h3>${T('校园 ↔ 杭荟城','Campus ↔ Hanghuicheng')}</h3><p>${T('杭荟城在校园北侧，隔着美院北路。从 2 号楼、3 号楼一带走北 2 门出校，过美院北路即到商场，再上楼到长江影城。从 2 号楼、3 号楼、西湖剧场出发步行约 8–10 分钟（含过马路和上楼），从 11 号楼约 13 分钟。','Hanghuicheng lies just north of campus across Meiyuan North Road. From Bldgs 2/3, leave by North Gate 2, cross the road and go up to Changjiang Cinema — about 8–10 min from Bldgs 2/3 or the West Lake Theater (incl. crossing and stairs), about 13 min from Bldg 11.')}</p></div>
+   <div class="box"><h3>${T('地铁 6 号线 · 美院象山站 末班车','Metro Line 6 · last trains at CAA Xiangshan')}</h3><p>${T('往市区（枸桔弄方向）末班约 22:38，部分时段 23:01；往双浦方向约 23:53；往桂花西路方向约 23:43。首班约 06:05–06:13。晚场 19:00 的放映散场后时间充裕。','Towards the city (Gouju Nong) the last train is about 22:38 (23:01 on some patterns); to Shuangpu about 23:53; to Guihua West Rd about 23:43. First trains about 06:05–06:13.')}</p><p class="msub">${T('数据来自地铁通 MetroMan，以车站公告为准。','Source: MetroMan; follow station notices.')}</p></div>
+  </div>`;
+}
 function renderInfo(){
 $('#infoBody').innerHTML=`
 <section class="isec" id="s-book"><h2>${T('观影预约','Book Screenings')}</h2>
@@ -1672,6 +1713,7 @@ $('#infoBody').innerHTML=`
   <div class="box"><h3>${T('公交 · 江口村站','Bus · Jiangkoucun')}</h3><p>${T('121、314、289、594、189、1498、344 路','No. 121, 314, 289, 594, 189, 1498, 344')}</p></div>
   <div class="box"><h3>${T('公交 · 转塘街道站','Bus · Zhuantangjie')}</h3><p>${T('4、308、318、7204、8202、5403 路','No. 4, 308, 318, 7204, 8202, 5403')}</p></div>
  </div>
+ ${aroundHTML()}
 </section>
 <section class="isec" id="s-awards"><h2>${T('评优与奖项','Awards')}</h2><p class="lead">${T('“西湖荣誉”评优单元面向 2024 年 7 月 1 日之后完成的纪录长片（60 分钟及以上）与短片。本届有效报名 829 项：中国制作 354 部（含香港 7 部、澳门 1 部、台湾 3 部），中外合制 15 部，外国制作 460 部；长片 459 部、短片 370 部。','The IDF Competition is open to feature (60 min and above) and short documentaries completed after July 1, 2024. This year there were 829 valid entries: 354 produced in China (incl. 7 from Hong Kong, 1 from Macao, 3 from Taiwan), 15 co-productions and 460 international productions; 459 features and 370 shorts.')}</p>
  <div class="cols">${AWARDS.map(([a,b])=>`<div class="box"><h3>${T(a,b)}</h3><p>${T(b,a)}</p></div>`).join('')}</div>
