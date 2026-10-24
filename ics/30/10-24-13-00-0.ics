@@ -7,18 +7,17 @@ X-WR-CALNAME:IDF2026
 X-WR-TIMEZONE:Asia/Shanghai
 BEGIN:VEVENT
 UID:10.24-13:00-0@idf2026.sparrowcinema
-DTSTAMP:20261023T051232Z
+DTSTAMP:20261024T101035Z
 DTSTART:20261024T050000Z
-DTEND:20261024T063900Z
-SUMMARY:IDF · 白银（含映后）
+DTEND:20261024T061900Z
+SUMMARY:IDF · 白银
 LOCATION:中国美术学院象山校区 · 2 号楼小剧场，杭州
-DESCRIPTION:白银 — 娜塔莉亚·康尼亚什\n映后交流约 20 分
- 钟\n座位预约请以官方小程序为准\nhttps://sparrowcinema.gith
- ub.io/idf2026/
+DESCRIPTION:白银 — 娜塔莉亚·康尼亚什\n座位预约请以官
+ 方小程序为准\nhttps://sparrowcinema.github.io/idf2026/
 URL:https://sparrowcinema.github.io/idf2026/
 BEGIN:VALARM
 ACTION:DISPLAY
-DESCRIPTION:IDF · 白银（含映后）
+DESCRIPTION:IDF · 白银
 TRIGGER:-PT30M
 END:VALARM
 END:VEVENT

@@ -7,18 +7,17 @@ X-WR-CALNAME:IDF2026
 X-WR-TIMEZONE:Asia/Shanghai
 BEGIN:VEVENT
 UID:10.24-15:30-0@idf2026.sparrowcinema
-DTSTAMP:20261023T051232Z
+DTSTAMP:20261024T101035Z
 DTSTART:20261024T073000Z
-DTEND:20261024T093500Z
-SUMMARY:IDF · 黎明之居（含映后）
+DTEND:20261024T091500Z
+SUMMARY:IDF · 黎明之居
 LOCATION:中国美术学院象山校区 · 2 号楼小剧场，杭州
-DESCRIPTION:黎明之居 — 克里斯蒂娜·施图伯特\n映后交流
- 约 20 分钟\n座位预约请以官方小程序为准\nhttps://sparrowc
- inema.github.io/idf2026/
+DESCRIPTION:黎明之居 — 克里斯蒂娜·施图伯特\n座位预约
+ 请以官方小程序为准\nhttps://sparrowcinema.github.io/idf2026/
 URL:https://sparrowcinema.github.io/idf2026/
 BEGIN:VALARM
 ACTION:DISPLAY
-DESCRIPTION:IDF · 黎明之居（含映后）
+DESCRIPTION:IDF · 黎明之居
 TRIGGER:-PT30M
 END:VALARM
 END:VEVENT

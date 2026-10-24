@@ -824,7 +824,7 @@ const addMin=(t,m)=>{const [h,mm]=t.split(':').map(Number);const x=h*60+mm+m;ret
 const SCR=RAW.map(([d,t,v,dur,titles,label],i)=>{
   const fl=titles?titles.split('|').map(x=>byTitle.get(x)).filter(Boolean):[];
   const lab=label||(COLL[titles]?['短片集 '+COLL[titles],'Short Film Collection '+COLL[titles]]:null);
-  return {i,key:d+'-'+t+'-'+v,d,t,v,dur,end:dur?addMin(t,dur):'',films:fl,lab,qa:fl.some(f=>f.section==='competition')};
+  return {i,key:d+'-'+t+'-'+v,d,t,v,dur,end:dur?addMin(t,dur):'',films:fl,lab,qa:false};
 });
 const labL=s=>s.lab?T(s.lab[0],s.lab[1]):'';
 const QA_MIN=20;const qaTag=s=>s.qa?`<span class="qatag">${T('映后交流','Q&A')}</span>`:'';
