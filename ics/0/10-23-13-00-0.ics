@@ -7,12 +7,12 @@ X-WR-CALNAME:IDF2026
 X-WR-TIMEZONE:Asia/Shanghai
 BEGIN:VEVENT
 UID:10.23-13:00-0@idf2026.sparrowcinema
-DTSTAMP:20261024T101034Z
+DTSTAMP:20261024T101425Z
 DTSTART:20261023T050000Z
-DTEND:20261023T064400Z
+DTEND:20261023T070400Z
 SUMMARY:IDF · 莽妹（含映后）
 LOCATION:中国美术学院象山校区 · 2 号楼小剧场，杭州
-DESCRIPTION:莽妹 — 杨娟\n映后交流约 20 分钟\n座位预约请
+DESCRIPTION:莽妹 — 杨娟\n映后交流约 40 分钟\n座位预约请
  以官方小程序为准\nhttps://sparrowcinema.github.io/idf2026/
 URL:https://sparrowcinema.github.io/idf2026/
 END:VEVENT

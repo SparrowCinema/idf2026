@@ -7,12 +7,12 @@ X-WR-CALNAME:IDF2026
 X-WR-TIMEZONE:Asia/Shanghai
 BEGIN:VEVENT
 UID:10.24-19:00-5@idf2026.sparrowcinema
-DTSTAMP:20261024T101034Z
+DTSTAMP:20261024T101425Z
 DTSTART:20261024T110000Z
-DTEND:20261024T125000Z
+DTEND:20261024T131000Z
 SUMMARY:IDF · 稻草人（含映后）
 LOCATION:中国美术学院象山校区 · 西湖剧场，杭州
-DESCRIPTION:稻草人 — 莱拉·帕卡莲莉娜\n映后交流约 20 分
+DESCRIPTION:稻草人 — 莱拉·帕卡莲莉娜\n映后交流约 40 分
  钟\n座位预约请以官方小程序为准\nhttps://sparrowcinema.gith
  ub.io/idf2026/
 URL:https://sparrowcinema.github.io/idf2026/

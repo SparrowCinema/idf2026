@@ -7,13 +7,13 @@ X-WR-CALNAME:IDF2026
 X-WR-TIMEZONE:Asia/Shanghai
 BEGIN:VEVENT
 UID:10.23-13:00-4@idf2026.sparrowcinema
-DTSTAMP:20261024T101034Z
+DTSTAMP:20261024T101425Z
 DTSTART:20261023T050000Z
-DTEND:20261023T065500Z
+DTEND:20261023T071500Z
 SUMMARY:IDF · 归去来辞（含映后）
 LOCATION:中国美术学院象山校区 · 11 号楼 113 小剧场，杭
  州
-DESCRIPTION:归去来辞 — 陈雨\n映后交流约 20 分钟\n座位预
+DESCRIPTION:归去来辞 — 陈雨\n映后交流约 40 分钟\n座位预
  约请以官方小程序为准\nhttps://sparrowcinema.github.io/idf2026/
 URL:https://sparrowcinema.github.io/idf2026/
 END:VEVENT
