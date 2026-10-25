@@ -1085,7 +1085,7 @@ const thL=k=>{const t=THEMES.find(x=>x[0]===k);return t?T(t[1],t[2]):k;};
 const crewOf=f=>CREW[f.id]||[];
 const hasDir=f=>crewOf(f).some(c=>c[1].includes('导演'));
 const crewTag=f=>{const c=crewOf(f);if(!c.length)return '';return `<span class="tag crewtag">🎤 ${hasDir(f)?T('导演出席','Director attending'):T('主创出席','Crew attending')}</span>`;};
-const scrCrew=s=>s.films.some(f=>crewOf(f).length);
+const NOQA_DAYS=['10.26'];const scrCrew=s=>!NOQA_DAYS.includes(s.d)&&s.films.some(f=>crewOf(f).length);
 SCR.forEach(s=>{if(scrCrew(s))s.qa=true;});
 function crewSec(f){const c=crewOf(f);const th=FTAG[f.id]||[];const w=FWARN[f.id]||[];let h='';
   if(c.length)h+=`<div class="sec"><h4>🎤 ${T('出席本届的主创','Attending IDF2026')}</h4><div class="links">${c.map(([n,rs])=>{const g=gByName.get(n);const role=`<small>${esc(rs.map(r=>T(r,CREWR[r]||r)).join(' / '))}</small>`;if(g)return `<button class="lnk" data-guest="${esc(n)}">${esc(gname(g))}${role}</button>`;const en=(n===f.director&&f.director_en)?f.director_en:n;return `<span class="lnk nolink">${esc(T(n,en))}${role}</span>`;}).join('')}</div><p class="h4n" style="display:block;margin-top:6px">${T('名单来自手册的出席嘉宾及大会补充信息，有主创出席的场次均标注映后交流（约 40 分钟），具体以现场安排为准。','From the catalogue guest list plus festival updates; screenings with attending crew are marked with a ~40-min Q&A — check on site.')}</p></div>`;

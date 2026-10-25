@@ -7,19 +7,18 @@ X-WR-CALNAME:IDF2026
 X-WR-TIMEZONE:Asia/Shanghai
 BEGIN:VEVENT
 UID:10.26-15:30-1@idf2026.sparrowcinema
-DTSTAMP:20261025T131425Z
+DTSTAMP:20261025T144657Z
 DTSTART:20261026T073000Z
-DTEND:20261026T095600Z
-SUMMARY:IDF · 莽妹 / 夜歌（含映后）
+DTEND:20261026T091600Z
+SUMMARY:IDF · 莽妹 / 夜歌
 LOCATION:中国美术学院象山校区 · 3 号楼 113 小剧场，杭
  州
-DESCRIPTION:莽妹 — 杨娟\n夜歌 — 桑霓\n映后交流约 40 分
- 钟\n座位预约请以官方小程序为准\nhttps://sparrowcinema.gith
- ub.io/idf2026/
+DESCRIPTION:莽妹 — 杨娟\n夜歌 — 桑霓\n座位预约请以官
+ 方小程序为准\nhttps://sparrowcinema.github.io/idf2026/
 URL:https://sparrowcinema.github.io/idf2026/
 BEGIN:VALARM
 ACTION:DISPLAY
-DESCRIPTION:IDF · 莽妹 / 夜歌（含映后）
+DESCRIPTION:IDF · 莽妹 / 夜歌
 TRIGGER:-PT15M
 END:VALARM
 END:VEVENT

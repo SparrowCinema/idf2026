@@ -7,19 +7,19 @@ X-WR-CALNAME:IDF2026
 X-WR-TIMEZONE:Asia/Shanghai
 BEGIN:VEVENT
 UID:10.26-19:00-1@idf2026.sparrowcinema
-DTSTAMP:20261025T131425Z
+DTSTAMP:20261025T144657Z
 DTSTART:20261026T110000Z
-DTEND:20261026T125700Z
-SUMMARY:IDF · 狐与粉月（含映后）
+DTEND:20261026T121700Z
+SUMMARY:IDF · 狐与粉月
 LOCATION:中国美术学院象山校区 · 3 号楼 113 小剧场，杭
  州
 DESCRIPTION:狐与粉月 — 梅尔达德·奥斯库维、索拉娅·阿
- 赫拉希\n映后交流约 40 分钟\n座位预约请以官方小程序
- 为准\nhttps://sparrowcinema.github.io/idf2026/
+ 赫拉希\n座位预约请以官方小程序为准\nhttps://sparrowcinem
+ a.github.io/idf2026/
 URL:https://sparrowcinema.github.io/idf2026/
 BEGIN:VALARM
 ACTION:DISPLAY
-DESCRIPTION:IDF · 狐与粉月（含映后）
+DESCRIPTION:IDF · 狐与粉月
 TRIGGER:-PT15M
 END:VALARM
 END:VEVENT
