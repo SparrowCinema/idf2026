@@ -7,17 +7,17 @@ X-WR-CALNAME:IDF2026
 X-WR-TIMEZONE:Asia/Shanghai
 BEGIN:VEVENT
 UID:10.25-19:00-5@idf2026.sparrowcinema
-DTSTAMP:20261025T104916Z
+DTSTAMP:20261025T105323Z
 DTSTART:20261025T110000Z
 DTEND:20261025T123000Z
-SUMMARY:IDF · 
+SUMMARY:IDF · 闭幕式 & 颁奖典礼
 LOCATION:中国美术学院象山校区 · 西湖剧场，杭州
-DESCRIPTION:座位预约请以官方小程序为准\nhttps://sparrowcinem
- a.github.io/idf2026/
+DESCRIPTION:闭幕式 & 颁奖典礼\n座位预约请以官方小程序
+ 为准\nhttps://sparrowcinema.github.io/idf2026/
 URL:https://sparrowcinema.github.io/idf2026/
 BEGIN:VALARM
 ACTION:DISPLAY
-DESCRIPTION:IDF · 
+DESCRIPTION:IDF · 闭幕式 & 颁奖典礼
 TRIGGER:-PT15M
 END:VALARM
 END:VEVENT

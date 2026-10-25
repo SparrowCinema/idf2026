@@ -7,18 +7,18 @@ X-WR-CALNAME:IDF2026
 X-WR-TIMEZONE:Asia/Shanghai
 BEGIN:VEVENT
 UID:10.26-19:00-1@idf2026.sparrowcinema
-DTSTAMP:20261025T104917Z
+DTSTAMP:20261025T105324Z
 DTSTART:20261026T110000Z
 DTEND:20261026T123000Z
-SUMMARY:IDF · 
+SUMMARY:IDF · 获奖影片放映 · IDF 优秀纪录片
 LOCATION:中国美术学院象山校区 · 3 号楼 113 小剧场，杭
  州
-DESCRIPTION:座位预约请以官方小程序为准\nhttps://sparrowcinem
- a.github.io/idf2026/
+DESCRIPTION:获奖影片放映 · IDF 优秀纪录片\n座位预约请以
+ 官方小程序为准\nhttps://sparrowcinema.github.io/idf2026/
 URL:https://sparrowcinema.github.io/idf2026/
 BEGIN:VALARM
 ACTION:DISPLAY
-DESCRIPTION:IDF · 
+DESCRIPTION:IDF · 获奖影片放映 · IDF 优秀纪录片
 TRIGGER:-PT30M
 END:VALARM
 END:VEVENT

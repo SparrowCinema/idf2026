@@ -1241,9 +1241,9 @@ function icsUTC(s){const [m,d]=s.d.split('.').map(Number);const [h,mi]=s.t.split
 function buildICS(L){
   const now=icsTime(Date.now());
   const ev=L.map(s=>{const st=icsUTC(s),en=st+((s.dur||90)+(s.qa?QA_MIN:0))*60000;
-    const title=s.ev!=null?T(s.title[0],s.title[1]):s.films.map(f=>ftitle(f)).join(' / ');
+    const title=s.ev!=null?T(s.title[0],s.title[1]):s.films.length?s.films.map(f=>ftitle(f)).join(' / '):labL(s);
     const sum=(s.ev!=null?'':'IDF · ')+title+(s.qa?T('（含映后）',' (+Q&A)'):'');
-    const desc=(s.ev!=null?[T(s.kn[0],s.kn[1])]:s.films.map(f=>ftitle(f)+(f.director?' — '+T(f.director,f.director_en||f.director):''))).concat(s.qa?[T(`映后交流约 ${QA_MIN} 分钟`,`Q&A approx. ${QA_MIN} min`)]:[],...(s.ev!=null?[SITE]:[T('座位预约请以官方小程序为准','Seat booking: see the official mini program'),SITE])).join('\n');
+    const desc=(s.ev!=null?[T(s.kn[0],s.kn[1])]:!s.films.length?[labL(s)]:s.films.map(f=>ftitle(f)+(f.director?' — '+T(f.director,f.director_en||f.director):''))).concat(s.qa?[T(`映后交流约 ${QA_MIN} 分钟`,`Q&A approx. ${QA_MIN} min`)]:[],...(s.ev!=null?[SITE]:[T('座位预约请以官方小程序为准','Seat booking: see the official mini program'),SITE])).join('\n');
     const a=[ 'BEGIN:VEVENT','UID:'+s.key+'@idf2026.sparrowcinema','DTSTAMP:'+now,'DTSTART:'+icsTime(st),'DTEND:'+icsTime(en),
       'SUMMARY:'+icsEsc(sum),'LOCATION:'+icsEsc((vPlace(s.v)==='hhc'?'':T('中国美术学院象山校区 · ','China Academy of Art, Xiangshan Campus · '))+venL(s.v)+T('，杭州',', Hangzhou')),'DESCRIPTION:'+icsEsc(desc),'URL:'+SITE];
     if(CALA>0)a.push('BEGIN:VALARM','ACTION:DISPLAY','DESCRIPTION:'+icsEsc(sum),'TRIGGER:-PT'+CALA+'M','END:VALARM');
@@ -1259,7 +1259,7 @@ const IS_AND=/Android/i.test(UA);
 const IOS_OTHER=/CriOS|FxiOS|EdgiOS|OPiOS|MQQBrowser|QQ\/|UCBrowser|Quark|baiduboxapp|SogouMobile|Weibo|DingTalk|AlipayClient|Lark|MicroMessenger/i.test(UA);
 const IOS_SAFARI=IS_IOS&&!IOS_OTHER;
 const BRANDF=()=>/CriOS|Chrome/.test(UA)&&!/Edg|SamsungBrowser|MiuiBrowser|HuaweiBrowser|HeyTapBrowser|VivoBrowser|UCBrowser|MQQBrowser|Quark/.test(UA)?'Chrome':/FxiOS|Firefox/.test(UA)?'Firefox':/EdgiOS|Edg/.test(UA)?'Edge':/MQQBrowser/.test(UA)?T('QQ 浏览器','QQ Browser'):/UCBrowser/.test(UA)?T('UC 浏览器','UC Browser'):/Quark/.test(UA)?T('夸克','Quark'):/SamsungBrowser/.test(UA)?'Samsung Internet':/MiuiBrowser/.test(UA)?T('小米浏览器','Mi Browser'):/HuaweiBrowser/.test(UA)?T('华为浏览器','Huawei Browser'):/HeyTapBrowser/.test(UA)?T('OPPO 浏览器','OPPO Browser'):/VivoBrowser/.test(UA)?T('vivo 浏览器','vivo Browser'):'';
-function calEv(s){const st=icsUTC(s),en=st+((s.dur||90)+(s.qa?QA_MIN:0))*60000;const title=s.ev!=null?T(s.title[0],s.title[1]):s.films.map(f=>ftitle(f)).join(' / ');
+function calEv(s){const st=icsUTC(s),en=st+((s.dur||90)+(s.qa?QA_MIN:0))*60000;const title=s.ev!=null?T(s.title[0],s.title[1]):s.films.length?s.films.map(f=>ftitle(f)).join(' / '):labL(s);
   return {st,en,sum:(s.ev!=null?'':'IDF · ')+title+(s.qa?T('（含映后）',' (+Q&A)'):''),loc:(vPlace(s.v)==='hhc'?'':T('中国美术学院象山校区 · ','China Academy of Art, Xiangshan Campus · '))+venL(s.v)+T('，杭州',', Hangzhou')};}
 const andIntent=s=>{const e=calEv(s);const q=v=>encodeURIComponent(v);return `intent:#Intent;action=android.intent.action.INSERT;type=vnd.android.cursor.item/event;S.title=${q(e.sum)};l.beginTime=${e.st};l.endTime=${e.en};S.eventLocation=${q(e.loc)};S.description=${q(SITE)};end`;};
 function calBlock(){if(!WANT.size)return '';const L=calList();const n=L.length;
@@ -1303,7 +1303,7 @@ function openFriend(){
   <p class="msub">${T(`共 ${L.length} 场${both?`，其中 ${both} 场你也想看`:''}。点 ☆ 加入自己的想看场次。`,`${L.length} screenings${both?`, ${both} also on your list`:''}. Tap ☆ to add to yours.`)}</p>`;
   if(!L.length)h+=`<p class="nnone">${T('这个链接里没有场次。','No screenings in this link.')}</p>`;
   SDAYS.forEach(d=>{const D=L.filter(s=>s.d===d);if(!D.length)return;
-    h+=`<h4 class="mday">${dateL(d)} <span>${wd(d)} · ${D.length}${T(' 场','')}</span></h4><div class="mlist">`+D.map(s=>{const on=WANT.has(s.key),cl=clash(s);return `<div class="mrow"><div class="mt"><b>${s.t}</b><span>${s.end||''}</span></div><div class="mb"><div class="mv">${esc(venL(s.v))}${on?`<em class="both">${T('你也想看','You too')}</em>`:''}${cl?`<em>${T('和你的场次冲突','Clashes with yours')}</em>`:''}</div>${s.films.map(f=>`<div class="mf"><button type="button" class="pname" data-film="${f.id}">${esc(ftitle(f))}</button></div>`).join('')}</div><button type="button" class="wbtn${on?' on':''}" data-want="${s.key}" aria-pressed="${on}">${on?'★':'☆'}</button></div>`;}).join('')+'</div>';});
+    h+=`<h4 class="mday">${dateL(d)} <span>${wd(d)} · ${D.length}${T(' 场','')}</span></h4><div class="mlist">`+D.map(s=>{const on=WANT.has(s.key),cl=clash(s);return `<div class="mrow"><div class="mt"><b>${s.t}</b><span>${s.end||''}</span></div><div class="mb"><div class="mv">${esc(venL(s.v))}${on?`<em class="both">${T('你也想看','You too')}</em>`:''}${cl?`<em>${T('和你的场次冲突','Clashes with yours')}</em>`:''}</div>${!s.films.length&&s.lab?`<div class="mf"><b class="evt">${esc(labL(s))}</b></div>`:''}${s.films.map(f=>`<div class="mf"><button type="button" class="pname" data-film="${f.id}">${esc(ftitle(f))}</button></div>`).join('')}</div><button type="button" class="wbtn${on?' on':''}" data-want="${s.key}" aria-pressed="${on}">${on?'★':'☆'}</button></div>`;}).join('')+'</div>';});
   const add=L.filter(s=>!WANT.has(s.key));const safe=add.filter(s=>!clash(s));
   if(add.length)h+=`<div class="pacts"><button type="button" class="recapbtn" id="fAddSafe">${T(`加入不冲突的 ${safe.length} 场`,`Add ${safe.length} non-clashing`)}</button>${safe.length<add.length?`<button type="button" class="chip" id="fAddAll">${T(`全部 ${add.length} 场都加入`,`Add all ${add.length}`)}</button>`:''}</div>`;
   openSheet(T('朋友的日程','Friend’s schedule'),h,['s','f']);
@@ -1429,7 +1429,8 @@ function nowData(){
   return {now,live,soon:ord(soon),nx:ord(nx),myLive:live.filter(s=>WANT.has(s.key))};
 }
 const nCd=(s,now)=>{const m=Math.round((sStart(s)-now)/60000);return m<60?T(`${m} 分钟后`,`in ${m} min`):m<1440?T(`${Math.floor(m/60)} 小时 ${m%60} 分后`,`in ${Math.floor(m/60)}h ${m%60}m`):`${dateL(s.d)} ${wd(s.d)} ${s.t}`;};
-const sTitle=s=>s.ev!=null?T(s.title[0],s.title[1]):s.films.length>1?(labL(s)||T('多部短片','Shorts')):ftitle(s.films[0]);
+const qT=s=>(s.ev!=null||!s.films.length)?sTitle(s):'《'+sTitle(s)+'》';
+const sTitle=s=>s.ev!=null?T(s.title[0],s.title[1]):!s.films.length?labL(s):s.films.length>1?(labL(s)||T('多部短片','Shorts')):ftitle(s.films[0]);
 function nowRow(s,isLive,now){const fav=WANT.has(s.key);const w=HERE?navRoute(HERE,vPlace(s.v)).min:null;const left=Math.round((sStart(s)-now)/60000);const late=!isLive&&w!=null&&w>left;
   return `<div class="nrow${fav?' fav':''}"><div class="ncd${isLive?' live':''}">${isLive?T('放映中','Now'):nCd(s,now)}<small>${s.t}${s.end?'–'+s.end:''}</small>${qaTag(s)}</div><div class="nb"><div class="nt">${fav?'★ ':''}${scrCrew(s)?'🎤 ':''}${s.films.length>1?esc(sTitle(s)):`<button type="button" class="pname" data-film="${s.films[0].id}">${esc(ftitle(s.films[0]))}</button>`}</div>${s.films.length>1?`<div class="nsub">${s.films.map(f=>`<button type="button" class="pname" data-film="${f.id}">${esc(ftitle(f))}</button>`).join(' · ')}</div>`:''}<button type="button" class="nnav${late?' late':''}" data-nav="${s.v}">📍 ${esc(T(VSH[s.v][0],VSH[s.v][1]))}${w===0?` · ${T('就在这里','you are here')}`:w!=null?` · ${T('走过去约','walk')} ${w} ${T('分钟','min')}${late?T('，来不及了','— too late'):''}`:` · ${T('怎么走','directions')}`}</button></div></div>`;}
 function myNext(now){
@@ -1437,7 +1438,7 @@ function myNext(now){
   const nxt=mine.find(s=>sStart(s)>now);if(!nxt)return null;
   const prev=mine.filter(s=>s!==nxt&&s.d===nxt.d&&sEndMs(s)<=sStart(nxt)+5*60000&&sStart(s)<sStart(nxt)).pop();
   let from=null,gap=null,fromLab='';
-  if(prev&&sEndMs(prev)>now-30*60000){from=vPlace(prev.v);gap=Math.round((sStart(nxt)-sEndMs(prev))/60000);fromLab=T(`《${sTitle(prev)}》散场后`,`after “${sTitle(prev)}”`);}
+  if(prev&&sEndMs(prev)>now-30*60000){from=vPlace(prev.v);gap=Math.round((sStart(nxt)-sEndMs(prev))/60000);fromLab=T(`${qT(prev)}散场后`,`after “${sTitle(prev)}”`);}
   else if(HERE){from=HERE;fromLab=T('从你现在的位置','from where you are');}
   const w=from?navRoute(from,vPlace(nxt.v)).min:null;
   const left=Math.round((sStart(nxt)-now)/60000);
@@ -1450,7 +1451,7 @@ function nowCard(){
   const MN=myNext(now);const mine=MN&&MN.left<=180?MN.s:null;
   const walk=s=>{const w=HERE?navRoute(HERE,vPlace(s.v)).min:null;return w==null?'':w===0?T(' · 就在这里',' · you are here'):T(` · 走过去 ${w} 分钟`,` · ${w} min walk`);};
   if(myLive.length){cls=' live';txt=T(`正在放映：${sTitle(myLive[0])}`,`Now showing: ${sTitle(myLive[0])}`);sub=T(VSH[myLive[0].v][0],VSH[myLive[0].v][1])+T(` · ${myLive[0].end} 散场`,` · ends ${myLive[0].end}`)+(MN&&MN.prev===myLive[0]?T(` · 下一场去 ${VSH[MN.s.v][0]}，走 ${MN.w} 分钟`,` · next: ${VSH[MN.s.v][1]}, ${MN.w} min walk`):'');}
-  else if(mine){txt=T(`你的下一场《${sTitle(mine)}》${nCd(mine,now)}开场`,`Your next: “${sTitle(mine)}” ${nCd(mine,now)}`);sub=T(VSH[mine.v][0],VSH[mine.v][1])+(MN.w==null?T(' · 点开看怎么走',' · tap for directions'):MN.w===0?T(' · 就在这里',' · same venue'):T(` · 走过去 ${MN.w} 分钟`,` · ${MN.w} min walk`))+(MN.late?T('，时间很紧',' — tight!'):'');if(MN.late)cls=' late';}
+  else if(mine){txt=T(`你的下一场${qT(mine)}${nCd(mine,now)}开场`,`Your next: “${sTitle(mine)}” ${nCd(mine,now)}`);sub=T(VSH[mine.v][0],VSH[mine.v][1])+(MN.w==null?T(' · 点开看怎么走',' · tap for directions'):MN.w===0?T(' · 就在这里',' · same venue'):T(` · 走过去 ${MN.w} 分钟`,` · ${MN.w} min walk`))+(MN.late?T('，时间很紧',' — tight!'):'');if(MN.late)cls=' late';}
   else if(soon.length){txt=T(`接下来一小时有 ${soon.length} 场开映`,`${soon.length} screening${soon.length>1?'s':''} start in the next hour`);}
   else if(MN){txt=T(`你的下一场：${dateL(MN.s.d)} ${wd(MN.s.d)} ${MN.s.t}《${sTitle(MN.s)}》`,`Your next: ${dateL(MN.s.d)} ${MN.s.t} “${sTitle(MN.s)}”`);sub=T(VSH[MN.s.v][0],VSH[MN.s.v][1])+(MN.w!=null&&MN.w>0?T(` · 走过去 ${MN.w} 分钟`,` · ${MN.w} min walk`):'');cls=' quiet';}
   else if(nx.length){cls=' quiet';txt=T(`下一批放映：${nCd(nx[0],now)} · ${nx.length} 场`,`Next: ${nCd(nx[0],now)} · ${nx.length} screening${nx.length>1?'s':''}`);}
@@ -1530,7 +1531,7 @@ function planResultHTML(R){
   if(!R)return '';
   let h=`<div class="pres" id="planRes"><h3 class="mday">${T('为你排好的日程','Your plan')} <span>${T(`${R.pick.length} 场 · 排进 ${PSEL.size-R.miss.length-R.dead.length}/${PSEL.size} 项`,`${R.pick.length} slots · ${PSEL.size-R.miss.length-R.dead.length}/${PSEL.size} picks`)}</span></h3>`;
   SDAYS.forEach(d=>{const D=R.pick.filter(s=>s.d===d);if(!D.length)return;
-    h+=`<h4 class="mday">${dateL(d)} <span>${wd(d)}</span></h4><div class="mlist">`+D.map(s=>`<div class="mrow"><div class="mt"><b>${s.t}</b><span>${s.end||''}</span></div><div class="mb"><div class="mv">${esc(venL(s.v))}${s.lab&&s.films.length>1?' · '+esc(labL(s)):''}${s.ev!=null?' · '+esc(T(s.kn[0],s.kn[1])):''}</div>${s.ev!=null?`<div class="mf"><span class="pname">${esc(T(s.title[0],s.title[1]))}</span></div>`:''}${s.films.map(f=>`<div class="mf"><button type="button" class="pname${PSEL.has(f.id)?'':' dim'}" data-film="${f.id}">${esc(ftitle(f))}</button>${PSEL.has(f.id)?'':`<small class="pbonus">${T('同场附带','also in this slot')}</small>`}</div>`).join('')}</div></div>`).join('')+'</div>';});
+    h+=`<h4 class="mday">${dateL(d)} <span>${wd(d)}</span></h4><div class="mlist">`+D.map(s=>`<div class="mrow"><div class="mt"><b>${s.t}</b><span>${s.end||''}</span></div><div class="mb"><div class="mv">${esc(venL(s.v))}${s.lab&&s.films.length>1?' · '+esc(labL(s)):''}${s.ev!=null?' · '+esc(T(s.kn[0],s.kn[1])):''}</div>${s.ev!=null?`<div class="mf"><span class="pname">${esc(T(s.title[0],s.title[1]))}</span></div>`:''}${!s.films.length&&s.lab?`<div class="mf"><b class="evt">${esc(labL(s))}</b></div>`:''}${s.films.map(f=>`<div class="mf"><button type="button" class="pname${PSEL.has(f.id)?'':' dim'}" data-film="${f.id}">${esc(ftitle(f))}</button>${PSEL.has(f.id)?'':`<small class="pbonus">${T('同场附带','also in this slot')}</small>`}</div>`).join('')}</div></div>`).join('')+'</div>';});
   if(R.miss.length)h+=`<h4 class="mday">${T('排不进的影片和活动','Could not fit')}</h4><div class="mlist">`+R.miss.map(x=>`<div class="mrow"><div class="mb"><div class="mf">${x.f.ev?`<span class="pname">${esc(pName(x.f.id))}</span>`:`<button type="button" class="pname" data-film="${x.f.id}">${esc(ftitle(x.f))}</button>`}</div><div class="mv pwhy">${x.why.length?T('所有场次都和已排的','All screenings clash with ')+x.why.map(pQuote).join(T('、',', '))+T(' 冲突',''):T('场次之间时间太紧','Too little time between screenings')}</div></div></div>`).join('')+'</div>';
   if(R.dead.length)h+=`<h4 class="mday">${T('已无场次','No screenings left')}</h4><p class="msub">${R.dead.map(f=>esc(pName(f.id))).join(T('、',', '))}${T(' 都已开始或结束。',' — already started or ended.')}</p>`;
   if(R.pick.length)h+=`<div class="pacts"><button type="button" class="recapbtn" id="planReplace">${T('用这份日程替换我的想看场次','Replace my screenings with this plan')}</button><button type="button" class="chip" id="planMerge">${T('只追加到我的想看场次','Add to my screenings')}</button></div>`;
@@ -1588,7 +1589,7 @@ function openMine(){
       body+=`<h4 class="mday">${dateL(d)} <span>${wd(d)} · ${D.length}${T(' 场',D.length>1?' screenings':' screening')}</span></h4><div class="mlist">`;
       D.forEach((s,i)=>{const pv=D[i-1];if(pv){const gap=Math.round((sStart(s)-sEndMs(pv))/60000),wk=walkMin(pv.v,s.v);if(gap>=0)body+=`<div class="mgap${wk>gap?' tight':''}"><span>${pv.v===s.v?T('同一场馆','Same venue'):T(`步行约 ${wk} 分钟`,`~${wk} min walk`)} · ${T(`间隔 ${gap} 分钟`,`${gap} min gap`)}${wk>gap?T('，可能赶不上',' — tight'):''}${pv.qa&&wk<=gap?(gap-wk<QA_MIN?T('；留下听映后会来不及','; no time to stay for the Q&A'):T('；来得及听完映后','; time to stay for the Q&A')):''}</span>${pv.v!==s.v?`<button type="button" class="vnav" data-nav="${s.v}">${T('路线','Route')} ›</button>`:''}</div>`;}
         body+=`<div class="mrow${clash.has(s.key)?' clash':''}"><div class="mt"><b>${s.t}</b><span>${s.end||''}</span></div><div class="mb"><div class="mv">${evTag(s)}${esc(venL(s.v))}${clash.has(s.key)?`<em>${T('时间冲突','Overlap')}</em>`:''}${qaTag(s)}${s.lab&&s.films.length>1?` · ${esc(labL(s))}`:''}</div>
-        ${s.ev!=null?`<div class="mf"><b class="evt">${esc(sTitle(s))}</b></div>`:''}${s.films.map(f=>`<div class="mf"><button type="button" class="pname" data-film="${f.id}">${esc(ftitle(f))}</button><span class="msc">${scorePills(f)}</span></div>`).join('')}</div>
+        ${s.ev!=null||!s.films.length?`<div class="mf"><b class="evt">${esc(sTitle(s))}</b></div>`:''}${s.films.map(f=>`<div class="mf"><button type="button" class="pname" data-film="${f.id}">${esc(ftitle(f))}</button><span class="msc">${scorePills(f)}</span></div>`).join('')}</div>
         <button type="button" class="wbtn on" data-want="${s.key}" aria-pressed="true" aria-label="${T('取消想看','Remove')}">★</button></div>`;});
       body+='</div>';});
   }
