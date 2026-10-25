@@ -577,6 +577,7 @@ html{touch-action:manipulation}
 .lnk.nolink{cursor:default;display:inline-flex;flex-direction:column}
 .mclass .mct{font-size:16px;font-weight:700;margin:4px 0 2px;color:var(--ink)}.talk .tp{margin:6px 0;font-size:14px;line-height:1.8;color:var(--ink)}.wnews{margin:4px 0 0;padding-left:1.1em}.wnews li{margin:4px 0;font-size:13.5px;line-height:1.65;color:var(--ink-2)}
 .pwin .pwr{margin:6px 0 0;display:flex;flex-direction:column;gap:1px}.pwin .pwr b{font-size:15px}.pwin .pwr small{font-size:12px;color:var(--ink-3)}.pbadge{display:inline-block;margin:4px 6px 0 0;font-size:11.5px;font-weight:600;padding:2px 8px;border-radius:999px;background:var(--amber-wash);color:var(--amber-ink)}
+.tag.awtag{background:var(--amber-wash);color:var(--amber-ink);border-color:transparent;font-weight:600}
 .planlink{display:block;width:100%;text-align:left;margin:4px 0 12px;padding:12px 14px;border-radius:12px;border:1px dashed color-mix(in srgb,var(--amber) 60%,transparent);background:var(--amber-wash);color:var(--amber-ink);font:inherit;font-size:13.5px;font-weight:600;cursor:pointer}
 .ptools{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:4px 0 6px}.pbuf{display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:12.5px;color:var(--ink-3);width:100%}.ptools .chip.on{background:var(--ink);color:var(--bg);border-color:var(--ink)}
 .plist{min-width:0;display:flex;flex-direction:column;border-top:1px solid var(--line)}
@@ -821,7 +822,7 @@ const RAW=[
 ['10.25','10:00',0,104,'石头与浪花'],['10.25','10:00',1,92,'一颗痣的自白'],['10.25','10:00',2,70,'宁静之夜的幻想'],['10.25','10:00',3,72,'热带分形'],['10.25','10:00',4,84,'莽妹'],
 ['10.25','13:00',0,88,'后世残影'],['10.25','13:00',1,80,S5b],['10.25','13:00',2,212,'直接行动'],['10.25','13:00',3,87,'冬日'],['10.25','13:00',4,74,'西行，萨帕塔'],
 ['10.25','15:30',0,110,'正梦'],['10.25','15:30',1,96,S5],['10.25','15:30',3,80,'火车'],['10.25','15:30',4,98,'狼街来信'],
-['10.26','10:00',1,null,'',['获奖影片放映 · IDF 特别荣誉','Award Winner Screening · IDF Special Mention']],['10.26','13:00',1,null,'',['获奖影片放映 · IDF 评委会荣誉','Award Winner Screening · IDF Jury Award']],['10.26','15:30',1,null,'',['获奖影片放映 · IDF 优秀华语纪录片 / IDF 优秀纪录短片','Award Winner Screening · IDF Best Chinese Documentary / IDF Best Short Documentary']],['10.26','19:00',1,null,'',['获奖影片放映 · IDF 优秀纪录片','Award Winner Screening · IDF Best Documentary']]
+['10.26','10:00',1,74,'西行，萨帕塔',['获奖影片放映 · IDF 特别荣誉','Award Winner Screening · IDF Special Mention']],['10.26','13:00',1,null,'',['获奖影片放映 · IDF 评委会荣誉','Award Winner Screening · IDF Jury Award']],['10.26','15:30',1,106,'莽妹|夜歌',['获奖影片放映 · IDF 优秀华语纪录片 / IDF 优秀纪录短片','Award Winner Screening · IDF Best Chinese Documentary / IDF Best Short Documentary']],['10.26','19:00',1,null,'',['获奖影片放映 · IDF 优秀纪录片','Award Winner Screening · IDF Best Documentary']]
 ];
 const byTitle=new Map(films.map(f=>[f.title,f]));
 const addMin=(t,m)=>{const [h,mm]=t.split(':').map(Number);const x=h*60+mm+m;return String(Math.floor(x/60)).padStart(2,'0')+':'+String(x%60).padStart(2,'0');};
@@ -1110,7 +1111,7 @@ function premTag(f){return f.premiere?`<span class="tag prem${f.premiere==='全�
 function secTag(f){const p=progOf.get(f.id);return f.section==='competition'?`<span class="tag comp">${T('西湖荣誉 · 评优入围','IDF Competition')}</span>`:`<span class="tag glory">${T('纪录之光','Glory')} · ${esc(p?F(p,'name'):'')}</span>`;}
 function filmCard(f){
   return `<button class="card" type="button" data-film="${f.id}">
-    <div class="top">${secTag(f)}${premTag(f)}<span class="tag">${esc(TYPEL(f))}</span>${crewTag(f)}</div>
+    <div class="top">${secTag(f)}${premTag(f)}<span class="tag">${esc(TYPEL(f))}</span>${awardTag(f)}${crewTag(f)}</div>
     <div class="hrow"><div class="ttl"><h2${EN()?' class="h2en"':''}>${hl(ftitle(f))}</h2><div class="en">${hl(fsub(f))}</div></div><span class="rwrap">${ratingBadge(f)}</span></div>
     <div class="meta"><span>${hl(F(f,'director'))}</span><span>${hl(F(f,'region'))}</span><span>${esc(f.year)}</span><span class="rt">${f.runtime}′</span>${extMini(f)}</div>
     <p class="syn">${hl(F(f,'synopsis'))}</p>
@@ -1332,7 +1333,7 @@ function renderQuick(first){
   else{const p=progOf.get(f.id);const syn=(F(f,'synopsis')||'').replace(/\s+/g,' ');
     let stars='';for(let k=1;k<=5;k++)stars+=`<span class="rs qs" data-k="${k}"><button type="button" class="qh l" data-qs="${k-0.5}" aria-label="${k-0.5}"></button><button type="button" class="qh r" data-qs="${k}" aria-label="${k}"></button><span class="st5"></span></span>`;
     h+=`<div class="qstack">${QQ[1]?`<div class="qcard qback"></div>`:''}<div class="qcard" id="qCard">
-      <div class="qtop">${secTag(f)}<span class="tag">${esc(TYPEL(f))} · ${f.runtime}′</span>${crewTag(f)}</div>
+      <div class="qtop">${secTag(f)}<span class="tag">${esc(TYPEL(f))} · ${f.runtime}′</span>${awardTag(f)}${crewTag(f)}</div>
       <h3 class="qt${EN()?' en':''}">${esc(ftitle(f))}</h3><div class="qen">${esc(fsub(f))}</div>
       <div class="qmeta">${esc(F(f,'director'))} · ${esc(F(f,'region'))} · ${esc(f.year)}</div>
       <p class="qsyn">${esc(syn.length>120?syn.slice(0,120)+'…':syn)}</p>
@@ -1741,7 +1742,7 @@ function openFilm(id){
   const cr=[[T('导演','Director'),esc(F(f,'director'))+(EN()?'':(f.director_en?`　<span style="color:var(--ink-3)">${esc(f.director_en)}</span>`:''))],[T('制片人','Producer'),esc(F(f,'producer'))],[T('制片地区','Country / Area'),esc(F(f,'region'))],[T('年份','Year'),esc(f.year)],[T('类型 / 时长','Type / Runtime'),`${esc(TYPEL(f))} · ${f.runtime} ${T('分钟','min')}`],[T('对白语言','Language'),esc(F(f,'language'))],[T('首映','Premiere'),esc(f.premiere?premL(f.premiere):'—')]].filter(r=>r[1]);
   const aw=EN()&&f.awards_en&&f.awards_en.length?f.awards_en:f.awards;
   openSheet(`${f.section==='competition'?T('西湖荣誉 · 评优入围','IDF Competition'):T('纪录之光','Glory')+' · '+(p?F(p,'name'):'')} · ${T('手册','Catalogue')} P.${f.page}`,`
-    <div class="top" style="display:flex;gap:6px;flex-wrap:wrap">${secTag(f)}${premTag(f)}${crewTag(f)}${f.note?`<span class="tag">${T(esc(f.note),'Mary Stephen Retrospective')}</span>`:''}</div>
+    <div class="top" style="display:flex;gap:6px;flex-wrap:wrap">${secTag(f)}${premTag(f)}${awardTag(f)}${crewTag(f)}${f.note?`<span class="tag">${T(esc(f.note),'Mary Stephen Retrospective')}</span>`:''}</div>
     <h2 id="sheetTitle"${EN()?' class="h2en"':''}>${esc(ftitle(f))}</h2><div class="en">${esc(fsub(f))}</div>
     <div class="dbrow">${extBtns(f)}</div>
     <p class="h4n" style="display:block;margin:2px 0 0">${T('外部评分截至 10 月 23 日，点按钮查看最新。','Outside scores as of Oct 23; tap for the latest.')}</p>
@@ -1796,6 +1797,9 @@ function evHTML(ev,k){const it0=k!=null?EVS.find(e=>e.ev===k):null;const it=it0|
 const pitchAwards=[['IDF 最具潜力发展计划','IDF Most Potential Development Plan','1',['浮动着的房子']],['IDF 优选提案','IDF Outstanding Proposals','4',['书店','布衣之城','日与夜','她和她的秘密']],['JNBY 100 个创作者计划 选择奖','JNBY The 100 Creators Project Award','',['双重生活']],['纪录公社「野艾实验室」奖','Jilu Commune Artemisia Award','',['厝中宇宙']],['一部电影种子奖','A FILM Seed Award','',['寻找那辆车']]];
 const pitchWin=t=>pitchAwards.filter(a=>a[3].includes(t)).map(a=>T(a[0],a[1]));
 const AWARDS=[['IDF 优秀纪录片','IDF Best Documentary'],['IDF 评委会荣誉','IDF Jury Award'],['IDF 优秀华语纪录片','IDF Best Chinese Documentary'],['IDF 优秀纪录短片','IDF Best Short Documentary'],['IDF 特别荣誉','IDF Special Mention']];
+const AWIN={'IDF 优秀华语纪录片':['f028'],'IDF 优秀纪录短片':['f050'],'IDF 特别荣誉':['f030']};
+const awardsOf=f=>AWARDS.filter(([a])=>(AWIN[a]||[]).includes(f.id));
+const awardTag=f=>awardsOf(f).map(([a,b])=>`<span class="tag awtag">🏆 ${esc(T(a,b))}</span>`).join('');
 let PK='hot';const PKX={};
 const fById=id=>films.find(f=>f.id===id);
 function pkTitle(id,t){const f=id&&fById(id);return f?`<button type="button" class="pkbtn" data-film="${f.id}">${esc(EN()?f.title_en:f.title)}</button>`:`<span class="pkna">${esc(t)}</span><span class="pktag">${T('未入选放映','Not screening')}</span>`;}
@@ -1896,7 +1900,9 @@ $('#infoBody').innerHTML=`
 </section>
 <section class="isec" id="s-food"><h2>${T('吃喝补给 · 洗手间','Food, Coffee & Restrooms')}</h2>${supplyHTML()}<div id="micWrap">${micHTML()}</div></section>
 <section class="isec" id="s-awards"><h2>${T('评优与奖项','Awards')}</h2><p class="lead">${T('“西湖荣誉”评优单元面向 2024 年 7 月 1 日之后完成的纪录长片（60 分钟及以上）与短片。本届有效报名 829 项：中国制作 354 部（含香港 7 部、澳门 1 部、台湾 3 部），中外合制 15 部，外国制作 460 部；长片 459 部、短片 370 部。','The IDF Competition is open to feature (60 min and above) and short documentaries completed after July 1, 2024. This year there were 829 valid entries: 354 produced in China (incl. 7 from Hong Kong, 1 from Macao, 3 from Taiwan), 15 co-productions and 460 international productions; 459 features and 370 shorts.')}</p>
- <div class="cols">${AWARDS.map(([a,b])=>`<div class="box"><h3>${T(a,b)}</h3><p>${T(b,a)}</p></div>`).join('')}</div>
+ <h3 class="ah3">${T('🏆 获奖名单（10.25 颁奖典礼公布）','🏆 Winners (announced 25 Oct)')}</h3>
+ <div class="cols">${AWARDS.map(([a,b])=>{const w=(AWIN[a]||[]).map(fById).filter(Boolean);return `<div class="box pwin"><h3>${T(a,b)}</h3>${w.length?w.map(f=>`<div class="pwr"><button type="button" class="pname" data-film="${f.id}">${esc(quote(ftitle(f)))}</button><small>${esc(F(f,'director'))} · ${esc(F(f,'region'))} · ${f.runtime}${T(' 分钟',' min')}</small></div>`).join(''):`<p class="msub">${T('待公布','To be announced')}</p>`}</div>`;}).join('')}</div>
+ <p class="msub">${T('获奖影片 10 月 26 日在 3 号楼 113 小剧场展映，场次见「排片」。','Award-winning films screen on 26 Oct in Theatre 113, Building 3 — see “Schedule”.')}</p>
  <div class="cols" style="margin-top:14px"><div class="box"><h3>${T('评审委员会','Jury')}</h3><p>${T('主席','President')} ${names('梁鸿')}${T('；成员 ','; members ')}${names('吴文光、芭芭拉·乌尔默、埃内斯托·德·卡瓦略、尼古拉·古罗')}</p></div>
  <div class="box"><h3>${T('学术顾问','Academic Consultants')}</h3><p>${names('凯文·麦克唐纳、宁瀛、周浩、小田香、若尔格·雅科梅')}</p></div></div>
 </section>
