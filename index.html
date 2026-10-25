@@ -1429,7 +1429,7 @@ function nowData(){
   return {now,live,soon:ord(soon),nx:ord(nx),myLive:live.filter(s=>WANT.has(s.key))};
 }
 const nCd=(s,now)=>{const m=Math.round((sStart(s)-now)/60000);return m<60?T(`${m} 分钟后`,`in ${m} min`):m<1440?T(`${Math.floor(m/60)} 小时 ${m%60} 分后`,`in ${Math.floor(m/60)}h ${m%60}m`):`${dateL(s.d)} ${wd(s.d)} ${s.t}`;};
-const qT=s=>(s.ev!=null||!s.films.length)?sTitle(s):'《'+sTitle(s)+'》';
+const qT=s=>(s.ev!=null||!s.films.length)?'「'+sTitle(s)+'」':'《'+sTitle(s)+'》';
 const sTitle=s=>s.ev!=null?T(s.title[0],s.title[1]):!s.films.length?labL(s):s.films.length>1?(labL(s)||T('多部短片','Shorts')):ftitle(s.films[0]);
 function nowRow(s,isLive,now){const fav=WANT.has(s.key);const w=HERE?navRoute(HERE,vPlace(s.v)).min:null;const left=Math.round((sStart(s)-now)/60000);const late=!isLive&&w!=null&&w>left;
   return `<div class="nrow${fav?' fav':''}"><div class="ncd${isLive?' live':''}">${isLive?T('放映中','Now'):nCd(s,now)}<small>${s.t}${s.end?'–'+s.end:''}</small>${qaTag(s)}</div><div class="nb"><div class="nt">${fav?'★ ':''}${scrCrew(s)?'🎤 ':''}${s.films.length>1?esc(sTitle(s)):`<button type="button" class="pname" data-film="${s.films[0].id}">${esc(ftitle(s.films[0]))}</button>`}</div>${s.films.length>1?`<div class="nsub">${s.films.map(f=>`<button type="button" class="pname" data-film="${f.id}">${esc(ftitle(f))}</button>`).join(' · ')}</div>`:''}<button type="button" class="nnav${late?' late':''}" data-nav="${s.v}">📍 ${esc(T(VSH[s.v][0],VSH[s.v][1]))}${w===0?` · ${T('就在这里','you are here')}`:w!=null?` · ${T('走过去约','walk')} ${w} ${T('分钟','min')}${late?T('，来不及了','— too late'):''}`:` · ${T('怎么走','directions')}`}</button></div></div>`;}
