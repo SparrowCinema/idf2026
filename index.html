@@ -808,6 +808,7 @@ const S5='涅科|寻找木屋的女孩|咒语|丘拉',S1='趋光之蛾|信使|�
 const COLL={[S5]:6,[S1]:1,[S4]:4,[S2]:2,[S3]:3,[S5b]:5};
 const RAW=[
 ['10.22','19:00',0,109,'隐迹之书：重写自我',['开幕式 & 开幕纪录片','Opening Ceremony & Opening Documentary']],
+['10.25','19:00',5,90,'',['闭幕式 & 颁奖典礼','Closing & Award Ceremony']],
 ['10.23','10:00',0,74,'西行，萨帕塔'],['10.23','10:00',1,100,'白马少年'],['10.23','10:00',2,97,'派卡尔'],['10.23','10:00',3,64,'第二层皮肤'],['10.23','10:00',4,88,'后世残影'],['10.23','10:00',5,96,S5],
 ['10.23','13:00',0,84,'莽妹'],['10.23','13:00',1,81,S1],['10.23','13:00',2,82,'黑水'],['10.23','13:00',3,90,'稻草人'],['10.23','13:00',4,95,'归去来辞'],['10.23','13:00',5,67,S4],
 ['10.23','15:30',0,84,'最好在野外疯狂'],['10.23','15:30',1,85,S2],['10.23','15:30',2,78,'夏令营'],['10.23','15:30',3,73,'当电话铃响起'],['10.23','15:30',4,79,'白银'],['10.23','15:30',5,77,S3],
@@ -866,16 +867,16 @@ const EV=[
  {d:'10.25',t:['15:30–17:00','15:30–17:00'],k:'forum',kn:['评委特展·主题讲座','Jury Screening · Lecture'],title:['尼古拉·古罗：谁在那里？远距离调查与共情','Nicolas Gourault: Who Is There? Remote Investigation and Empathy'],v:1,pg:'176',
   ppl:[[['主讲人','Lecturer'],'尼古拉·古罗'],[['学术主持','Moderator'],'徐玮超']],
   desc:['电影与计算机生成图像如何与线上调查相结合？讲座以《汽车操控手册》（2020）和《在他们眼中》（2025）两部短片为基础，分析它们如何呈现自动化系统中的隐形人类劳动，并分享他在“法证建筑”的实践经验，探讨影像创作者如何借助调查实践，对构成当代世界的技术基建展开批判性的审视。',
-        'How can film and computer-generated imagery be combined with online investigation? Drawing on his shorts VO (2020) and Their Eyes (2025), Nicolas Gourault shows how they reveal invisible human labor inside automated systems, shares his experience with Forensic Architecture, and discusses how filmmakers can use investigative practice to critically examine the technical infrastructure of today\'s world.']}
+        'How can film and computer-generated imagery be combined with online investigation? Drawing on his shorts VO (2020) and Their Eyes (2025), Nicolas Gourault shows how they reveal invisible human labor inside automated systems, shares his experience with Forensic Architecture, and discusses how filmmakers can use investigative practice to critically examine the technical infrastructure of today\'s world.']},
+ {d:'10.25',t:['19:00–20:30','19:00–20:30'],k:'cere',kn:['大会','Festival'],title:['闭幕式 & 颁奖典礼','Closing & Award Ceremony'],v:3,scrKey:'10.25-19:00-5',ppl:[[['颁发','Presenting'],['“西湖荣誉”评优单元各奖项','All IDF Competition awards']]]}
 ];
 const UNDATED=[
- {k:'cere',kn:['大会','Festival'],title:['闭幕式暨荣誉之夜','Closing & Award Ceremony'],v:3,ppl:[[['颁发','Presenting'],['“西湖荣誉”评优单元各奖项','All IDF Competition awards']]]},
  {k:'pitch',kn:['IDF 学院','IDF Academy'],d:'10.22',title:['剪辑大师课｜迷宫中漫步 —— 后期剪辑心理按摩指南（10.22 已举行）','Editing Masterclass | Walking in a Maze (held 22 Oct)'],v:4,ppl:[[['主讲','Speaker'],'李博'],[['导师','Tutors'],'陈玲珍、萧汝冠、于晓川']]}
 ];
 const EVV=[['2 号楼小剧场','Theatre, Building 2'],['水岸山居 会议室','Meeting Room, Shui An Shan Ju'],['中国国际设计博物馆 一层报告厅','Lecture Hall, China Design Museum'],['西湖剧场（8 号楼体育馆）','West Lake Theater (CAA Stadium, Building 8)'],['3 号楼 311 会议室','Room 311, Building 3']];
 
 const EVMAP=[0,6,7,5,8];
-const EVS=EV.map((e,k)=>{if(!e.d||!e.t||e.film)return null;const m=e.t[0].match(/(\d{1,2}:\d{2})\s*[–-]\s*(\d{1,2}:\d{2})/);if(!m)return null;const [h1,m1]=m[1].split(':').map(Number),[h2,m2]=m[2].split(':').map(Number);
+const EVS=EV.map((e,k)=>{if(!e.d||!e.t||e.film||e.scrKey)return null;const m=e.t[0].match(/(\d{1,2}:\d{2})\s*[–-]\s*(\d{1,2}:\d{2})/);if(!m)return null;const [h1,m1]=m[1].split(':').map(Number),[h2,m2]=m[2].split(':').map(Number);
   return {i:1000+k,key:'ev'+k,ev:k,d:e.d,t:m[1].padStart(5,'0'),end:m[2].padStart(5,'0'),dur:(h2*60+m2)-(h1*60+m1),v:EVMAP[e.v],films:[],lab:null,title:e.title,kn:e.kn,qa:false};}).filter(Boolean);
 const ITEMS=()=>SCR.concat(EVS);
 const evTag=s=>s.ev!=null?`<span class="evtag">${esc(T(s.kn[0],s.kn[1]))}</span>`:'';
@@ -1148,7 +1149,7 @@ function renderSched(){
   const ts=[...new Set(L.map(s=>s.t))].sort();
   $('#scrList').innerHTML=L.length?ts.map(t=>{const M=L.filter(s=>s.t===t).sort((a,b)=>a.v-b.v);return `<div class="slot"><div class="sloth"><b>${t}</b><span>${T(`${M.length} 场同时开映`,`${M.length} at once`)}</span></div><div class="sgrid">${M.map(s=>{const fav=WANT.has(s.key);
     return `<div class="scard${fav?' fav':''}"><div class="vn"><span>${esc(venL(s.v))}</span><span class="tm">${s.end?s.t+'–'+s.end:T('时长待定','TBA')}${scrCrew(s)?' 🎤':''}</span>${qaTag(s)}${s.films.length?`<button type="button" class="wbtn${fav?' on':''}" data-want="${s.key}" aria-pressed="${fav}" aria-label="${T('想看这一场','Save this screening')}">${fav?'★':'☆'}</button>`:''}</div>${s.lab?`<div class="lbl">${esc(labL(s))}</div>`:''}
-    ${s.films.length?s.films.map(f=>`<button class="sfilm" type="button" data-film="${f.id}"><span class="st">${MYR[f.id]!=null?fmt1(MYR[f.id]):''}</span><span class="nm${EN()?' en':''}">${esc(ftitle(f))}</span><span class="mn">${f.runtime}′</span></button>`).join(''):`<div class="sfilm"><span class="nm" style="color:var(--ink-3)">${T('片目待颁奖后公布','Titles announced after the awards')}</span></div>`}</div>`;}).join('')}</div></div>`;}).join(''):`<p class="empty">${emptySched()}</p>`;
+    ${s.films.length?s.films.map(f=>`<button class="sfilm" type="button" data-film="${f.id}"><span class="st">${MYR[f.id]!=null?fmt1(MYR[f.id]):''}</span><span class="nm${EN()?' en':''}">${esc(ftitle(f))}</span><span class="mn">${f.runtime}′</span></button>`).join(''):`<div class="sfilm"><span class="nm" style="color:var(--ink-3)">${s.key==='10.25-19:00-5'?T('颁发“西湖荣誉”评优单元各奖项','All IDF Competition awards presented'):T('片目待颁奖后公布','Titles announced after the awards')}</span></div>`}</div>`;}).join('')}</div></div>`;}).join(''):`<p class="empty">${emptySched()}</p>`;
 }
 function fitGantt(){const w=$('#scrList .gwrap');if(!w)return;
   const ds=$('#dayseg');const stick=ds&&getComputedStyle(ds).position==='sticky'?ds.getBoundingClientRect().height:0;
@@ -1784,7 +1785,7 @@ function names(n){
   if(Array.isArray(n))return esc(T(n[0],n[1]));
   return n.split('、').map(x=>{const g=gByName.get(x);const note=NOTE[x]?T(`（${NOTE[x][0]}）`,` (${NOTE[x][1]})`):'';return (g?`<button class="pname" data-guest="${esc(x)}">${esc(gname(g))}</button>`:esc(x))+esc(note);}).join(T('、',', '));
 }
-function evHTML(ev,k){const it=k!=null?EVS.find(e=>e.ev===k):null;const on=it&&WANT.has(it.key);return `<div class="ev" id="${k!=null?'ev'+k:''}"><div class="t">${ev.t?T(ev.t[0],ev.t[1]):T('时间以现场通知为准','Time to be announced')}${it?`<button type="button" class="wbtn evw${on?' on':''}" data-want="${it.key}" aria-pressed="${on}" aria-label="${T('加入我的日程','Add to my schedule')}">${on?'★':'☆'}</button>`:''}</div><div>
+function evHTML(ev,k){const it0=k!=null?EVS.find(e=>e.ev===k):null;const it=it0||(ev.scrKey?{key:ev.scrKey}:null);const on=it&&WANT.has(it.key);return `<div class="ev" id="${k!=null?'ev'+k:''}"><div class="t">${ev.t?T(ev.t[0],ev.t[1]):T('时间以现场通知为准','Time to be announced')}${it?`<button type="button" class="wbtn evw${on?' on':''}" data-want="${it.key}" aria-pressed="${on}" aria-label="${T('加入我的日程','Add to my schedule')}">${on?'★':'☆'}</button>`:''}</div><div>
   <span class="k ${ev.k}">${esc(T(ev.kn[0],ev.kn[1]))}</span>
   <h3>${esc(T(ev.title[0],ev.title[1]))}</h3><div class="v">${T('地点：','Venue: ')}${esc(T(EVV[ev.v][0],EVV[ev.v][1]))}${ev.pg?`　·　${T('手册','Catalogue')} P.${ev.pg}`:''}</div>
   ${ev.film?`<div class="ppl"><div><span>${T('开幕纪录片：','Opening film: ')}</span><button class="pname" data-film="${byTitle.get(ev.film).id}">${esc(quote(ftitle(byTitle.get(ev.film))))}</button>${T('（雪美莲，109 分钟）',' (Mary Stephen, 109 min)')}</div></div>`:''}
@@ -1876,7 +1877,7 @@ $('#infoBody').innerHTML=`
   <div class="qrtx"><span class="qrk">${T('微信小程序','WeChat mini program')}</span><b>${T('中国美术学院电影学院','School of Film, China Academy of Art')}</b><p>${T('长按二维码或扫描二维码进入小程序，预约展映座位。','Long-press or scan the code to open the mini program and reserve seats.')}</p></div></div>
  <h3 class="ah3">${T('入场方式','How to get in')}</h3><ul class="entry">${ENTRY.map(t=>`<li>${esc(T(t[0],t[1]))}</li>`).join('')}</ul>
  <h3 class="ah3">${T('友情提示','Good to know')}</h3><ol class="tips">${TIPS.map(t=>`<li>${esc(T(t[0],t[1]))}</li>`).join('')}</ol></section>
-<section class="isec" id="s-sched"><h2>${T('活动日程','Events')}</h2><p class="lead">${T('学术、创投活动时间来自大会手册，开幕式时间来自排片表。闭幕式只有场地、没有具体时间；剪辑大师课已于 10.22 举行，课堂回顾见「IDF 学院」。影片放映场次见“排片”页。','Forum and pitching times come from the festival catalogue; the opening time comes from the screening timetable. The closing ceremony has a venue but no published time; the editing masterclass was held on 22 Oct — see “IDF Academy” for a recap. For film screenings, see "Schedule".')}</p>
+<section class="isec" id="s-sched"><h2>${T('活动日程','Events')}</h2><p class="lead">${T('学术、创投活动时间来自大会手册，开幕式时间来自排片表。闭幕式 & 颁奖典礼 10.25 19:00 在西湖剧场；剪辑大师课已于 10.22 举行，课堂回顾见「IDF 学院」。影片放映场次见“排片”页。','Forum and pitching times come from the festival catalogue; the opening time comes from the screening timetable. The closing & award ceremony is at 19:00 on 25 Oct in the West Lake Theater; the editing masterclass was held on 22 Oct — see “IDF Academy” for a recap. For film screenings, see "Schedule".')}</p>
  ${SDAYS.slice(0,4).map(d=>{const L=EV.map((ev,k)=>[ev,k]).filter(([ev])=>ev.d===d);return `<div class="day"><div class="dayh"><b>${dateL(d)}</b><span>${wd(d)}</span></div>${L.length?L.map(([ev,k])=>evHTML(ev,k)).join(''):`<div class="ev"><div class="t">—</div><div class="v">${T('当日无学术或创投活动，放映场次见“排片”页。','No forums or pitching this day; see "Schedule" for screenings.')}</div></div>`}</div>`;}).join('')}
  <div class="day"><div class="dayh"><b>${T('场地已定 · 时间待通知','Venue set · time TBA')}</b></div>${UNDATED.map(ev=>evHTML(ev,null)).join('')}</div>
 </section>
