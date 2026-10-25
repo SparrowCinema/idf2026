@@ -1172,7 +1172,7 @@ window.addEventListener('resize',()=>{if(SM==='gantt')fitGantt();});
 const PX=2;
 const tmin=t=>{const [h,m]=t.split(':').map(Number);return h*60+m;};
 function gantt(L){
-  const vs=[...new Set(SCR.filter(s=>s.d===SS.day).map(s=>s.v))].sort((a,b)=>a-b);
+  const vFirst=SS.day==='10.25'?5:-1;const vs=[...new Set(SCR.filter(s=>s.d===SS.day).map(s=>s.v))].sort((a,b)=>(a===vFirst?-1:b===vFirst?1:a-b));
   const st=Math.min(...L.map(s=>tmin(s.t))),en=Math.max(...L.map(s=>tmin(s.t)+(s.dur||90)+(s.qa?QA_MIN:0)));
   const h0=Math.floor(st/60)*60,h1=Math.min(Math.ceil(en/60)*60,en+20),H=(h1-h0)*PX;
   let ticks='';for(let m=h0;m<=h1;m+=60)ticks+=`<span class="gtick" style="top:${(m-h0)*PX}px">${String(m/60).padStart(2,'0')}:00</span>`;
