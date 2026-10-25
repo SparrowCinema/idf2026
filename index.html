@@ -822,7 +822,7 @@ const RAW=[
 ['10.25','10:00',0,104,'石头与浪花'],['10.25','10:00',1,92,'一颗痣的自白'],['10.25','10:00',2,70,'宁静之夜的幻想'],['10.25','10:00',3,72,'热带分形'],['10.25','10:00',4,84,'莽妹'],
 ['10.25','13:00',0,88,'后世残影'],['10.25','13:00',1,80,S5b],['10.25','13:00',2,212,'直接行动'],['10.25','13:00',3,87,'冬日'],['10.25','13:00',4,74,'西行，萨帕塔'],
 ['10.25','15:30',0,110,'正梦'],['10.25','15:30',1,96,S5],['10.25','15:30',3,80,'火车'],['10.25','15:30',4,98,'狼街来信'],
-['10.26','10:00',1,74,'西行，萨帕塔',['获奖影片放映 · IDF 特别荣誉','Award Winner Screening · IDF Special Mention']],['10.26','13:00',1,null,'',['获奖影片放映 · IDF 评委会荣誉','Award Winner Screening · IDF Jury Award']],['10.26','15:30',1,106,'莽妹|夜歌',['获奖影片放映 · IDF 优秀华语纪录片 / IDF 优秀纪录短片','Award Winner Screening · IDF Best Chinese Documentary / IDF Best Short Documentary']],['10.26','19:00',1,null,'',['获奖影片放映 · IDF 优秀纪录片','Award Winner Screening · IDF Best Documentary']]
+['10.26','10:00',1,74,'西行，萨帕塔',['获奖影片放映 · IDF 特别荣誉','Award Winner Screening · IDF Special Mention']],['10.26','13:00',1,110,'正梦',['获奖影片放映 · IDF 评委会荣誉','Award Winner Screening · IDF Jury Award']],['10.26','15:30',1,106,'莽妹|夜歌',['获奖影片放映 · IDF 优秀华语纪录片 / IDF 优秀纪录短片','Award Winner Screening · IDF Best Chinese Documentary / IDF Best Short Documentary']],['10.26','19:00',1,77,'狐与粉月',['获奖影片放映 · IDF 优秀纪录片','Award Winner Screening · IDF Best Documentary']]
 ];
 const byTitle=new Map(films.map(f=>[f.title,f]));
 const addMin=(t,m)=>{const [h,mm]=t.split(':').map(Number);const x=h*60+mm+m;return String(Math.floor(x/60)).padStart(2,'0')+':'+String(x%60).padStart(2,'0');};
@@ -1797,7 +1797,7 @@ function evHTML(ev,k){const it0=k!=null?EVS.find(e=>e.ev===k):null;const it=it0|
 const pitchAwards=[['IDF 最具潜力发展计划','IDF Most Potential Development Plan','1',['浮动着的房子']],['IDF 优选提案','IDF Outstanding Proposals','4',['书店','布衣之城','日与夜','她和她的秘密']],['JNBY 100 个创作者计划 选择奖','JNBY The 100 Creators Project Award','',['双重生活']],['纪录公社「野艾实验室」奖','Jilu Commune Artemisia Award','',['厝中宇宙']],['一部电影种子奖','A FILM Seed Award','',['寻找那辆车']]];
 const pitchWin=t=>pitchAwards.filter(a=>a[3].includes(t)).map(a=>T(a[0],a[1]));
 const AWARDS=[['IDF 优秀纪录片','IDF Best Documentary'],['IDF 评委会荣誉','IDF Jury Award'],['IDF 优秀华语纪录片','IDF Best Chinese Documentary'],['IDF 优秀纪录短片','IDF Best Short Documentary'],['IDF 特别荣誉','IDF Special Mention']];
-const AWIN={'IDF 优秀华语纪录片':['f028'],'IDF 优秀纪录短片':['f050'],'IDF 特别荣誉':['f030']};
+const AWIN={'IDF 优秀纪录片':['f026'],'IDF 评委会荣誉':['f042'],'IDF 优秀华语纪录片':['f028'],'IDF 优秀纪录短片':['f050'],'IDF 特别荣誉':['f030']};
 const awardsOf=f=>AWARDS.filter(([a])=>(AWIN[a]||[]).includes(f.id));
 const awardTag=f=>awardsOf(f).map(([a,b])=>`<span class="tag awtag">🏆 ${esc(T(a,b))}</span>`).join('');
 let PK='hot';const PKX={};
