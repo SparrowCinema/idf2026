@@ -1471,11 +1471,12 @@ function openNow(){
     ${MN.w!=null?`<div class="mnr">${esc(MN.fromLab)}${MN.w===0?T('，同一场馆不用走',': same venue'):T(`步行约 ${MN.w} 分钟`,`, about ${MN.w} min on foot`)}${MN.gap!=null?T(`（间隔 ${MN.gap} 分钟）`,` (${MN.gap} min gap)`):''}${MN.late?T('，时间很紧，建议提前离场或换一场',' — tight; leave early or pick another slot'):''}</div>`:`<div class="mnr">${T('设置你现在的位置，就能算出走过去要多久。','Set your location to see the walking time.')}</div>`}
     <button type="button" class="recapbtn" data-navf="${MN.from||''}" data-nav="${x.v}">${T('看路线','Show route')} →</button></div>`;}
   else if(D)h+=`<p class="nnone">${T('在排片里点 ☆ 标记想看的场次，这里会显示你的下一场在哪、走过去要多久。','Tap ☆ on screenings you want; your next one, where it is and how long the walk takes will show here.')}</p>`;
-  if(D)h+=`<h4 class="mday">${D.soon.length?T('接下来一小时开映','Starting in the next hour'):T('下一批开映','Next screenings')}</h4>`;
+  if(D)h+=`<h4 class="mday">${D.soon.length?T('接下来一小时开映','Starting in the next hour'):D.nx.length&&sStart(D.nx[0])-D.now>3*3600000?T(`${dateL(D.nx[0].d)} ${wd(D.nx[0].d)} 放映`,`Screenings · ${dateL(D.nx[0].d)}`):T('下一批开映','Next screenings')}</h4>`;
   if(D){const {now,soon,nx,myLive}=D;
     if(myLive.length)h+=myLive.map(s=>nowRow(s,true,now)).join('');
     if(soon.length)h+=soon.map(s=>nowRow(s,false,now)).join('');
-    else if(nx.length)h+=`<p class="nnone">${T('接下来一小时没有开场的放映。','No screenings start in the next hour.')}</p>`+nx.map(s=>nowRow(s,false,now)).join('');}
+    else if(nx.length){const far=sStart(nx[0])-now>3*3600000;const day=far?SCR.filter(s=>s.d===nx[0].d&&sStart(s)>now).sort((a,b)=>sStart(a)-sStart(b)||a.v-b.v):nx;
+      h+=`<p class="nnone">${T('接下来一小时没有开场的放映。','No screenings start in the next hour.')}${far?T(`以下是 ${dateL(nx[0].d)} ${wd(nx[0].d)} 的全部 ${day.length} 场放映。`,` All ${day.length} screenings on ${dateL(nx[0].d)}:`):''}</p>`+day.map(s=>nowRow(s,false,now)).join('');}}
   openSheet(T('接下来一小时','Next hour'),h,['x','now']);
   const nh=$('#nowHere');if(nh)nh.onclick=e=>{e.stopPropagation();openNav(HERE||'b2');};
 }
