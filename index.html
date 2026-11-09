@@ -959,8 +959,12 @@ function toggleWant(key){WANT.has(key)?WANT.delete(key):WANT.add(key);saveWant()
 function updFavN(){const n=$('#favN');if(n)n.textContent=films.filter(wantFilm).length;const r=$('#ratedN');if(r)r.textContent=Object.keys(MYR).length;const m=$('#myAllN');if(m)m.textContent=WANT.size;}
 function refreshLists(){if(TAB==='films')renderFilms();if(TAB==='screen')renderSched();}
 /* ratings: my own (this device) + shared stats from Supabase */
-const SB_URL='https://wclivgihyakxzqyupupj.supabase.co',SB_KEY='sb_publishable_vvjIDUUnNuOLGdSkcoQ4yQ_PM67CXRm';
-const SB_ON=/^https:\/\//.test(SB_URL)&&SB_KEY.length>20;
+/* 影展已结束（2026.10.22–10.26）：观众评分与想看人数于 2026-11-09 从 Supabase 导出后固定写在页面里，不再联网读写。
+   个人打分仍保存在本机（idf26rate），只影响「我的评分」，不改变公开结果。 */
+const SB_URL='',SB_KEY='';
+const SB_ON=false, FINAL=true;
+const FROZEN_RATINGS=[["f120",13,3.885],["f068",10,2.95],["f094",13,3.5],["f132",11,3.5],["f084",10,3.3],["f034",11,3.318],["f072",16,4.031],["f112",10,3.25],["f106",11,2.864],["f140",9,3.278],["f058",20,3.6],["f052",10,2.9],["f104",15,4.167],["f130",11,3.955],["f108",10,3.55],["f078",12,3.5],["f042",15,2.8],["f144",10,3.75],["f122",12,3.292],["f076",11,2.955],["f046",9,2.944],["f030",18,4],["f088",10,2.75],["f126",11,3.318],["f074",13,3.423],["f092",13,4.115],["f038",18,4],["f080",11,3.682],["f026",21,4.262],["f086",9,3.5],["f066",11,2.864],["f142",11,4.273],["f138",14,4.071],["f096",12,2.083],["f036",15,4.1],["f062",13,4.192],["f114",11,3.409],["f050",11,3.5],["f044",10,3.15],["f040",11,2.818],["f134",8,4.063],["f128",11,2.5],["f098",12,3.625],["f064",12,2.875],["f118",11,3.545],["f048",9,3.056],["f100",11,3],["f032",14,3.536],["f024",21,3.548],["f028",14,3.714]]; /* [影片id, 评分人数, 平均星数(5星制)] */
+const FROZEN_WANTS={"f030":1,"f028":1,"f026":1,"f024":2};
 let MYR={};try{MYR=JSON.parse(localStorage.getItem('idf26rate')||'{}')||{};}catch(e){}
 let DEV='';try{DEV=localStorage.getItem('idf26dev')||'';if(!DEV){DEV=(crypto.randomUUID?crypto.randomUUID():'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g,c=>{const r=Math.random()*16|0;return (c==='x'?r:(r&3|8)).toString(16);}));localStorage.setItem('idf26dev',DEV);}}catch(e){DEV='';}
 let STATS={};
@@ -968,7 +972,7 @@ const MINR=5;
 let GMEAN=null;
 function applyStats(a){STATS={};let sw=0,sn=0;a.forEach(x=>{const avg=x.avg==null?null:Number(x.avg);STATS[x.film_id]={n:x.n,avg};if(avg!=null){sw+=avg*x.n;sn+=x.n;}});GMEAN=sn?sw/sn:null;}
 async function loadStats(){if(!SB_ON)return;try{const r=await fetch(SB_URL+'/rest/v1/rpc/rating_stats',{headers:{apikey:SB_KEY}});if(!r.ok)return;const a=await r.json();applyStats(a);try{localStorage.setItem('idf26stats',JSON.stringify(a));}catch(e){}refreshLists();refreshSheetRating();if(TAB==='picks'&&PK==='hot')renderPicks();}catch(e){}}
-try{const c=JSON.parse(localStorage.getItem('idf26stats')||'null');if(c&&SB_ON)applyStats(c);}catch(e){}
+applyStats(FROZEN_RATINGS.map(([film_id,n,avg])=>({film_id,n,avg})));WSTATS={...FROZEN_WANTS};WS_OK=true;
 /* IMDb-style weighted rating: WR=(v/(v+m))R+(m/(v+m))C, m=MINR; returns 10-point score */
 function wr10(id){const s=STATS[id];if(!s||s.avg==null||s.n<MINR)return null;const C=GMEAN==null?s.avg:GMEAN;return 2*((s.n/(s.n+MINR))*s.avg+(MINR/(s.n+MINR))*C);}
 let RERR=false;
@@ -987,11 +991,11 @@ function ratingBadge(f){const s=STATS[f.id];const mine=MYR[f.id];let h='';
   if(mine!=null)h+=`<span class="rmine"><small>${T('我','Me')}</small><b>${mine*2}</b></span>`;
   return h;}
 function ratingBlock(f){const s=STATS[f.id];const mine=MYR[f.id];const w=wr10(f.id);
-  const comm=!SB_ON?T('评分仅在公开网站显示。','Scores are shown on the public website.'):w!=null?`<b class="ravg">${fmt1(w)}</b><span class="r10">/10</span>${starsSVG(w/2,'sm')}<span class="rn">${T(`${s.n} 人评分`,`${s.n} ratings`)}</span>`:`<span class="rn">${T(`${s?s.n:0} 人评分 · 满 ${MINR} 人后显示评分`,`${s?s.n:0} rating${s&&s.n===1?'':'s'} · score shows after ${MINR}`)}</span>`;
+  const comm=w!=null?`<b class="ravg">${fmt1(w)}</b><span class="r10">/10</span>${starsSVG(w/2,'sm')}<span class="rn">${T(`${s.n} 人评分`,`${s.n} ratings`)}</span>`:`<span class="rn">${T(`${s?s.n:0} 人评分 · 满 ${MINR} 人后显示评分`,`${s?s.n:0} rating${s&&s.n===1?'':'s'} · score shows after ${MINR}`)}</span>`;
   let btns='';for(let k=1;k<=5;k++){btns+=`<span class="rs" data-k="${k}"><button type="button" class="rh l" data-score="${k-0.5}" aria-label="${k-0.5}"></button><button type="button" class="rh r" data-score="${k}" aria-label="${k}"></button><span class="st5 ${mine>=k?'full':mine>=k-0.5?'half':''}"></span></span>`;}
   return `<div class="rate" data-rid="${f.id}"><div class="rcomm">${comm}</div>
    <div class="rmy"><span class="rlab">${mine!=null?T('我的评分','My rating'):T('点星星打分','Tap to rate')}</span><span class="rbtns" role="group" aria-label="${T('打分','Rate')}">${btns}</span><b class="rval">${mine!=null?mine*2+'<small>/10</small>':''}</b>${mine!=null?`<button type="button" class="rclear">${T('清除','Clear')}</button>`:''}</div>
-   <div class="rnote">${T(`参考 IMDb 加权算法：打分人数少的影片会向全片平均分靠拢，满 ${MINR} 人后显示。一颗星 = 2 分。`,`IMDb-style weighted rating: films with few votes are pulled toward the overall mean; shown after ${MINR} ratings. One star = 2 points.`)}</div>
+   <div class="rnote">${T(`影展已结束，观众评分为最终结果，你在这里打的分只保存在本机。参考 IMDb 加权算法：打分人数少的影片会向全片平均分靠拢，满 ${MINR} 人后显示。一颗星 = 2 分。`,`The festival has ended; audience scores are final and your rating here stays on this device. IMDb-style weighted rating: films with few votes are pulled toward the overall mean; shown after ${MINR} ratings. One star = 2 points.`)}</div>
    ${RERR?`<div class="rerr">${T('网络不稳，评分已存在本机，稍后会再同步。','Network issue: saved on this device; will sync later.')}</div>`:''}</div>`;}
 function refreshSheetRating(){const el=$('#sheetBody .rate');if(!el)return;const f=films.find(x=>x.id===el.dataset.rid);if(f)el.outerHTML=ratingBlock(f);}
 const FS={section:'all',prog:'all',type:'all',prem:'all',day:'all',theme:'all',sort:'first',fav:false,rated:false,crew:false};

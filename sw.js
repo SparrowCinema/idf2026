@@ -1,5 +1,5 @@
 /* IDF2026 影展手册 · offline cache */
-const C='idf26-v2';
+const C='idf26-v3';
 const CORE=['./','./index.html','./map-campus.jpg','./map-hangzhou.jpg','./qr-booking.jpg','./qr-tickets.jpg','./qr-tickets-code.jpg','./icon-512.png','./apple-touch-icon.png','./favicon-32.png','./manifest.webmanifest'];
 self.addEventListener('install',e=>{e.waitUntil(caches.open(C).then(c=>c.addAll(CORE)).then(()=>self.skipWaiting()));});
 self.addEventListener('activate',e=>{e.waitUntil(caches.keys().then(ks=>Promise.all(ks.filter(k=>k!==C).map(k=>caches.delete(k)))).then(()=>self.clients.claim()));});
